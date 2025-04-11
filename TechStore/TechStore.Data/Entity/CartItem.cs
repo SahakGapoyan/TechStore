@@ -14,6 +14,8 @@ namespace TechStore.Data.Entity
         public DateTime AddedAt { get; set; } = DateTime.Now;
         public Product Product { get; set; } = default!;
         public int ProductId { get; set; }
+        public User User { get; set; } = default!;
+        public int UserId { get; set; }
         public decimal SubTotal => Quantity * Product.Price;
     }
 }
