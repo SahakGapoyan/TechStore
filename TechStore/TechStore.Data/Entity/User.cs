@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechStore.Data.Entity
 {
-    public class User:BaseEntity
+    public class User : BaseEntity
     {
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
@@ -16,6 +16,7 @@ namespace TechStore.Data.Entity
         public string Address { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public IEnumerable<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public IEnumerable<Order> MyProperty { get; set; } = new List<Order>();
 
     }
 }
