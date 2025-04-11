@@ -9,7 +9,7 @@ namespace TechStore.Data.Entity
 {
     public class CartItem:BaseEntity
     {
-        public decimal CurrentPrice { get; set; }
+        public decimal CurrentPrice => Product.Price;
         public int Quantity { get; set; }
         public DateTime AddedAt { get; set; } = DateTime.Now;
         public Product Product { get; set; } = default!;
