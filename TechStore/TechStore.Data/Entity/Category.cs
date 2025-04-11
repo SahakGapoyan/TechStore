@@ -11,5 +11,6 @@ namespace TechStore.Data.Entity
         public string Name { get; set; } = default!;
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public IEnumerable<Product> Products { get; set; } = new List<Product>();
     }
 }
