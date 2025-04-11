@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TechStore.Data.Entity
 {
-    public class Ram : BaseEntity
+    public class Color : BaseEntity
     {
-        public string Size { get; set; } = default!;
+        public string Name { get; set; } = default!;
     }
 }

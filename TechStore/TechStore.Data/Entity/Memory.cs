@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechStore.Data.Entity
 {
-    public class Ram : BaseEntity
+    public class Memory : BaseEntity
     {
         public string Size { get; set; } = default!;
     }
