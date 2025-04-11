@@ -19,6 +19,8 @@ namespace TechStore.Data.Entity
         public int BrandId { get; set; }
         public Model Model { get; set; } = default!;
         public int ModelId { get; set; }
+        public Color? Color { get; set; }
+        public int ColorId { get; set; }
 
     }
 }
