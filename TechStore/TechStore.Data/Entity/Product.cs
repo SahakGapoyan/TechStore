@@ -15,8 +15,10 @@ namespace TechStore.Data.Entity
         public bool IsAvailable { get; set; }
         public Category Category { get; set; } = default!;
         public int CategoryId { get; set; }
-
         public Brand Brand { get; set; } = default!;
         public int BrandId { get; set; }
+        public Model Model { get; set; } = default!;
+        public int ModelId { get; set; }
+
     }
 }
