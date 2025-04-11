@@ -9,5 +9,6 @@ namespace TechStore.Data.Entity
     public class Color : BaseEntity
     {
         public string Name { get; set; } = default!;
+        public IEnumerable<Product> Products { get; set; } = new List<Product>();
     }
 }
