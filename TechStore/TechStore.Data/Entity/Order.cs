@@ -9,6 +9,8 @@ namespace TechStore.Data.Entity
 {
     public class Order : BaseEntity
     {
+        public int UserId { get; set; }
+        public User User { get; set; } = default!;
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public OrderStatus Status { get; set; }
         public decimal TotalAmount { get; set; }
