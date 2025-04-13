@@ -12,7 +12,7 @@ namespace TechStore.Data.Interfaces
         Task<IEnumerable<User>> GetAll(CancellationToken token=default);
         Task<User?> GetById(int userId, CancellationToken token= default);
         Task AddUser(User user, CancellationToken token = default);
-        Task UpdateUser(User user, CancellationToken token = default);
-        Task DeleteUser(User user, CancellationToken token = default);
+        Task UpdateUser(User user);
+        Task DeleteUser(User user);
     }
 }
