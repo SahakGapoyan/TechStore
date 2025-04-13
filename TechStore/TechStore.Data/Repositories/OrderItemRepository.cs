@@ -32,6 +32,7 @@ namespace TechStore.Data.Repositories
         {
             return await _context.OrderItems
                  .Include(o => o.Order)
+                 .Include(o=>o.Product)
                  .Where(o => o.Order.UserId == userId)
                  .ToListAsync(token);
         }
