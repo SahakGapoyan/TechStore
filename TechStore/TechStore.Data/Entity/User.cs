@@ -16,7 +16,7 @@ namespace TechStore.Data.Entity
         public string Address { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public IEnumerable<CartItem> CartItems { get; set; } = new List<CartItem>();
-        public IEnumerable<Order> MyProperty { get; set; } = new List<Order>();
+        public IEnumerable<Order> Orders { get; set; } = new List<Order>();
 
     }
 }
