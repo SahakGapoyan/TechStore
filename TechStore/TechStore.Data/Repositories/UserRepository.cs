@@ -24,7 +24,7 @@ namespace TechStore.Data.Repositories
             await _context.Users.AddAsync(user);
         }
 
-        public async Task DeleteUser(User user, CancellationToken token=default)
+        public async Task DeleteUser(User user)
         {
             _context.Users.Remove(user);
         }
@@ -39,7 +39,7 @@ namespace TechStore.Data.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId, token);
         }
 
-        public async Task UpdateUser(User user, CancellationToken token= default)
+        public async Task UpdateUser(User user)
         {
             _context.Users.Update(user);
         }
