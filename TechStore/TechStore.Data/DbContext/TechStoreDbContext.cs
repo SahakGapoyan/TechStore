@@ -8,7 +8,7 @@ using TechStore.Data.Entity;
 
 namespace TechStore.Data.DbContext
 {
-    class TechStoreDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class TechStoreDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public TechStoreDbContext(DbContextOptions<TechStoreDbContext> options) : base(options)
         {
