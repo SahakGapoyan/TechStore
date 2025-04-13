@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TechStore.Data.Entity
 {
-    public class Product:BaseEntity
+    public abstract class Product:BaseEntity
     {
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
