@@ -10,7 +10,7 @@ namespace TechStore.Data.Interfaces
     public interface IOrderRepository
     {
         Task<IEnumerable<Order>> GetOrdersByUserId(int userId, CancellationToken token=default);
-        Task<Order> GetOrder(int orderId, CancellationToken token=default);
+        Task<Order?> GetOrder(int orderId, CancellationToken token=default);
         Task AddOrder(Order order, CancellationToken token=default);
         Task UpdateOrder(Order order);
     }

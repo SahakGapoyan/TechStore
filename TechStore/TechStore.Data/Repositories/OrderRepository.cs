@@ -23,7 +23,7 @@ namespace TechStore.Data.Repositories
             await _context.Orders.AddAsync(order, token);
         }
 
-        public async Task<Order> GetOrder(int orderId, CancellationToken token)
+        public async Task<Order?> GetOrder(int orderId, CancellationToken token)
         {
             return await _context.Orders
                 .Include(o => o.OrderItems)
