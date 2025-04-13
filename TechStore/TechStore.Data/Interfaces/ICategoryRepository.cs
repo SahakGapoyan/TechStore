@@ -9,9 +9,9 @@ namespace TechStore.Data.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetCategories(CancellationToken toke = default);
+        Task<IEnumerable<Category>> GetCategories(CancellationToken token = default);
         Task<Category?> GetCategory(int id, CancellationToken token = default);
-        Task AddCategory(Category category, CancellationToken toke = default);
+        Task AddCategory(Category category, CancellationToken token = default);
         Task UpdateCategory(Category category);
         Task DeleteCategory(Category category);
     }
