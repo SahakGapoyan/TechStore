@@ -7,7 +7,7 @@ using TechStore.Data.Entity;
 
 namespace TechStore.Data.Interfaces
 {
-    interface ILaptopRepository : IProductRepository<Laptop>
+    public interface ILaptopRepository : IProductRepository<Laptop>
     {
         Task<IEnumerable<Laptop>> GetLaptopsByRamId(int ramId, CancellationToken token = default);
         Task<IEnumerable<Laptop>> GetLaptopsByMemoryId(int memoryId, CancellationToken token = default);
