@@ -33,6 +33,11 @@ namespace TechStore.Data.Repositories
             return await _context.Colors.FirstOrDefaultAsync(c => c.Id == colorId, token);
         }
 
+        public async Task<IEnumerable<Color>> GetColors(CancellationToken token)
+        {
+            return await _context.Colors.ToListAsync();
+        }
+
         public async Task UpdateColor(Color color)
         {
             _context.Colors.Update(color);

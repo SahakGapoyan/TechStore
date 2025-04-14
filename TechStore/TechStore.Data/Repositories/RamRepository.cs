@@ -20,7 +20,7 @@ namespace TechStore.Data.Repositories
         }
         public async Task AddRam(Ram ram, CancellationToken token = default)
         {
-            await _context.Rams.AddAsync(ram,token);
+            await _context.Rams.AddAsync(ram, token);
         }
 
         public async Task DeleteRam(Ram ram)
@@ -31,6 +31,11 @@ namespace TechStore.Data.Repositories
         public async Task<Ram?> GetRamById(int ramId, CancellationToken token = default)
         {
             return await _context.Rams.FirstOrDefaultAsync(r => r.Id == ramId, token);
+        }
+
+        public async Task<IEnumerable<Ram>> GetRams(CancellationToken token)
+        {
+            return await _context.Rams.ToListAsync();
         }
 
         public async Task UpdateRam(Ram ram)

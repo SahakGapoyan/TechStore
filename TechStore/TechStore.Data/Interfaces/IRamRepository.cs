@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
 {
     public interface IRamRepository
     {
+        Task<IEnumerable<Ram>> GetRams(CancellationToken token);
         Task<Ram?> GetRamById(int ramId, CancellationToken token = default);
         Task AddRam(Ram ram, CancellationToken token = default);
         Task UpdateRam(Ram ram);
