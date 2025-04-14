@@ -12,7 +12,7 @@ namespace TechStore.Data.Repositories
 {
     public class ProductRepository<T> : IProductRepository<T> where T : Product
     {
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
         private readonly TechStoreDbContext _context;
 
         public ProductRepository(TechStoreDbContext context)
