@@ -12,8 +12,6 @@ namespace TechStore.Data.Repositories
 {
     public class LaptopRepository : ProductRepository<Laptop>, ILaptopRepository
     {
-        //private readonly TechStoreDbContext _context;
-
         public LaptopRepository(TechStoreDbContext context) : base(context)
         {
             
