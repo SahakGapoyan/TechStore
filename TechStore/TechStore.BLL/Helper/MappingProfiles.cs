@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechStore.BLL.DtoModels.User;
+using TechStore.Data.Entity;
 
 namespace TechStore.BLL.Helper
 {
@@ -11,7 +13,9 @@ namespace TechStore.BLL.Helper
     {
         public MappingProfiles()
         {
-            
+            CreateMap<User, UserDto>();
+            CreateMap<User, UserAddDto>().ReverseMap();
+            CreateMap<User, UserUpdateDto>().ReverseMap();
         }
     }
 }
