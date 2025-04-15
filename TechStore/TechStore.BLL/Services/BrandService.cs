@@ -65,6 +65,7 @@ namespace TechStore.BLL.Services
 
             brand.Name = brandUpdateDto.Name ?? brand.Name;
 
+            await _uow.SaveAsync(token);
             return Result.Ok("Successfully updated.");
         }
     }
