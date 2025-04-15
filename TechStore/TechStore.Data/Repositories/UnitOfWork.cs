@@ -20,6 +20,7 @@ namespace TechStore.Data.Repositories
             ModelRepository = new ModelRepository(_context);
             CategoryRepository = new CategoryRepository(_context);
             ColorRepository = new ColorRepository(_context);
+            UserRepository = new UserRepository(_context);
             CartItemRepository = new CartItemRepository(_context);
             OrderItemRepository = new OrderItemRepository(_context);
             OrderRepository = new OrderRepository(_context);
@@ -49,13 +50,15 @@ namespace TechStore.Data.Repositories
 
         public IOrderRepository OrderRepository { get; }
 
-        public IOSRepsoitory OSRepsoitory {get;}
+        public IOSRepsoitory OSRepsoitory { get; }
 
         public IRamRepository RamRepository { get; }
 
         public ISmartPhoneRepository SmartPhoneRepository { get; }
 
         public ITvRepository TvRepository { get; }
+
+        public IUserRepository UserRepository { get; }
 
         public void Dispose()
         {

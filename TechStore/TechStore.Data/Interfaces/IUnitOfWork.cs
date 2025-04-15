@@ -22,7 +22,8 @@ namespace TechStore.Data.Interfaces
         ITvRepository TvRepository { get; }
         IOSRepsoitory OSRepsoitory { get; }
         IRamRepository RamRepository { get; }
-        IProductRepository<T> GetProductRepository<T>(CancellationToken token=default) where T : Product;
+        IUserRepository UserRepository { get; }
+        IProductRepository<T> GetProductRepository<T>(CancellationToken token = default) where T : Product;
         Task SaveAsync(CancellationToken token);
     }
 }
