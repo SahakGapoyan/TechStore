@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechStore.BLL.DtoModels.Brand;
+using TechStore.Data.Entity;
 
 namespace TechStore.BLL.Helper
 {
@@ -11,7 +13,8 @@ namespace TechStore.BLL.Helper
     {
         public MappingProfiles()
         {
-            
+            CreateMap<Brand, BrandDto>();
+            CreateMap<BrandAddDto, Brand>();
         }
     }
 }
