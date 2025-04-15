@@ -7,7 +7,7 @@ using TechStore.BLL.DtoModels;
 using TechStore.BLL.DtoModels.Brand;
 using TechStore.Data.Entity;
 
-namespace TechStore.BLL
+namespace TechStore.BLL.Interfaces
 {
     public interface IBrandService
     {
