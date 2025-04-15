@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TechStore.BLL.Models
+namespace TechStore.BLL.Models.Enums
 {
     public enum ErrorType
     {
