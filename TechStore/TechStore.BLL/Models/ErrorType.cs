@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechStore.BLL.Models
 {
-    enum ErrorType
+    public enum ErrorType
     {
         None,
         NotFound
