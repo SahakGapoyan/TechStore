@@ -14,8 +14,4 @@
     <ProjectReference Include="..\TechStore.Data\TechStore.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
-
 </Project>
