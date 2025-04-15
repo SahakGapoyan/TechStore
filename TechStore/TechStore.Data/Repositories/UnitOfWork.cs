@@ -50,7 +50,7 @@ namespace TechStore.Data.Repositories
 
         public IOrderRepository OrderRepository { get; }
 
-        public IOSRepsoitory OSRepsoitory {get;}
+        public IOSRepsoitory OSRepsoitory { get; }
 
         public IRamRepository RamRepository { get; }
 
