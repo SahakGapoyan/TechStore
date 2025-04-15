@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TechStore.BLL.Models.Enums;
+using TechStore.BLL.DtoModels.Enums;
 
-namespace TechStore.BLL.Models
+namespace TechStore.BLL.DtoModels
 {
     public class Result
     {
