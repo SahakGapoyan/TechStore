@@ -20,8 +20,8 @@ namespace TechStore.BLL.Services
         where TProductAddDto : ProductAddDto
         where TProductUpdateDto : ProductUpdateDto
     {
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
+        protected readonly IUnitOfWork _uow;
+        protected readonly IMapper _mapper;
 
         public ProductService(IUnitOfWork uow, IMapper mapper)
         {
