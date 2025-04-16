@@ -13,7 +13,7 @@ namespace TechStore.BLL.Helper.CategoryMap
     {
         public CategoryMapping()
         {
-            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Category, CategoryDto>();
             CreateMap<Category, CategoryAddDto>().ReverseMap();
         }
     }
