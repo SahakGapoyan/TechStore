@@ -65,7 +65,7 @@ namespace TechStore.Data.Repositories
             _context.Dispose();
         }
 
-        public IProductRepository<T> GetProductRepository<T>(CancellationToken token = default) where T : Product
+        public async Task<IProductRepository<T>> GetProductRepository<T>(CancellationToken token = default) where T : Product
         {
             return new ProductRepository<T>(_context);
         }
