@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechStore.BLL.DtoModels.Base;
+using TechStore.BLL.DtoModels.Product;
 
 namespace TechStore.BLL.DtoModels.CartItem
 {
@@ -15,6 +16,6 @@ namespace TechStore.BLL.DtoModels.CartItem
         public DateTime AddedAt { get; set; }
         public int ProductId { get; set; }
         public int UserId { get; set; }
-        public decimal SubTotal { get; set; }
+        public decimal SubTotal => Quantity * CurrentPrice;
     }
 }

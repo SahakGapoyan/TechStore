@@ -24,10 +24,19 @@ namespace TechStore.BLL.Services
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task AddCartItem(CartItemAddDto cartItemAddDto, CancellationToken token = default)
+        public async Task AddCartItem(CartItemAddDto cartItemAddDto, int userId,CancellationToken token = default)
         {
-            var cartItem = _mapper.Map<CartItem>(cartItemAddDto);
-            await _uow.CartItemRepository.AddCartItem(cartItem,token);
+            var existingItem = await _uow.CartItemRepository.GetCartItemByUserAndProduct(cartItemAddDto.ProductId, userId, token);
+            if (existingItem != null)
+            {
+                existingItem.Quantity += cartItemAddDto.Quantity;
+            }
+            else
+            {
+                var newCartItem = _mapper.Map<CartItem>(cartItemAddDto);
+                newCartItem.UserId = userId;
+                await _uow.CartItemRepository.AddCartItem(newCartItem);
+            }
             await _uow.SaveAsync(token);
         }
 
@@ -48,21 +57,19 @@ namespace TechStore.BLL.Services
             return _mapper.Map<CartItemDto>(await _uow.CartItemRepository.GetById(cartItemId, token));
         }
 
+        public async Task<CartItemDto?> GetCartItemByUserAndProduct(int userId, int productId, CancellationToken token = default)
+        {
+            return _mapper.Map<CartItemDto>(await _uow.CartItemRepository.GetCartItemByUserAndProduct(userId, productId, token));
+        }
+
         public async Task<IEnumerable<CartItemDto>> GetCartItemsByUserId(int userId, CancellationToken token = default)
         {
             return _mapper.Map<List<CartItemDto>>(await _uow.CartItemRepository.GetCartItemsByUserId(userId, token));
         }
 
-        public async Task<Result> UpdateCartItem(int cartItemId, CartItemUpdateDto cartItemUpdateDto, CancellationToken token = default)
+        public Task<Result> UpdateCartItem(int cartItemId, CartItemUpdateDto cartItemUpdateDto, CancellationToken token = default)
         {
-            var cartItem = await _uow.CartItemRepository.GetById(cartItemId, token);
-            if(cartItem==null)
-            {
-                return Result.Error(ErrorType.NotFound);
-            }
-            await _uow.CartItemRepository.UpdateCartItem(cartItem);
-            await _uow.SaveAsync(token);
-            return Result.Ok("Successfully Updated");
+            throw new NotImplementedException();
         }
     }
 }

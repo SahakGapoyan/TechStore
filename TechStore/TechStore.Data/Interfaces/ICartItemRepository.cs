@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<CartItem?> GetById(int cartItemId,CancellationToken token=default);
         Task<IEnumerable<CartItem>> GetCartItemsByUserId(int userId, CancellationToken token = default);
+        Task<CartItem?> GetCartItemByUserAndProduct(int userId, int productId, CancellationToken token = default);
         Task AddCartItem(CartItem cartItem, CancellationToken token = default);
         Task UpdateCartItem(CartItem cartItem);
         Task DeleteCartItem(CartItem cartItem);
