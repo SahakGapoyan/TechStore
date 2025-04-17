@@ -28,7 +28,7 @@ namespace TechStore.Data.Repositories
             _techStoreDbContext.CartItems.Remove(cartItem);
         }
 
-        public async Task<CartItem> GetById(int cartItemId, CancellationToken token = default)
+        public async Task<CartItem?> GetById(int cartItemId, CancellationToken token = default)
         {
             return await _techStoreDbContext.CartItems.FirstOrDefaultAsync(c => c.Id == cartItemId, token);
         }
