@@ -14,6 +14,5 @@ namespace TechStore.BLL.DtoModels.User
         public string PasswordHash { get; set; } = default!;
         public string PhoneNumber { get; set; } = default!;
         public string Address { get; set; } = default!;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

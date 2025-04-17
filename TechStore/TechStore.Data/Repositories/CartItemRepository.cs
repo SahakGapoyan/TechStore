@@ -28,9 +28,16 @@ namespace TechStore.Data.Repositories
             _techStoreDbContext.CartItems.Remove(cartItem);
         }
 
-        public async Task<CartItem> GetById(int cartItemId, CancellationToken token = default)
+        public async Task<CartItem?> GetById(int cartItemId, CancellationToken token = default)
         {
             return await _techStoreDbContext.CartItems.FirstOrDefaultAsync(c => c.Id == cartItemId, token);
+        }
+
+        public async Task<CartItem?> GetCartItemByUserAndProduct(int userId, int productId, CancellationToken token = default)
+        {
+            return await _techStoreDbContext.CartItems
+                .Include(c => c.Product)
+                .FirstOrDefaultAsync(c => c.ProductId == productId && c.UserId == userId);
         }
 
         public async Task<IEnumerable<CartItem>> GetCartItemsByUserId(int userId, CancellationToken token)
