@@ -8,10 +8,10 @@ namespace TechStore.BLL.DtoModels.CartItem
 {
     public class CartItemAddDto
     {
-        public decimal CurrentPrice;
+        public decimal CurrentPrice { get; set; }
         public int Quantity { get; set; }
         public int ProductId { get; set; }
         public int UserId { get; set; }
-        public decimal SubTotal;
+        public decimal SubTotal { get; set; }
     }
 }
