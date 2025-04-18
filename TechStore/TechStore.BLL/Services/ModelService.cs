@@ -23,7 +23,7 @@ namespace TechStore.BLL.Services
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task AddModel(ModelAddDto modelAddDto, CancellationToken token = default)
+        public async Task AddModel(ModelAddto modelAddDto, CancellationToken token = default)
         {
             var model = _mapper.Map<Model>(modelAddDto);
             await _uow.ModelRepository.AddModel(model, token);
@@ -53,7 +53,7 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<ModelDto>>(await _uow.ModelRepository.GetModels(token));
         }
 
-        public async Task<Result> Update(int modelId, ModelUpdateDto modelUpdateDto, CancellationToken token = default)
+        public async Task<Result> UpdateModel(int modelId, ModelUpdateDto modelUpdateDto, CancellationToken token = default)
         {
             var model = await _uow.ModelRepository.GetModel(modelId, token);
 

@@ -44,7 +44,7 @@ namespace TechStore.Api.Controllers
         [HttpPut("id/{id}")]
         public async Task<ActionResult> UpdateModel([FromRoute] int id, [FromBody] ModelUpdateDto modelUpdateDto,CancellationToken token)
         {
-            var result = await _modelService.Update(id, modelUpdateDto, token);
+            var result = await _modelService.UpdateModel(id, modelUpdateDto, token);
             if(!result.Success)
             {
                 if (result.ErrorType == ErrorType.NotFound)
