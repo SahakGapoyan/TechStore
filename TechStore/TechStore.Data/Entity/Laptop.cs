@@ -13,7 +13,7 @@ namespace TechStore.Data.Entity
         public Memory Memory { get; set; } = default!;
         public int MemoryId { get; set; }
         public OS OS { get; set; } = default!;
-        public int OsId { get; set; }
+        public int OSId { get; set; }
         public string Processor { get; set; } = default!;
         public string GPU { get; set; } = default!;
         public string ScreenSize { get; set; } = default!;
