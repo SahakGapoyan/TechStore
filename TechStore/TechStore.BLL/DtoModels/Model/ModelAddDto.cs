@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TechStore.BLL.DtoModels.Model
 {
-    public class ModelAddto
+    public class ModelAddDto
     {
         public string Name { get; set; } = default!;
         public int AnnouncementYear { get; set; }
