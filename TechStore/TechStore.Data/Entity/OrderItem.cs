@@ -14,6 +14,6 @@ namespace TechStore.Data.Entity
         public Product Product { get; set; } = default!;
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
-        public decimal TotalPrice => Quantity * UnitPrice;
+        public decimal TotalPrice { get; set; }
     }
 }

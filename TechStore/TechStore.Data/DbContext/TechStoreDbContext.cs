@@ -33,6 +33,9 @@ namespace TechStore.Data.DbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SmartPhone>().ToTable("SmartPhones");
+            modelBuilder.Entity<Laptop>().ToTable("Laptops");
+            modelBuilder.Entity<Tv>().ToTable("Tvs");
             //one to many User-Order
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
@@ -110,7 +113,48 @@ namespace TechStore.Data.DbContext
             modelBuilder.Entity<Laptop>()
                .HasOne(l => l.OS)
                .WithMany(os => os.Laptops)
-               .HasForeignKey(l => l.OsId);
+               .HasForeignKey(l => l.OSId);
+
+            //one to many OS-Laptop
+            modelBuilder.Entity<Laptop>()
+               .HasOne(l => l.Memory)
+               .WithMany(m => m.Laptops)
+               .HasForeignKey(l => l.MemoryId);
+
+            //one to many OS-Laptop
+            modelBuilder.Entity<SmartPhone>()
+               .HasOne(s => s.Memory)
+               .WithMany(m => m.SmartPhones)
+               .HasForeignKey(s => s.MemoryId);
+
+            //config for decimal
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<CartItem>()
+                .Property(o => o.CurrentPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<CartItem>()
+                .Property(o => o.SubTotal)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(o => o.UnitPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(o => o.TotalPrice)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Product>()
+                .Property(o => o.Price)
+                .HasPrecision(18, 2);
         }
     }
 }

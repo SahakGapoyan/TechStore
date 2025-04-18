@@ -1,11 +1,13 @@
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TechStore.BLL.DtoModels.Laptop;
 using TechStore.BLL.DtoModels.Product;
 using TechStore.BLL.DtoModels.SmartPhone;
 using TechStore.BLL.DtoModels.Tv;
 using TechStore.BLL.Interfaces;
 using TechStore.BLL.Services;
+using TechStore.Data.DbContext;
 using TechStore.Data.Entity;
 using TechStore.Data.Interfaces;
 using TechStore.Data.Repositories;
@@ -49,6 +51,12 @@ namespace TechStore.Api
             builder.Services.AddScoped<ISmartPhoneService, SmartPhoneService>();
             builder.Services.AddScoped<ITvService, TvService>();
             builder.Services.AddScoped<IUserService, UserService>();
+
+
+            builder.Services.AddDbContext<TechStoreDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("TechStoreConnection"));
+            });
 
             var app = builder.Build();
 

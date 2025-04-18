@@ -13,7 +13,8 @@ namespace TechStore.BLL.Helper.CartItemMap
     {
         public CartItemMapping()
         {
-            CreateMap<CartItem, CartItemDto>();
+            CreateMap<CartItem, CartItemDto>()
+                .ForMember(dest => dest.CurrentPrice, opt => opt.MapFrom(src => src.Product.Price));
             CreateMap<CartItem, CartItemAddDto>().ReverseMap();
         }
     }

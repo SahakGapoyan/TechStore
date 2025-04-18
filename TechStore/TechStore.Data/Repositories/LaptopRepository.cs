@@ -24,7 +24,7 @@ namespace TechStore.Data.Repositories
 
         public async Task<IEnumerable<Laptop>> GetLaptopsByOSId(int osId, CancellationToken token = default)
         {
-            return await _dbSet.Where(l => l.OsId == osId).ToListAsync(token);
+            return await _dbSet.Where(l => l.OSId == osId).ToListAsync(token);
         }
 
         public async Task<IEnumerable<Laptop>> GetLaptopsByRamId(int ramId, CancellationToken token = default)
