@@ -14,7 +14,7 @@ namespace TechStore.BLL.Helper.ModelMap
         public ModelMappingProfile()
         {
             CreateMap<Model, ModelDto>();
-            CreateMap<ModelAddto, Model>();
+            CreateMap<ModelAddDto, Model>();
         }
     }
 }

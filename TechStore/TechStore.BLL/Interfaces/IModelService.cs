@@ -12,7 +12,7 @@ namespace TechStore.BLL.Interfaces
     {
         Task<IEnumerable<ModelDto>> GetModels(CancellationToken token = default);
         Task<ModelDto?> GetModel(int modelId, CancellationToken token = default);
-        Task AddModel(ModelAddto modelAddDto, CancellationToken token = default);
+        Task AddModel(ModelAddDto modelAddDto, CancellationToken token = default);
         Task<Result> Update(int modelId, ModelUpdateDto modelUpdateDto, CancellationToken token = default);
         Task<Result> Delete(int modelId, CancellationToken token = default);
     }
