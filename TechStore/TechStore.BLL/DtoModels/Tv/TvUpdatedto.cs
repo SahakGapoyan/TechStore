@@ -7,7 +7,7 @@ using TechStore.BLL.DtoModels.Product;
 
 namespace TechStore.BLL.DtoModels.Tv
 {
-    public class TvUpdatedto : ProductUpdateDto
+    public class TvUpdateDto : ProductUpdateDto
     {
         public string? ScreenSize { get; set; }
         public string? PanelType { get; set; }

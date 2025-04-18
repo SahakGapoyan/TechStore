@@ -8,7 +8,7 @@ using TechStore.Data.Entity;
 
 namespace TechStore.BLL.Interfaces
 {
-    public interface ITvService : IProductService<Tv, TvDto, TvAddDto, TvUpdatedto>
+    public interface ITvService : IProductService<Tv, TvDto, TvAddDto, TvUpdateDto>
     {
 
     }
