@@ -59,7 +59,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        public async Task<ActionResult> Delete([FromRoute] int id, CancellationToken token)
+        public async Task<ActionResult> DeleteSmartPhone([FromRoute] int id, CancellationToken token)
         {
             var result = await _smartPhoneService.DeleteProduct(id, token);
 
@@ -102,7 +102,7 @@ namespace TechStore.Api.Controllers
         [HttpGet("osId/{osId}")]
         public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByOSID([FromRoute] int osId, CancellationToken token = default)
         {
-            var result = await _smartPhoneService.GetSmartPhonesByOSID(osId, token);
+            var result = await _smartPhoneService.GetSmartPhonesByOSId(osId, token);
 
             if (!result.Item1.Success)
             {
