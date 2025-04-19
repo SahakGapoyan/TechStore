@@ -61,7 +61,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpDelete("id/{id}")]
-        public async Task<ActionResult> Delete([FromRoute] int id, CancellationToken token)
+        public async Task<ActionResult> DeleteLaptop([FromRoute] int id, CancellationToken token)
         {
             var result = await _laptopService.DeleteProduct(id, token);
 
