@@ -27,7 +27,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public async Task<ActionResult<LaptopDto>> GetSmartPhoneById([FromRoute] int id, CancellationToken token)
+        public async Task<ActionResult<LaptopDto>> GetLaptopById([FromRoute] int id, CancellationToken token)
         {
             var laptop = await _laptopService.GetProductById(id, token);
 
@@ -89,7 +89,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet("memoryId/{memoryId}")]
-        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
+        public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByMemoryId(int memoryId, CancellationToken token = default)
         {
             var result = await _laptopService.GetLaptopsByMemoryId(memoryId, token);
 
@@ -102,7 +102,7 @@ namespace TechStore.Api.Controllers
             return Ok(result);
         }
         [HttpGet("osId/{osId}")]
-        public async Task<ActionResult<List<LaptopDto>>> GetSmartPhonesByOSID([FromRoute] int osId, CancellationToken token = default)
+        public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByOSID([FromRoute] int osId, CancellationToken token = default)
         {
             var result = await _laptopService.GetLaptopsByOSId(osId, token);
 
