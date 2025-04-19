@@ -20,20 +20,20 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<RamDto>>> GetOSes(CancellationToken token)
+        public async Task<ActionResult<List<OSDto>>> GetOSes(CancellationToken token)
         {
             return Ok(await _oSService.GetOSs(token));
         }
 
         [HttpGet("id/{id}")]
-        public async Task<ActionResult<RamDto>> GetOSById([FromRoute] int id, CancellationToken token)
+        public async Task<ActionResult<OSDto>> GetOSById([FromRoute] int id, CancellationToken token)
         {
-            var ram = await _oSService.GetOSById(id, token);
-            if (ram == null)
+            var OS = await _oSService.GetOSById(id, token);
+            if (OS == null)
             {
                 return NotFound();
             }
-            return Ok(ram);
+            return Ok(OS);
         }
 
         [HttpPost]
