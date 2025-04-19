@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechStore.BLL.DtoModels;
+using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.DtoModels.OrderItem;
 using TechStore.BLL.Interfaces;
 using TechStore.Data.Entity;
@@ -34,9 +36,14 @@ namespace TechStore.BLL.Services
             return _mapper.Map<OrderItemDto>(await _uow.OrderItemRepository.GetOrderItemById(orderItemId, token));
         }
 
-        public async Task<IEnumerable<OrderItemDto>> GetOrderItemsByUserId(int userId, CancellationToken token = default)
+        public async Task<(Result, IEnumerable<OrderItemDto>)> GetOrderItemsByUserId(int userId, CancellationToken token = default)
         {
-            return _mapper.Map<List<OrderItemDto>>(await _uow.OrderItemRepository.GetOrderItemsByUserId(userId, token));
+            var user = await _uow.UserRepository.GetById(userId, token);
+            if(user==null)
+            {
+                return (Result.Error(ErrorType.NotFound, $"There is no User by {userId} Id"), null);
+            }
+            return(Result.Ok(),_mapper.Map<List<OrderItemDto>>(await _uow.OrderItemRepository.GetOrderItemsByUserId(userId,token)));
         }
     }
 }
