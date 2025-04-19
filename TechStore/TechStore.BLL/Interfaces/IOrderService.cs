@@ -13,7 +13,7 @@ namespace TechStore.BLL.Interfaces
     {
         Task<IEnumerable<OrderDto>> GetOrdersByUserId(int userId, CancellationToken token = default);
         Task<OrderDto?> GetOrder(int orderId, CancellationToken token = default);
-        Task AddOrder(OrderAddDto orderAddDto, CancellationToken token = default);
+        Task AddOrder(int userId,OrderAddDto orderAddDto, CancellationToken token = default);
         Task<Result> UpdateOrder(int orderId,OrderUpdateDto orderUpdateDto,CancellationToken token=default);
     }
 }
