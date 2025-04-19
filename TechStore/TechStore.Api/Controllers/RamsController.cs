@@ -10,11 +10,11 @@ namespace TechStore.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RamController : ControllerBase
+    public class RamsController : ControllerBase
     {
         private readonly IRamService _ramService;
 
-        public RamController(IRamService ramService)
+        public RamsController(IRamService ramService)
         {
             _ramService = ramService;
         }

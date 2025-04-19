@@ -9,11 +9,11 @@ namespace TechStore.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderItemController : ControllerBase
+    public class OrderItemsController : ControllerBase
     {
         private readonly IOrderItemService _orderItemService;
 
-        public OrderItemController(IOrderItemService orderItemService)
+        public OrderItemsController(IOrderItemService orderItemService)
         {
             _orderItemService = orderItemService;
         }
