@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.DtoModels.OrderItem;
 using TechStore.BLL.Interfaces;
 
@@ -23,7 +24,10 @@ namespace TechStore.Api.Controllers
             var result=await _orderItemService.GetOrderItemsByUserId(userId, token);
             if(!result.Item1.Success)
             {
-                return NotFound(result.Item1.Message);
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                {
+                    return NotFound(result.Item1.Message);
+                }
             }
             return Ok(result);
         }

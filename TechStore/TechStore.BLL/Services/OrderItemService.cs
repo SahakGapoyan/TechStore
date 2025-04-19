@@ -41,7 +41,7 @@ namespace TechStore.BLL.Services
             var user = await _uow.UserRepository.GetById(userId, token);
             if(user==null)
             {
-                return (Result.Error(ErrorType.NotFound, $"There is nor User by {userId} Id"), null);
+                return (Result.Error(ErrorType.NotFound, $"There is no User by {userId} Id"), null);
             }
             return(Result.Ok(),_mapper.Map<List<OrderItemDto>>(await _uow.OrderItemRepository.GetOrderItemsByUserId(userId,token)));
         }
