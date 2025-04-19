@@ -36,7 +36,7 @@ namespace TechStore.BLL.Services
             var oS = await _uow.OSRepsoitory.GetOSById(osId, token);
 
             if (oS == null)
-                return (Result.Error(ErrorType.NotFound, $"OS with {osId} MemoryId not found."), null);
+                return (Result.Error(ErrorType.NotFound, $"OS with {osId} OSId not found."), null);
 
             return (Result.Ok(), _mapper.Map<List<LaptopDto>>(await _uow.LaptopRepository.GetLaptopsByOSId(osId)));
         }
@@ -46,7 +46,7 @@ namespace TechStore.BLL.Services
             var ram = await _uow.RamRepository.GetRamById(ramId, token);
 
             if (ram == null)
-                return (Result.Error(ErrorType.NotFound, $"Ram with {ramId} MemoryId not found."), null);
+                return (Result.Error(ErrorType.NotFound, $"Ram with {ramId} RamId not found."), null);
 
             return (Result.Ok(), _mapper.Map<List<LaptopDto>>(await _uow.LaptopRepository.GetLaptopsByRamId(ramId)));
         }
