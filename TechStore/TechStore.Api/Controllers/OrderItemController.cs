@@ -20,7 +20,12 @@ namespace TechStore.Api.Controllers
         [HttpGet("userId/{userId}")]
         public async Task<ActionResult<List<OrderItemDto?>>> GetOrderItemsByUserId([FromRoute] int userId, CancellationToken token)
         {
-            return Ok(await _orderItemService.GetOrderItemsByUserId(userId, token));
+            var result=await _orderItemService.GetOrderItemsByUserId(userId, token);
+            if(!result.Item1.Success)
+            {
+                return NotFound(result.Item1.Message);
+            }
+            return Ok(result);
         }
 
         [HttpGet("id/{id}")]
