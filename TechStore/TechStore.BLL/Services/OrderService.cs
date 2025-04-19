@@ -24,9 +24,10 @@ namespace TechStore.BLL.Services
             _uow = uow;
             _mapper = mapper;
         }
-        public async Task AddOrder(OrderAddDto orderAddDto, CancellationToken token = default)
+        public async Task AddOrder(int userId,OrderAddDto orderAddDto, CancellationToken token = default)
         {
             var order = _mapper.Map<Order>(orderAddDto);
+            order.UserId = userId;
             await _uow.OrderRepository.AddOrder(order,token);
             await _uow.SaveAsync(token);
         }
