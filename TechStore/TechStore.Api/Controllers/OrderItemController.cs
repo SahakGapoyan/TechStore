@@ -19,7 +19,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet("userId/{userId}")]
-        public async Task<ActionResult<List<OrderItemDto?>>> GetOrderItemsByUserId([FromRoute] int userId, CancellationToken token)
+        public async Task<ActionResult<List<OrderItemDto>>> GetOrderItemsByUserId([FromRoute] int userId, CancellationToken token)
         {
             var result=await _orderItemService.GetOrderItemsByUserId(userId, token);
             if(!result.Item1.Success)
@@ -33,7 +33,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public async Task<ActionResult<OrderItemDto?>> GetOrderItemById([FromRoute] int id, CancellationToken token)
+        public async Task<ActionResult<OrderItemDto>> GetOrderItemById([FromRoute] int id, CancellationToken token)
         {
             var orderItem = await _orderItemService.GetOrderItemById(id, token);
             if (orderItem == null)
