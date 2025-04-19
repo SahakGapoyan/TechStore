@@ -22,7 +22,7 @@ namespace TechStore.BLL.Services
 
         }
 
-
+        public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
         {
             var memory = await _uow.MemoryRepository.GetMemoryById(memoryId,token);
 
@@ -32,7 +32,7 @@ namespace TechStore.BLL.Services
             return (Result.Ok(),_mapper.Map<List<SmartPhoneDto>>(await _uow.SmartPhoneRepository.GetSmartPhonesByMemoryId(memoryId)));
         }
 
-        public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByOSID(int OSId, CancellationToken token = default)
+        public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByOSId(int OSId, CancellationToken token = default)
         {
             var os = await _uow.OSRepsoitory.GetOSById(OSId, token);
 
