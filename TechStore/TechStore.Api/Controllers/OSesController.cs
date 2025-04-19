@@ -1,0 +1,70 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using TechStore.BLL.DtoModels.Enums;
+using TechStore.BLL.DtoModels.OS;
+using TechStore.BLL.DtoModels.Ram;
+using TechStore.BLL.Interfaces;
+using TechStore.BLL.Services;
+
+namespace TechStore.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OSesController : ControllerBase
+    {
+        private readonly IOSService _oSService;
+
+        public OSesController(IOSService oSService)
+        {
+           _oSService = oSService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<RamDto>>> GetOSes(CancellationToken token)
+        {
+            return Ok(await _oSService.GetOSs(token));
+        }
+
+        [HttpGet("id/{id}")]
+        public async Task<ActionResult<RamDto>> GetOSById([FromRoute] int id, CancellationToken token)
+        {
+            var ram = await _oSService.GetOSById(id, token);
+            if (ram == null)
+            {
+                return NotFound();
+            }
+            return Ok(ram);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateOS([FromBody] OSAddDto oSAddDto, CancellationToken token)
+        {
+            await _oSService.AddOS(oSAddDto, token);
+            return Ok("Successfully Created");
+        }
+
+        [HttpPut("id/{id}")]
+        public async Task<ActionResult> UpdateOS([FromRoute] int id, [FromBody] OSUpdateDto oSUpdateDto, CancellationToken token)
+        {
+            var result = await _oSService.UpdateOS(id, oSUpdateDto, token);
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.NotFound)
+                    return NotFound();
+            }
+            return Ok(result.Message);
+        }
+
+        [HttpDelete("id/{id}")]
+        public async Task<ActionResult> DeleteOS([FromRoute] int id, CancellationToken token)
+        {
+            var result = await _oSService.DeleteOS(id, token);
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.NotFound)
+                    return NotFound();
+            }
+            return Ok(result.Message);
+        }
+    }
+}
