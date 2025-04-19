@@ -22,7 +22,7 @@ namespace TechStore.BLL.Services
 
         }
 
-        public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
+
         {
             var memory = await _uow.MemoryRepository.GetMemoryById(memoryId,token);
 
