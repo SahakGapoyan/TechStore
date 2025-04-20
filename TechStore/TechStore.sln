@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechStore.Data", "TechStore
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechStore.BLL", "TechStore.BLL\TechStore.BLL.csproj", "{C9CE817C-BFDF-4517-9CE0-10F97EF3773F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechStore.Blazor", "TechStore.Blazor\TechStore.Blazor.csproj", "{D498A6D2-57B3-4622-967A-DEA944154A61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{C9CE817C-BFDF-4517-9CE0-10F97EF3773F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9CE817C-BFDF-4517-9CE0-10F97EF3773F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9CE817C-BFDF-4517-9CE0-10F97EF3773F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D498A6D2-57B3-4622-967A-DEA944154A61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D498A6D2-57B3-4622-967A-DEA944154A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D498A6D2-57B3-4622-967A-DEA944154A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D498A6D2-57B3-4622-967A-DEA944154A61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
