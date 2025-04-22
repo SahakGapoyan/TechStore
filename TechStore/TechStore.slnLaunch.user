@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "TechStore.Api\\TechStore.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "TechStore.Blazor\\TechStore.Blazor.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
