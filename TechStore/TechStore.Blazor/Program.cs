@@ -20,6 +20,7 @@ namespace TechStore.Blazor
             builder.Services.AddMudServices();
 
             builder.Services.AddScoped<IBrandApi, BrandApi>();
+            builder.Services.AddScoped<ICategoryApi, CategoryApi>();
 
 
             await builder.Build().RunAsync();
