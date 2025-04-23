@@ -8,7 +8,7 @@ namespace TechStore.BLL.DtoModels.Category
 {
     public class CategoryUpdateDto
     {
-        public string Name { get; set; } = default!;
+        public string? Name { get; set; } 
         public string? Description { get; set; }
     }
 }
