@@ -6,15 +6,15 @@ namespace TechStore.Blazor.Apis
 {
     public class CategoryApi : ICategoryApi
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _httpclient;
 
         public CategoryApi(HttpClient client)
         {
-            _client = client;
+            _httpclient = client;
         }
         public async Task AddCategory(CategoryAddDto categoryAddDto)
         {
-            var response = await _client.PostAsJsonAsync($"api/Categories", categoryAddDto);
+            var response = await _httpclient.PostAsJsonAsync($"api/Categories", categoryAddDto);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
@@ -23,7 +23,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task DeleteCategory(int id)
         {
-            var response = await _client.DeleteAsync($"api/Categories/id/{id}");
+            var response = await _httpclient.DeleteAsync($"api/Categories/id/{id}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
@@ -32,7 +32,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<CategoryDto>> GetCategories()
         {
-            var response = await _client.GetAsync("api/Categories");
+            var response = await _httpclient.GetAsync("api/Categories");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<IEnumerable<CategoryDto>>();
@@ -42,7 +42,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<CategoryDto> GetCategory(int id)
         {
-            var response = await _client.GetAsync($"api/Categories");
+            var response = await _httpclient.GetAsync($"api/Categories");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<CategoryDto>();
@@ -52,7 +52,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto)
         {
-            var response = await _client.PutAsJsonAsync($"api/Categories/id/{id}", categoryUpdateDto);
+            var response = await _httpclient.PutAsJsonAsync($"api/Categories/id/{id}", categoryUpdateDto);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
