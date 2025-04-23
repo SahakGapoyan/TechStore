@@ -8,13 +8,13 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpclient;
 
-        public CategoryApi(HttpClient client)
+        public CategoryApi(HttpClient httpclient)
         {
-            _httpclient = client;
+            _httpclient = httpclient;
         }
         public async Task AddCategory(CategoryAddDto categoryAddDto)
         {
-            var response = await _httpclient.PostAsJsonAsync($"api/Categories", categoryAddDto);
+            var response = await _httpclient.PostAsJsonAsync("api/Categories", categoryAddDto);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
@@ -42,7 +42,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<CategoryDto> GetCategory(int id)
         {
-            var response = await _httpclient.GetAsync($"api/Categories");
+            var response = await _httpclient.GetAsync($"api/Categories/id/{id}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<CategoryDto>();
