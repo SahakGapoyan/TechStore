@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using TechStore.Blazor.Apis;
-using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor
 {
@@ -15,11 +13,8 @@ namespace TechStore.Blazor
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddMudServices();
-            builder.Services.AddHttpClient<ICategoryApi, CategoryApi>(client =>
-            {
-                client.BaseAddress = new Uri("http://localhost:5016/");
-            });
+            builder.Services.AddMudServices();  
+
             await builder.Build().RunAsync();
         }
     }
