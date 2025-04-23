@@ -9,6 +9,7 @@ namespace TechStore.Data.Entity
     public class Brand:BaseEntity
     {
         public string Name { get; set; } = default!;
+        public string ImageUrl { get; set; }= default!;
         public IEnumerable<Product> Products { get; set; } = new List<Product>();
     }
 }

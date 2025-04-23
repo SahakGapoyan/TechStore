@@ -21,6 +21,7 @@ namespace TechStore.Data.Entity
         public int ModelId { get; set; }
         public Color? Color { get; set; }
         public int ColorId { get; set; }
+        public string ImageUrl { get; set; } = default!;
         public IEnumerable<CartItem> CartItems { get; set; } = new List<CartItem>();
         public IEnumerable<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
