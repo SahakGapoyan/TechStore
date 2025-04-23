@@ -17,32 +17,56 @@ namespace TechStore.Blazor.Apis
         }
         public async Task AddBrand(BrandAddDto brandAddDto)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.PostAsJsonAsync("api/Brands", brandAddDto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error" + response.ReasonPhrase);
+            }
         }
 
-        public Task DeleteBrand(int brandId)
+        public async Task DeleteBrand(int brandId)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync($"api/Brands/id/{brandId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error" + response.ReasonPhrase);
+            }
         }
 
-        public Task<BrandDto?> GetBrand(int brandId)
+        public async Task<BrandDto?> GetBrand(int brandId)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"api/Brands/id/{brandId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<BrandDto>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
         }
 
         public async Task<IEnumerable<BrandDto>> GetBrands()
         {
             var response = await _httpClient.GetAsync("api/Brands");
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<IEnumerable<BrandDto>>();
             }
+
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public Task UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto)
+        public async Task UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.PutAsJsonAsync($"api/Brands/id/{brandId}", brandUpdateDto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error" + response.ReasonPhrase);
+            }
         }
     }
 }
