@@ -1,6 +1,8 @@
-﻿namespace TechStore.Blazor.DtoModels.SmartPhone
+﻿using TechStore.Blazor.DtoModels.Product;
+
+namespace TechStore.Blazor.DtoModels.SmartPhone
 {
-    public class SmartPhoneUpdateDto
+    public class SmartPhoneUpdateDto:ProductUpdateDto   
     {
         public int? RamId { get; set; }
         public int? MemoryId { get; set; }
