@@ -21,7 +21,7 @@ namespace TechStore.Blazor
 
             builder.Services.AddScoped<IBrandApi, BrandApi>();
             builder.Services.AddScoped<ICategoryApi, CategoryApi>();
-
+            builder.Services.AddScoped<ISmartPhoneApi, SmartPhoneApi>();
 
             await builder.Build().RunAsync();
         }
