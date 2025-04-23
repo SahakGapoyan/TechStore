@@ -16,7 +16,7 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Apis\" />
-    <Folder Include="DtoModels\" />
+    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>
