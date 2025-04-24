@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
+using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Category;
 using TechStore.Blazor.Interfaces;
 
@@ -8,9 +10,10 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpclient;
 
-        public CategoryApi(HttpClient httpclient)
+        public CategoryApi(HttpClient httpclient,IOptions<ApiSettings> options)
         {
             _httpclient = httpclient;
+            _httpclient.BaseAddress = new Uri(options.Value.BaseUri);
         }
         public async Task AddCategory(CategoryAddDto categoryAddDto)
         {
