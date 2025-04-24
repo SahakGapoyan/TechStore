@@ -1,23 +1,26 @@
 ﻿@page "/"
 @using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
+@inject ISmartPhoneApi SmartPhoneApi
+
 
 <MudCarousel Class="mud-width-full"
-             Style="height: 33.33vw; max-height: 400px; min-height: 200px;"
-             ShowArrows="@arrows"
-             ShowBullets="@bullets"
-             EnableSwipeGesture="@enableSwipeGesture"
-             AutoCycle="@autocycle"
-             Transition="@transition"
-             TData="object">
+Style="height: 33.33vw; max-height: 400px; min-height: 200px;"
+ShowArrows="@arrows"
+ShowBullets="@bullets"
+EnableSwipeGesture="@enableSwipeGesture"
+AutoCycle="@autocycle"
+Transition="@transition"
+TData="object">
 
     <!-- Item 1 -->
     <MudCarouselItem>
         <MudContainer Class="d-flex fill-height">
             <img src="images/img3.jpg"
-                 alt="Nature wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
+            alt="Nature wallpaper"
+            class="mud-width-full mud-height-full object-cover" />
         </MudContainer>
     </MudCarouselItem>
 
@@ -25,8 +28,8 @@
     <MudCarouselItem>
         <MudContainer Class="d-flex fill-height">
             <img src="images/img1.jpg"
-                 alt="Second wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
+            alt="Second wallpaper"
+            class="mud-width-full mud-height-full object-cover" />
         </MudContainer>
     </MudCarouselItem>
 
@@ -34,8 +37,8 @@
     <MudCarouselItem>
         <MudContainer Class="d-flex fill-height">
             <img src="images/img2.jpg"
-                 alt="Third wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
+            alt="Third wallpaper"
+            class="mud-width-full mud-height-full object-cover" />
         </MudContainer>
     </MudCarouselItem>
 </MudCarousel>
@@ -67,10 +70,124 @@
     }
 </MudGrid>
 
+<MudGrid GutterSize="3">
+    @if (SmartPhones is not null)
+    {
+        @foreach (var phone in SmartPhones)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudCard Class="product-card"
+                Style="height: 100%; width: 100%; max-width: 300px;"
+                OnClick="@(() => NavigateToSmartPhone(phone))">
+                    <!-- Availability Chip with shadow -->
+                    <MudChip T="bool"
+                    Color="@(phone.IsAvailable ? Color.Success : Color.Error)"
+                    Variant="Variant.Filled"
+                    Class="ml-2 mt-2 availability-chip"
+                    Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        @(phone.IsAvailable ? "In Stock" : "Out of Stock")
+                    </MudChip>
+
+                    <!-- Image with hover zoom effect -->
+                    <div class="image-container">
+                        <MudCardMedia Image="@phone.ImageUrl" Class="product-image" Height="300" />
+                    </div>
+
+                    <!-- Card Content -->
+                    <MudCardContent Class="px-4 pt-3 pb-1">
+                        <MudText Typo="Typo.h6" Class="product-name">@phone.Name</MudText>
+                        <MudText Typo="Typo.body2" Class="mb-2 product-description">@phone.Description</MudText>
+                        <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
+                            @($"{phone.Price:C}")
+                        </MudText>
+                    </MudCardContent>
+
+                    <!-- Animated Buy Button -->
+                    <MudCardActions Class="px-4 pb-3">
+                        <MudButton Variant="Variant.Filled"
+                        Color="Color.Primary"
+                        EndIcon="@Icons.Material.Filled.ShoppingCart"
+                        Class="buy-button"
+                        Disabled="@(!phone.IsAvailable)">
+                            @(phone.IsAvailable ? "Add to Cart" : "Out of Stock")
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    }
+</MudGrid>
+
+<style>
+    /* Card Hover Effects */
+    .product-card {
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    }
+
+    .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    /* Image Hover Zoom */
+    .image-container {
+    overflow: hidden;
+    }
+
+    .product-image {
+    transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .product-image {
+    transform: scale(1.05);
+    }
+
+    /* Text Styles */
+    .product-name {
+    font-weight: 600;
+    margin-bottom: 8px;
+    }
+
+    .product-description {
+    color: #666;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    }
+
+    .price-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+    }
+
+    /* Button Animation */
+    .buy-button {
+    transition: all 0.3s ease;
+    width: 100%;
+    }
+
+    .product-card:hover .buy-button {
+    background-color: var(--mud-palette-primary-darken) !important;
+    }
+
+    /* Availability Chip */
+    .availability-chip {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    }
+</style>
+
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+    public List<SmartPhoneDto> SmartPhones { get; set; } = new List<SmartPhoneDto>();
     private ElementReference scrollContainer;
     private bool arrows = true;
     private bool bullets = true;
@@ -93,6 +210,7 @@
     protected override async Task OnInitializedAsync()
     {
         Categories = (await CategoryApi.GetCategories()).ToList();
+        SmartPhones = (await SmartPhoneApi.GetSmartPhones()).ToList();
         foreach (var category in Categories)
         {
             category.Icon = GetCategoryIcon(category.Name);
@@ -105,9 +223,9 @@
 
         return lowerName switch
         {
-            "smartphones"  => Icons.Material.Filled.PhoneIphone,
-            "laptops" => Icons.Material.Filled.Laptop,
-            "tvs"  => Icons.Material.Filled.Tv,
+            "հեռախոսներ" => Icons.Material.Filled.PhoneIphone,
+            "համակարգիչներ" => Icons.Material.Filled.Laptop,
+            "հեռուստացույցներ" => Icons.Material.Filled.Tv,
             _ => Icons.Material.Filled.DeviceUnknown// Default icon
         };
     }
@@ -115,5 +233,9 @@
     void NavigateToCategory(string category)
     {
         Nav.NavigateTo($"category/{category}");
+    }
+    void NavigateToSmartPhone(SmartPhoneDto smartPhoneDto)
+    {
+        
     }
 }
