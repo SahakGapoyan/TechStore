@@ -11,6 +11,7 @@
     <link href="TechStore.Blazor.styles.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="css/Home.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -29,6 +30,31 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+    <script>
+        window.scrollElementBy = (element, amount) => {
+            if (element) {
+                const container = element.firstElementChild;
+                const scrollWidth = container.scrollWidth;
+                const clientWidth = element.clientWidth;
+
+                // If scrolling right and at end, reset to start
+                if (amount > 0 && element.scrollLeft + clientWidth >= scrollWidth - 1) {
+                    element.scrollTo({ left: 0, behavior: 'smooth' });
+                }
+                // If scrolling left and at start, reset to end
+                else if (amount < 0 && element.scrollLeft <= 1) {
+                    element.scrollTo({ left: scrollWidth, behavior: 'smooth' });
+                }
+                // Normal scroll
+                else {
+                    element.scrollBy({ left: amount, behavior: 'smooth' });
+                }
+            }
+        };
+    </script>
 </body>
 
 </html>
+
+

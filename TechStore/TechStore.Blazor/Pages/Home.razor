@@ -1,7 +1,119 @@
 ﻿@page "/"
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.Interfaces
+@inject ICategoryApi CategoryApi
 
-<PageTitle>Home</PageTitle>
+<MudCarousel Class="mud-width-full"
+             Style="height: 33.33vw; max-height: 400px; min-height: 200px;"
+             ShowArrows="@arrows"
+             ShowBullets="@bullets"
+             EnableSwipeGesture="@enableSwipeGesture"
+             AutoCycle="@autocycle"
+             Transition="@transition"
+             TData="object">
 
-<h1>Hello, world!</h1>
+    <!-- Item 1 -->
+    <MudCarouselItem>
+        <MudContainer Class="d-flex fill-height">
+            <img src="images/img3.jpg"
+                 alt="Nature wallpaper"
+                 class="mud-width-full mud-height-full object-cover" />
+        </MudContainer>
+    </MudCarouselItem>
 
-Welcome to your new app.
+    <!-- Item 2 -->
+    <MudCarouselItem>
+        <MudContainer Class="d-flex fill-height">
+            <img src="images/img1.jpg"
+                 alt="Second wallpaper"
+                 class="mud-width-full mud-height-full object-cover" />
+        </MudContainer>
+    </MudCarouselItem>
+
+    <!-- Item 3 -->
+    <MudCarouselItem>
+        <MudContainer Class="d-flex fill-height">
+            <img src="images/img2.jpg"
+                 alt="Third wallpaper"
+                 class="mud-width-full mud-height-full object-cover" />
+        </MudContainer>
+    </MudCarouselItem>
+</MudCarousel>
+
+<MudGrid Class="mt-auto">
+    @if (Categories is not null)
+    {
+        <MudContainer Class="mt-auto">
+            <div style="display: flex; align-items: center; justify-content:center">
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="ScrollLeft" />
+
+                <div class="hide-scrollbar" style="overflow-x: auto; white-space: nowrap; scroll-behavior: smooth; width: auto;" @ref="scrollContainer">
+                    <div style="display: flex; gap: 1rem;">
+                        @foreach (var category in Categories)
+                        {
+                            <MudCard Class="card-hover" Style="min-width: 150px; cursor: pointer; height: auto;" @onclick="@(() => NavigateToCategory(category.Name.ToLower()))">
+                                <MudCardContent Style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 16px;">
+                                    <MudIcon Icon="@category.Icon" Size="Size.Medium" Style="margin-bottom: 8px;" />
+                                    <MudText Typo="Typo.h6" Style="margin: 0; text-align: center;">@category.Name</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                </div>
+
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="ScrollRight" />
+            </div>
+        </MudContainer>
+    }
+</MudGrid>
+
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+    private ElementReference scrollContainer;
+    private bool arrows = true;
+    private bool bullets = true;
+    private bool enableSwipeGesture = true;
+    private bool autocycle = true;
+    private Transition transition = Transition.Fade;
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private async Task ScrollLeft()
+    {
+        await JS.InvokeVoidAsync("scrollElementBy", scrollContainer, -300);
+    }
+
+    private async Task ScrollRight()
+    {
+        await JS.InvokeVoidAsync("scrollElementBy", scrollContainer, 300);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = (await CategoryApi.GetCategories()).ToList();
+        foreach (var category in Categories)
+        {
+            category.Icon = GetCategoryIcon(category.Name);
+        }
+    }
+
+    private string GetCategoryIcon(string categoryName)
+    {
+        var lowerName = categoryName.ToLower();
+
+        return lowerName switch
+        {
+            "smartphones"  => Icons.Material.Filled.PhoneIphone,
+            "laptops" => Icons.Material.Filled.Laptop,
+            "tvs"  => Icons.Material.Filled.Tv,
+            _ => Icons.Material.Filled.DeviceUnknown// Default icon
+        };
+    }
+
+    void NavigateToCategory(string category)
+    {
+        Nav.NavigateTo($"category/{category}");
+    }
+}
