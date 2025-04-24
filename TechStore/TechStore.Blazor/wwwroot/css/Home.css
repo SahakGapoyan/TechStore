@@ -1,0 +1,24 @@
+﻿/* wwwroot/css/scroll.css */
+/* Hide scrollbar while allowing scrolling */
+.hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+.card-hover {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    background: white;
+    position: relative;
+    margin-top: 4px; /* Reserve space for hover movement */
+    margin-bottom: 4px; /* Keep spacing consistent */
+    border: 1px solid #e2e8f0;
+}
+
+    .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        background-color: aliceblue;
+        border-color: #cbd5e0;
+    }
+
