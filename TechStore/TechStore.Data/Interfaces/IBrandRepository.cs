@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<Brand>> GetBrands(CancellationToken token = default);
         Task<Brand?> GetBrand(int brandId, CancellationToken token = default);
+        Task<IEnumerable<Brand>> GetBrandsByCategoryId(int categoryId, CancellationToken token = default);  
         Task AddBrand(Brand brand, CancellationToken token = default);
         Task UpdateBrand(Brand brand);
         Task DeleteBrand(Brand brand);

@@ -57,6 +57,12 @@ namespace TechStore.BLL.Services
 
         }
 
+        public async Task<IEnumerable<BrandDto>> GetBrandsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var brands=await _uow.BrandRepository.GetBrandsByCategoryId(categoryId, token);
+            return _mapper.Map<List<BrandDto>>(brands);
+        }
+
         public async Task<Result> UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto, CancellationToken token = default)
         {
             var brand = await _uow.BrandRepository.GetBrand(brandId, token);

@@ -22,6 +22,16 @@ namespace TechStore.BLL.Services
 
         }
 
+        public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByColorId(int colorId, CancellationToken token = default)
+        {
+            var color = await _uow.ColorRepository.GetColorById(colorId, token);
+
+            if (color == null)
+                return (Result.Error(ErrorType.NotFound, $"Color with {colorId} ColorId not found."), null);
+
+            return (Result.Ok(), _mapper.Map<List<SmartPhoneDto>>(await _uow.SmartPhoneRepository.GetSmartPhonesByColorId(colorId)));
+        }
+
         public async Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
         {
             var memory = await _uow.MemoryRepository.GetMemoryById(memoryId,token);

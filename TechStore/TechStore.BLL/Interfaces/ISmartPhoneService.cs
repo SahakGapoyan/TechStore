@@ -15,5 +15,6 @@ namespace TechStore.BLL.Interfaces
         Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByRamId(int ramId, CancellationToken token = default);
         Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default);
         Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByOSId(int osId, CancellationToken token = default);
+        Task<(Result, IEnumerable<SmartPhoneDto>)> GetSmartPhonesByColorId(int colorId, CancellationToken token = default);
     }
 }

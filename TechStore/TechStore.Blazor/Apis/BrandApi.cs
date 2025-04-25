@@ -59,6 +59,18 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
+        public async Task<IEnumerable<BrandDto>> GetBrandsByCategoryId(int categoryId)
+        {
+            var response = await _httpClient.GetAsync($"api/Brands/categoryId/{categoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<BrandDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
+
         public async Task UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Brands/id/{brandId}", brandUpdateDto);

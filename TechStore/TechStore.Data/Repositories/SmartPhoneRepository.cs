@@ -16,14 +16,19 @@ namespace TechStore.Data.Repositories
         {
         }
 
+        public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByColorId(int colorId, CancellationToken token = default)
+        {
+            return await _dbSet.Where(s => s.ColorId == colorId).ToListAsync(token);
+        }
+
         public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
         {
             return await _dbSet.Where(s => s.MemoryId == memoryId).ToListAsync(token);
         }
 
-        public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByOSID(int OSId, CancellationToken token = default)
+        public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByOSID(int oSId, CancellationToken token = default)
         {
-            return await _dbSet.Where(s => s.OSId == OSId).ToListAsync(token);
+            return await _dbSet.Where(s => s.OSId == oSId).ToListAsync(token);
         }
 
         public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByRamId(int ramId, CancellationToken token = default)
