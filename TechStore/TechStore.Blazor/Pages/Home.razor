@@ -70,56 +70,68 @@
     }
 </MudGrid>
 
-<MudContainer Class="mt-auto" Style="justify-content:center">
+<div style="display: flex; flex-direction: column; gap: 0;">
+    <!-- Main Content: Filter + Products (inside SAME MudContainer) -->
+    <MudContainer MaxWidth="MaxWidth.False" Style="max-width: 1200px; margin: 0 auto; padding: 0;">
+        <div style="display: flex; gap: 5px;">
 
-    <MudGrid GutterSize="3">
-        @if (SmartPhones is not null)
-        {
-            @foreach (var phone in SmartPhones)
-            {
-                <MudItem xs="12" sm="6" md="4" lg="3">
-                    <MudCard Class="product-card"
-                             Style="height: 100%; width: 100%; max-width: 300px;"
-                             OnClick="@(() => NavigateToSmartPhone(phone))">
-                        <!-- Availability Chip with shadow -->
-                        <MudChip T="bool"
-                                 Color="@(phone.IsAvailable ? Color.Success : Color.Error)"
-                                 Variant="Variant.Filled"
-                                 Class="ml-2 mt-2 availability-chip"
-                                 Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                            @(phone.IsAvailable ? "In Stock" : "Out of Stock")
-                        </MudChip>
+            <!-- Right: Smartphones -->
+            <div style="flex: 1;">
+                <MudGrid GutterSize="3">
+                    @if (SmartPhones is not null)
+                    {
+                        @foreach (var phone in SmartPhones)
+                        {
+                            <MudItem xs="12" sm="6" md="4" lg="3">
+                                <MudCard Class="product-card"
+                                         Style="height: 100%; width: 100%;max-width: 300px;"
+                                         OnClick="@(() => NavigateToSmartPhone(phone))">
+                                    <MudChip T="bool"
+                                             Color="@(phone.IsAvailable ? Color.Success : Color.Error)"
+                                             Variant="Variant.Filled"
+                                             Class="ml-2 mt-2 availability-chip"
+                                             Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                        @(phone.IsAvailable ? "Առկա է" : "Առկա չէ")
+                                    </MudChip>
 
-                        <!-- Image with hover zoom effect -->
-                        <div class="image-container">
-                            <MudCardMedia Image="@phone.ImageUrl" Class="product-image" Height="300" />
-                        </div>
+                                    @*  <div class="image-container"
+                                         style="width: 100%;aspect-ratio: 1;overflow: hidden;display: flex;justify-content: center;align-items: center;background-color: #f5f5f5;">
+                                        <MudCardMedia Image="@phone.ImageUrl"
+                                                      Style="width: 100%;height: 100%; object-fit: cover;" />
+                                    </div> *@
+                                    <div class="image-container"
+                                         style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                                        <MudCardMedia Image="@phone.ImageUrl" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
+                                    </div>
 
-                        <!-- Card Content -->
-                        <MudCardContent Class="px-4 pt-3 pb-1">
-                            <MudText Typo="Typo.h6" Class="product-name">@phone.Name</MudText>
-                            <MudText Typo="Typo.body2" Class="mb-2 product-description">@phone.Description</MudText>
-                            <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
-                                @($"{phone.Price:C}")
-                            </MudText>
-                        </MudCardContent>
 
-                        <!-- Animated Buy Button -->
-                        <MudCardActions Class="px-4 pb-3">
-                            <MudButton Variant="Variant.Filled"
-                                       Color="Color.Primary"
-                                       EndIcon="@Icons.Material.Filled.ShoppingCart"
-                                       Class="buy-button"
-                                       Disabled="@(!phone.IsAvailable)">
-                                @(phone.IsAvailable ? "Add to Cart" : "Out of Stock")
-                            </MudButton>
-                        </MudCardActions>
-                    </MudCard>
-                </MudItem>
-            }
-        }
-    </MudGrid>
-</MudContainer>
+                                    <MudCardContent Class="px-4 pt-3 pb-1">
+                                        <MudText Typo="Typo.h6" Class="product-name">@phone.Name</MudText>
+                                        <MudText Typo="Typo.body2" Class="mb-2 product-description">@phone.Description</MudText>
+                                        <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
+                                            @($"{phone.Price:C}")
+                                        </MudText>
+                                    </MudCardContent>
+
+                                    <MudCardActions Class="px-4 pb-3">
+                                        <MudButton Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   EndIcon="@Icons.Material.Filled.ShoppingCart"
+                                                   Class="buy-button"
+                                                   Disabled="@(!phone.IsAvailable)">
+                                            @(phone.IsAvailable ? "Add to Cart" : "Out of Stock")
+                                        </MudButton>
+                                    </MudCardActions>
+                                </MudCard>
+                            </MudItem>
+                        }
+                    }
+                </MudGrid>
+            </div>
+
+        </div>
+    </MudContainer>
+</div>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
