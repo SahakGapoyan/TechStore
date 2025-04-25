@@ -27,7 +27,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<LaptopDto> GetLaptop(int id)
         {
-            var response = await _httpClient.GetAsync($"api/SmartPhones/id/{id}");
+            var response = await _httpClient.GetAsync($"api/Laptops/id/{id}");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<LaptopDto>();
