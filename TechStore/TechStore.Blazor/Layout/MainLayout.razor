@@ -5,20 +5,32 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
+<MudLayout Style="display: flex; flex-direction: column; min-height: 100vh;">
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         My Application
     </MudAppBar>
+
     <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
+        <NavMenu />
     </MudDrawer>
-    <MudMainContent>
-        @Body
+
+    <MudMainContent Style="flex: 1; display: flex; flex-direction: column;">
+        <div class="p-4" style="flex: 1;">
+            @Body
+        </div>
+
+        <!-- Footer -->
+        <footer class="py-6 text-center" style="background-color: black;">
+            <MudText Typo="Typo.body2" Style="color: white;">
+                © @DateTime.Now.Year My Application. All rights reserved.
+            </MudText>
+        </footer>
     </MudMainContent>
 </MudLayout>
+
 @code {
-    bool _drawerOpen = true;
+    bool _drawerOpen = false;
 
     void DrawerToggle()
     {
