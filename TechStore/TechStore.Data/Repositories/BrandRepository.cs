@@ -38,6 +38,11 @@ namespace TechStore.Data.Repositories
             return await _context.Brands.ToListAsync(token);
         }
 
+        public async Task<IEnumerable<Brand>> GetBrandsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.Brands.Where(b => b.Products.Any(e => e.CategoryId == categoryId)).ToListAsync(token);
+        }
+
         public async Task UpdateBrand(Brand brand)
         {
             _context.Brands.Update(brand);

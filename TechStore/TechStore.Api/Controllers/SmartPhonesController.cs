@@ -112,5 +112,19 @@ namespace TechStore.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("colorId/{colorId}")]
+        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByColorId(int colorId, CancellationToken token = default)
+        {
+            var result = await _smartPhoneService.GetSmartPhonesByColorId(colorId,token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result);
+        }
     }
 }
