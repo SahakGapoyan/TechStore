@@ -1,47 +1,11 @@
-﻿@page "/"
+﻿@page "/category/smartphones"
+@using TechStore.Blazor.Apis
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
 @inject ISmartPhoneApi SmartPhoneApi
-
-
-<MudCarousel Class="mud-width-full"
-             Style="height: 33.33vw; max-height: 400px; min-height: 200px;"
-             ShowArrows="@arrows"
-             ShowBullets="@bullets"
-             EnableSwipeGesture="@enableSwipeGesture"
-             AutoCycle="@autocycle"
-             Transition="@transition"
-             TData="object">
-
-    <!-- Item 1 -->
-    <MudCarouselItem>
-        <MudContainer Class="d-flex fill-height">
-            <img src="images/img3.jpg"
-                 alt="Nature wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
-        </MudContainer>
-    </MudCarouselItem>
-
-    <!-- Item 2 -->
-    <MudCarouselItem>
-        <MudContainer Class="d-flex fill-height">
-            <img src="images/img1.jpg"
-                 alt="Second wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
-        </MudContainer>
-    </MudCarouselItem>
-
-    <!-- Item 3 -->
-    <MudCarouselItem>
-        <MudContainer Class="d-flex fill-height">
-            <img src="images/img2.jpg"
-                 alt="Third wallpaper"
-                 class="mud-width-full mud-height-full object-cover" />
-        </MudContainer>
-    </MudCarouselItem>
-</MudCarousel>
+<h3>Հեռախոսներ</h3>
 
 <MudGrid Class="mt-auto">
     @if (Categories is not null)
@@ -121,6 +85,7 @@
     </MudGrid>
 </MudContainer>
 
+
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
@@ -139,7 +104,6 @@
         { "հեռուստացույցներ", "tvs" },
         // Add more as needed
     };
-
 
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
@@ -162,7 +126,6 @@
             category.Icon = GetCategoryIcon(category.Name);
         }
     }
-
     private string GetCategoryIcon(string categoryName)
     {
         var lowerName = categoryName.ToLower();
@@ -175,7 +138,6 @@
             _ => Icons.Material.Filled.DeviceUnknown// Default icon
         };
     }
-
     void NavigateToCategory(string categoryName)
     {
         if (_categoryUrlMap.TryGetValue(categoryName, out var urlSlug))
