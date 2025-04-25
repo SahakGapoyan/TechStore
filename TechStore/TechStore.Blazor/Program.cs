@@ -26,6 +26,7 @@ namespace TechStore.Blazor
             builder.Services.AddScoped<IColorApi, ColorApi>();
             builder.Services.AddScoped<IMemoryApi, MemoryApi>();
             builder.Services.AddScoped<IOSApi, OSApi>();
+            builder.Services.AddScoped<ILaptopApi, LaptopApi>();
 
 
             await builder.Build().RunAsync();
