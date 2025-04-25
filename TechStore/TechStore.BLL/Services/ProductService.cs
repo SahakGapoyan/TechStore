@@ -81,6 +81,7 @@ namespace TechStore.BLL.Services
             product.CategoryId = productUpdateDto.CategoryId ?? product.CategoryId;
             product.Price = productUpdateDto.Price ?? product.Price;
             product.ModelId = productUpdateDto.ModelId ?? product.ModelId;
+            product.ImageUrl=productUpdateDto.ImageUrl ?? product.ImageUrl; 
 
             await mockProduct.UpdateProduct(product);
             await _uow.SaveAsync(token);

@@ -1,0 +1,123 @@
+﻿@page "/smartphones/{Id:int}"
+@using System.Diagnostics.Metrics
+@using TechStore.Blazor.Apis
+@using TechStore.Blazor.DtoModels.SmartPhone
+@using TechStore.Blazor.Interfaces
+@inject ISmartPhoneApi SmartPhoneApi
+
+
+<MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem;">
+    @if (smartphone == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    }
+    else
+    {
+        <!-- Breadcrumb navigation -->
+        <MudText Typo="Typo.body2">
+            <MudLink OnClick="@(() => NavigateToHome())">Գլխավոր</MudLink> / 
+            <MudLink OnClick="@(() => NavigateToSmartphones())">Հեռախոսներ</MudLink> / 
+            <MudText Typo="Typo.body2" Style="display: inline; color: grey;">@smartphone.Name</MudText>
+        </MudText>
+
+        <MudGrid Style="margin-top: 1rem;">
+            <MudItem xs="12" md="5">
+                <MudPaper Class="p-2 d-flex justify-center" Style="border-radius: 12px; height: 100%; position: relative; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                    <MudImage Src="@smartphone.ImageUrl"
+                    Alt="@smartphone.Name"
+                    Style="max-width: 100%; max-height: 450px; object-fit: contain;" />
+
+                    <MudPaper Elevation="1"
+                    Class="px-2 py-1"
+                    Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(smartphone.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
+                        @(smartphone.IsAvailable ? "Առկա է" : "Առկա չէ")
+                    </MudPaper>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="7">
+                <MudStack Spacing="2" Style="margin-top: 1rem;">
+                    <MudText Typo="Typo.h5">@smartphone.Name</MudText>
+                    <MudRating SelectedValue="4" ReadOnly="false" Size="Size.Small" />
+                    <MudDivider />
+
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Գին: @smartphone.Price.ToString("C")</MudText>
+                    <MudText Typo="Typo.subtitle2">@smartphone.Description</MudText>
+
+                    <MudDivider />
+
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string"><MudText><b>Էկրանի չափսը:</b> @smartphone.ScreenSize</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Processor:</b> @smartphone.Processor</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Battery:</b> @smartphone.BatteryCapacity mAh</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Camera:</b> @smartphone.CameraMegaPixel MP</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>5G:</b> @(smartphone.Has5G ? "Այո" : "Ոչ")</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Ջրակայուն:</b> @(smartphone.IsWaterResistant ? "Այո" : "Ոչ")</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>WiFi:</b> @(smartphone.Wifi ? "Այո" : "Ոչ")</MudText></MudListItem>
+                        <MudListItem T="string">
+                            <MudText>
+                                <b>Առկա գույներ:</b>
+                                <Mud Direction="Row" Spacing="1" AlignItems="AlignItems.Center">
+                                    <MudAvatar Size="Size.Small" Style="background-color:#000;" />
+                                    <MudAvatar Size="Size.Small" Style="background-color:#fff; border:0.5px solid #ccc;" />
+                                    <MudAvatar Size="Size.Small" Style="background-color:#e60000;" />
+                                </Mud>
+                            </MudText>
+                        </MudListItem>
+                    </MudList>
+
+                    <MudQueue Direction="Row" Spacing="1" Class="mt-2" AlignItems="Center">
+                        <MudButton Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled">Գնել</MudButton>
+
+                        <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Primary" Size="Size.Small" @onclick="IncrementCartCounter">
+                            <MudBadge Color="Color.Secondary" BadgeContent="@cartCount" AnchorOrigin="Origin.TopRight" />
+                        </MudIconButton>
+
+                        <MudQueue Direction="Row" AlignItems="AlignItems.Center" Spacing="1.5">
+                            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" @onclick="IncrementCartCounter" />
+                            <MudText Typo="Typo.button">@cartCount</MudText>
+                        </MudQueue>
+                    </MudQueue>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private SmartPhoneDto smartphone;
+    private int cartCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Ensure no request is initiated prematurely
+        try
+        {
+            smartphone = await SmartPhoneApi.GetSmartPhone(Id);
+        }
+        catch (Exception ex)
+        {
+            // Handle exception (e.g., log it, display an error message)
+            Console.Error.WriteLine($"Error loading smartphone: {ex.Message}");
+        }
+    }
+
+    private void IncrementCartCounter()
+    {
+        cartCount++;
+    }
+
+    void NavigateToHome()
+    {
+        Nav.NavigateTo("/");
+    }
+
+    void NavigateToSmartphones()
+    {
+        Nav.NavigateTo("category/smartphones");
+    }
+}
