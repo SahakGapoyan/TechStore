@@ -1,6 +1,8 @@
-﻿namespace TechStore.Blazor.DtoModels.Product
+﻿using TechStore.Blazor.DtoModels.Base;
+
+namespace TechStore.Blazor.DtoModels.Product
 {
-    public class ProductDto
+    public class ProductDto:BaseDto
     {
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
