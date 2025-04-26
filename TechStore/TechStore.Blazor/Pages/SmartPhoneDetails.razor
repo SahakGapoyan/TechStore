@@ -5,7 +5,10 @@
 @using TechStore.Blazor.Interfaces
 @inject ISmartPhoneApi SmartPhoneApi
 @inject ICategoryApi CategoryApi
-
+@inject IRamApi RamApi
+@inject IMemoryApi MemoryApi
+@inject IOSApi OSApi
+@inject IModelApi ModelApi
 
 <MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem;">
     @if (smartphone == null)
@@ -48,7 +51,7 @@
                     <MudDivider />
 
                     <MudList T="string" Dense="true">
-                        <MudListItem T="string"><MudText><b>Էկրանի չափսը:</b> @smartphone.ScreenSize</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b> @smartphone.RamId</MudText></MudListItem>
                         <MudListItem T="string"><MudText><b>Processor:</b> @smartphone.Processor</MudText></MudListItem>
                         <MudListItem T="string"><MudText><b>Battery:</b> @smartphone.BatteryCapacity mAh</MudText></MudListItem>
                         <MudListItem T="string"><MudText><b>Camera:</b> @smartphone.CameraMegaPixel MP</MudText></MudListItem>
@@ -75,8 +78,9 @@
                         </MudIconButton>
 
                         <MudQueue Direction="Row" AlignItems="AlignItems.Center" Spacing="1.5">
-                            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" @onclick="IncrementCartCounter" />
+                            <MudIconButton Icon="@Icons.Material.Outlined.Add" @onclick="IncrementCartCounter" />
                             <MudText Typo="Typo.button">@cartCount</MudText>
+                            <MudIconButton Icon="@Icons.Material.Outlined.Remove" @onclick="Decrease" />
                         </MudQueue>
                     </MudQueue>
                 </MudStack>
@@ -84,6 +88,63 @@
         </MudGrid>
     }
 </MudPaper>
+<MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem; margin-top: 2rem;">
+    <MudStack Spacing="3">
+
+        <!-- General Section -->
+        <MudStack Spacing="1">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" />
+                <MudText Typo="Typo.h5">Ընդհանուր բնութագրեր</MudText>
+            </div>
+
+            <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5;">
+                <tbody>
+                    <tr>
+                        <td><b>Մոդել</b></td>
+                        <td>@modelName</td>
+                    </tr>
+                    <tr>
+                        <td><b>Հայտարարության տարին</b></td>
+                        <td>@announcementYear</td>
+                    </tr>
+                    <tr>
+                        <td><b>Օպերացիոն համակարգ</b></td>
+                        <td>@oSName</td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
+
+
+        </MudStack>
+
+        <MudDivider Class="my-4" />
+
+        <!-- Display Section -->
+        <MudStack Spacing="1">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <MudIcon Icon="@Icons.Material.Filled.PhoneIphone" Color="Color.Primary" />
+                <MudText Typo="Typo.h6">Էկրան</MudText>
+            </div>
+
+            <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5;">
+                <tbody>
+                    <tr>
+                        <td><b>Էկրանի չափս</b></td>
+                        <td>@smartphone?.ScreenSize</td>
+                    </tr>
+                </tbody>
+            </MudSimpleTable>
+
+        </MudStack>
+
+               <MudDivider Class="my-4" />
+
+
+    </MudStack>
+</MudPaper>
+
+
 
 @code {
     [Parameter]
@@ -92,19 +153,28 @@
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private SmartPhoneDto smartphone;
     private int cartCount = 0;
-
+    private string ramSize = "";
+    private string memorySize = "";
+    private string oSName = "";
+    private string modelName = "";
+    private int announcementYear = 0;
     protected override async Task OnInitializedAsync()
     {
-        // Ensure no request is initiated prematurely
-        try
-        {
-            smartphone = await SmartPhoneApi.GetSmartPhone(Id);
-        }
-        catch (Exception ex)
-        {
-            // Handle exception (e.g., log it, display an error message)
-            Console.Error.WriteLine($"Error loading smartphone: {ex.Message}");
-        }
+
+        smartphone = await SmartPhoneApi.GetSmartPhone(Id);
+
+        var ram = await RamApi.GetRam(smartphone.RamId);
+        ramSize = ramSize = ram?.Size ?? "Unknown";
+
+        var memory = await MemoryApi.GetMemory(smartphone.MemoryId);
+        memorySize =memory?.Size ?? "Unknown";
+
+        var os=await OSApi.GetOS(smartphone.OSId);
+        oSName = os?.Size ?? "Unknown";
+
+        var model=await ModelApi.GetModel(smartphone.ModelId);
+        modelName = model.Name ?? "Unknown";
+        announcementYear = model.AnnouncementYear;
     }
 
     private void IncrementCartCounter()
@@ -112,6 +182,17 @@
         cartCount++;
     }
 
+    private void Decrease()
+    {
+        if(cartCount>0)
+        {
+            cartCount--;
+        }
+        else
+        {
+            cartCount = 0;
+        }
+    }
     void NavigateToHome()
     {
         Nav.NavigateTo("/");
