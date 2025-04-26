@@ -13,5 +13,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByMemoryId(int memoryId);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByOSId(int osId);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByColorId(int colorId);
+        Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByBrandId(int brandId);
+
     }
 }
