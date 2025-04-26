@@ -10,17 +10,11 @@ using TechStore.Data.Interfaces;
 
 namespace TechStore.Data.Repositories
 {
-    public class SmartPhoneRepository:ProductRepository<SmartPhone>,ISmartPhoneRepository
+    public class SmartPhoneRepository : ProductRepository<SmartPhone>, ISmartPhoneRepository
     {
-        public SmartPhoneRepository(TechStoreDbContext context):base(context)
+        public SmartPhoneRepository(TechStoreDbContext context) : base(context)
         {
         }
-
-        public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByColorId(int colorId, CancellationToken token = default)
-        {
-            return await _dbSet.Where(s => s.ColorId == colorId).ToListAsync(token);
-        }
-
         public async Task<IEnumerable<SmartPhone>> GetSmartPhonesByMemoryId(int memoryId, CancellationToken token = default)
         {
             return await _dbSet.Where(s => s.MemoryId == memoryId).ToListAsync(token);

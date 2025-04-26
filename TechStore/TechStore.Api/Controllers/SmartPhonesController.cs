@@ -83,7 +83,7 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
         }
 
         [HttpGet("memoryId/{memoryId}")]
@@ -97,7 +97,7 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
         }
         [HttpGet("osId/{osId}")]
         public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByOSID([FromRoute] int osId, CancellationToken token = default)
@@ -110,13 +110,13 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
         }
 
         [HttpGet("colorId/{colorId}")]
-        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByColorId(int colorId, CancellationToken token = default)
+        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByColorId([FromRoute] int colorId, CancellationToken token = default)
         {
-            var result = await _smartPhoneService.GetSmartPhonesByColorId(colorId,token);
+            var result = await _smartPhoneService.GetProductsByColorId(colorId, token);
 
             if (!result.Item1.Success)
             {
@@ -124,7 +124,21 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("brandId/{brandId}")]
+        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByBrandId([FromRoute] int brandId, CancellationToken token = default)
+        {
+            var result = await _smartPhoneService.GetProductsByBrandId(brandId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
         }
     }
 }

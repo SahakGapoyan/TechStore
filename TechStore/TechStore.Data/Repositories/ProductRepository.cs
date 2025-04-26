@@ -22,7 +22,7 @@ namespace TechStore.Data.Repositories
         }
         public async Task AddProduct(T product, CancellationToken token = default)
         {
-            await _dbSet.AddAsync(product,token);
+            await _dbSet.AddAsync(product, token);
         }
 
         public async Task DeleteProduct(T product)
@@ -38,6 +38,16 @@ namespace TechStore.Data.Repositories
         public async Task<IEnumerable<T>> GetProducts(CancellationToken token = default)
         {
             return await _dbSet.ToListAsync(token);
+        }
+
+        public async Task<IEnumerable<T>> GetProductsByBrandId(int brandId, CancellationToken token = default)
+        {
+            return await _dbSet.Where(p => p.BrandId == brandId).ToListAsync(token);
+        }
+
+        public async Task<IEnumerable<T>> GetProductsByColorId(int colorId, CancellationToken token = default)
+        {
+            return await _dbSet.Where(p => p.ColorId == colorId).ToListAsync(token);
         }
 
         public async Task UpdateProduct(T product)

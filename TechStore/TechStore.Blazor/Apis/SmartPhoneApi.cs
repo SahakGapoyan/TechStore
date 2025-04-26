@@ -56,6 +56,16 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error " + response.ReasonPhrase);
         }
 
+        public async Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByBrandId(int brandId)
+        {
+            var response = await _httpClient.GetAsync($"api/SmartPhones/brandId/{brandId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<SmartPhoneDto>>();
+            }
+            throw new Exception("Error " + response.ReasonPhrase);
+        }
+
         public async Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByColorId(int colorId)
         {
             var response = await _httpClient.GetAsync($"api/SmartPhones/colorId/{colorId}");

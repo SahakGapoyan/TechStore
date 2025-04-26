@@ -64,6 +64,27 @@ namespace TechStore.BLL.Services
             var products = await mockProduct.GetProducts(token);
             return _mapper.Map<List<TProductDto>>(products);
         }
+        public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByBrandId(int brandId, CancellationToken token = default)
+        {
+            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var brand = await _uow.BrandRepository.GetBrand(brandId, token);
+
+            if (brand == null)
+                return (Result.Error(ErrorType.NotFound, $"Brand with {brandId} BrandId not found."), null);
+
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByBrandId(brandId)));
+        }
+
+        public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByColorId(int colorId, CancellationToken token = default)
+        {
+            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var color = await _uow.ColorRepository.GetColorById(colorId, token);
+
+            if (color == null)
+                return (Result.Error(ErrorType.NotFound, $"Color with {colorId} ColorId not found."), null);
+
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByColorId(colorId)));
+        }
 
         public async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
         {
@@ -81,7 +102,7 @@ namespace TechStore.BLL.Services
             product.CategoryId = productUpdateDto.CategoryId ?? product.CategoryId;
             product.Price = productUpdateDto.Price ?? product.Price;
             product.ModelId = productUpdateDto.ModelId ?? product.ModelId;
-            product.ImageUrl=productUpdateDto.ImageUrl ?? product.ImageUrl; 
+            product.ImageUrl = productUpdateDto.ImageUrl ?? product.ImageUrl;
 
             await mockProduct.UpdateProduct(product);
             await _uow.SaveAsync(token);
