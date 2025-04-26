@@ -1,0 +1,42 @@
+﻿using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
+using TechStore.Blazor.Configuration;
+using TechStore.Blazor.DtoModels.Model;
+using TechStore.Blazor.Interfaces;
+
+namespace TechStore.Blazor.Apis
+{
+    public class ModelApi : IModelApi
+    {
+        private readonly HttpClient _httpClient;
+
+        public ModelApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        {
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
+        }
+        public async Task<ModelDto> GetModel(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/Models/id/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<ModelDto>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task<IEnumerable<ModelDto>> GetModels()
+        {
+            var response = await _httpClient.GetAsync("api/Models");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<ModelDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
+    }
+}

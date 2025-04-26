@@ -27,7 +27,7 @@ namespace TechStore.Blazor
             builder.Services.AddScoped<IMemoryApi, MemoryApi>();
             builder.Services.AddScoped<IOSApi, OSApi>();
             builder.Services.AddScoped<ILaptopApi, LaptopApi>();
-
+            builder.Services.AddScoped<IModelApi, ModelApi>();
 
             await builder.Build().RunAsync();
         }
