@@ -2,7 +2,10 @@
 @using TechStore.Blazor.Apis
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
 @using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Ram
 @using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
@@ -43,10 +46,152 @@
 <div style="display: flex; flex-direction: column; gap: 0;">
     <!-- Phones Header -->
     <MudContainer Class="d-flex"
-                  Style="padding: 16px; background-color: white; max-width: 1200px; margin: 0 auto; width: 100%;">
-        <MudText Typo="Typo.h5" Style="text-align: left; width: 100%;">Հեռախոսներ</MudText>
+                  Style="padding: 16px; background-color: white; max-width: 1200px; margin: 0 auto;margin-bottom: 1px; width: 100%;position:relative;">
+        <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight:600;text-align: left; width: 100%;">Հեռախոսներ</MudText>
+
+        <!-- Mobile Filter Button -->
+
+        <MudButton Class="d-md-none ml-2"
+                   Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Tune"
+                   IconSize="Size.Small"
+                   OnClick="ToggleMobileFilters"
+                   Style="@(showMobileFilters ? "display: none;" : "display: block;")">
+        </MudButton>
     </MudContainer>
 
+    <!-- Mobile Filter Overlay -->
+    <div class="filter-overlay @(showMobileFilters ? "open" : "")" @onclick="ToggleMobileFilters"></div>
+    <!-- Mobile Filter Sidebar -->
+    <div class="filter-sidebar @(showMobileFilters ? "open" : "")">
+        <div class="filter-sidebar-header">
+            <MudText Typo="Typo.h6" Color="Color.Dark" Style="font-weight: 600;">Ֆիլտրեր</MudText>
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           OnClick="ToggleMobileFilters" />
+
+        </div>
+
+        <!-- Brand Filter -->
+        <div class="filter-section">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ԲՐԵՆԴՆԵՐ</MudText>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;padding-bottom: 8px; border-bottom: 1px solid #ddd;">
+                @if (Brands is not null)
+                {
+                    @foreach (var brand in Brands)
+                    {
+                        <MudItem sm="3" >
+                            <MudCard Class="product-card"
+                                     Style="@GetBrandCardStyle(brand.Id)"
+                                     @onclick="@(() => ToggleBrandSelection(brand.Id))">
+
+                                <div class="image-container"
+                                     style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                                    <MudCardMedia Image="@brand.ImageUrl" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
+                                </div>
+                            </MudCard>
+                        </MudItem>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- OS Filter -->
+        <div class="filter-section">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ՕՊԵՐԱՑԻՈՆ ՀԱՄԱԿԱՐԳ</MudText>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;padding-bottom: 8px; border-bottom: 1px solid #ddd; ">
+                @if (Oses is not null)
+                {
+                    @foreach (var os in Oses)
+                    {
+                        <MudChip T="int"
+                                 Color="@(selectedOses.Contains(os.Id) ? Color.Primary : Color.Default)"
+                                 Variant="@(selectedOses.Contains(os.Id) ? Variant.Filled : Variant.Outlined)"
+                                 OnClick="@(() => ToggleOsSelection(os.Id))"
+                                 Class="os-chip">
+                            @os.Size
+                        </MudChip>
+                    }
+                }
+            </div>
+        </div>
+
+
+        <!-- Model Filter -->
+        <div class="filter-section">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ՀԱՅՏԱՐԱՐՈՒԹՅԱՆ ՏԱՐԻՆ</MudText>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;padding-bottom: 8px; border-bottom: 1px solid #ddd; ">
+                @if (Models is not null)
+                {
+                    @foreach (var model in Models)
+                    {
+                        <MudChip T="int"
+                                 Color="@(selectedModels.Contains(model.Id) ? Color.Primary : Color.Default)"
+                                 Variant="@(selectedModels.Contains(model.Id) ? Variant.Filled : Variant.Outlined)"
+                                 OnClick="@(() => ToggleModelSelection(model.Id))"
+                                 Class="os-chip">
+                            @model.AnnouncementYear
+                        </MudChip>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Memory Filter -->
+        <div class="filter-section">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;padding-bottom: 8px; border-bottom: 1px solid #ddd; ">
+                @if (Memories is not null)
+                {
+                    @foreach (var memory in Memories)
+                    {
+                        <MudChip T="int"
+                                 Color="@(selectedMemories.Contains(memory.Id) ? Color.Primary : Color.Default)"
+                                 Variant="@(selectedMemories.Contains(memory.Id) ? Variant.Filled : Variant.Outlined)"
+                                 OnClick="@(() => ToggleMemorySelection(memory.Id))"
+                                 Class="os-chip">
+                            @memory.Size
+                        </MudChip>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Ram Filter -->
+        <div class="filter-section">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ՕՊԵՐԱՏԻՎ ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;padding-bottom: 8px; border-bottom: 1px solid #ddd; ">
+                @if (Rams is not null)
+                {
+                    @foreach (var ram in Rams)
+                    {
+                        <MudChip T="int"
+                                 Color="@(selectedRams.Contains(ram.Id) ? Color.Primary : Color.Default)"
+                                 Variant="@(selectedRams.Contains(ram.Id) ? Variant.Filled : Variant.Outlined)"
+                                 OnClick="@(() => ToggleRamSelection(ram.Id))"
+                                 Class="os-chip">
+                            @ram.Size
+                        </MudChip>
+                    }
+                }
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 24px;">
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Secondary"
+                       FullWidth="true"
+                       OnClick="ResetFilters">
+                Reset
+            </MudButton>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       OnClick="() => ApplyFilters(true)">
+                Apply
+            </MudButton>
+        </div>
+    </div>
 
 
     <!-- Main Content: Filter + Products (inside SAME MudContainer) -->
@@ -56,11 +201,11 @@
             <!-- Left: Filter Options -->
 
             <div style="width: 250px; background-color: #f5f5f5; padding: 0px;" class="d-none d-md-block">
-                <MudText Typo="Typo.h6" Style="margin-bottom: 1px;margin-block-start:1px; background-color: white;padding:16px;">Ֆիլտր</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Dark" Style="font-weight:600;margin-bottom: 1px;margin-block-start:1px; background-color: white;padding:16px;">Ֆիլտր</MudText>
 
                 <div style="display: flex; flex-direction: column; gap: 1px;">
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1" Style="margin-bottom: 1px;margin-block-start:1px;">ԲՐԵՆԴՆԵՐ</MudText>
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-bottom: 1px;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ԲՐԵՆԴՆԵՐ</MudText>
                         <!-- You can add filter elements here -->
                         <div style="flex: 1;">
                             <MudGrid GutterSize="0" Spacing="1">
@@ -68,7 +213,7 @@
                                 {
                                     @foreach (var brand in Brands)
                                     {
-                                        <MudItem xs="12" sm="6" md="4" lg="4">
+                                        <MudItem md="4" lg="4">
                                             <MudCard Class="product-card"
                                                      Style="@GetBrandCardStyle(brand.Id)"
                                                      @onclick="@(() => ToggleBrandSelection(brand.Id))">
@@ -85,10 +230,10 @@
                         </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1" Style="margin-block-start:1px;">ՕՊԵՐԱՑԻՈՆ ՀԱՄԱԿԱՐԳ</MudText>
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-bottom: 1px;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ՕՊԵՐԱՑԻՈՆ ՀԱՄԱԿԱՐԳ</MudText>
                         <!-- You can add filter elements here -->
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 0px;">
                             @if (Oses is not null)
                             {
                                 @foreach (var os in Oses)
@@ -105,24 +250,67 @@
                         </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1">ՀԱՅՏԱՐԱՐՈՒԹՅԱՆ ՏԱՐԻՆ</MudText>
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-bottom: 1px;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ՀԱՅՏԱՐԱՐՈՒԹՅԱՆ ՏԱՐԻՆ</MudText>
                         <!-- You can add filter elements here -->
-
+                        <div style="display: flex; flex-wrap: wrap; gap: 0px;">
+                            @if (Models is not null)
+                            {
+                                @foreach (var model in Models)
+                                {
+                                    <MudChip T="int"
+                                             Color="@(selectedModels.Contains(model.Id) ? Color.Primary : Color.Default)"
+                                             Variant="@(selectedModels.Contains(model.Id) ? Variant.Filled : Variant.Outlined)"
+                                             OnClick="@(() => ToggleModelSelection(model.Id))"
+                                             Class="os-chip">
+                                        @model.AnnouncementYear
+                                    </MudChip>
+                                }
+                            }
+                        </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1">ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>
-                        <!-- You can add filter elements here -->
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-bottom: 1px;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>                        <!-- You can add filter elements here -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 0px;">
+                            @if (Memories is not null)
+                            {
+                                @foreach (var memory in Memories)
+                                {
+                                    <MudChip T="int"
+                                             Color="@(selectedMemories.Contains(memory.Id) ? Color.Primary : Color.Default)"
+                                             Variant="@(selectedMemories.Contains(memory.Id) ? Variant.Filled : Variant.Outlined)"
+                                             OnClick="@(() => ToggleMemorySelection(memory.Id))"
+                                             Class="os-chip">
+                                        @memory.Size
+                                    </MudChip>
+                                }
+                            }
+                        </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1">ՕՊԵՐԱՏԻՎ ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-bottom: 1px;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ՕՊԵՐԱՏԻՎ ՀԻՇՈՂՈՒԹՅՈՒՆ</MudText>
                         <!-- You can add filter elements here -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 0px;">
+                            @if (Rams is not null)
+                            {
+                                @foreach (var ram in Rams)
+                                {
+                                    <MudChip T="int"
+                                             Color="@(selectedRams.Contains(ram.Id) ? Color.Primary : Color.Default)"
+                                             Variant="@(selectedRams.Contains(ram.Id) ? Variant.Filled : Variant.Outlined)"
+                                             OnClick="@(() => ToggleRamSelection(ram.Id))"
+                                             Class="os-chip">
+                                        @ram.Size
+                                    </MudChip>
+                                }
+                            }
+                        </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;">
-                        <MudText Typo="Typo.subtitle1">ԱՌԿԱ ԳՈՒՅՆԵՐ</MudText>
+                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-block-start:1px;">
+                        <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ԱՌԿԱ ԳՈՒՅՆԵՐ</MudText>
                         <!-- You can add filter elements here -->
                     </MudCard>
                 </div>
@@ -187,12 +375,18 @@
     public List<SmartPhoneDto> SmartPhones { get; set; } = new List<SmartPhoneDto>();
     public List<BrandDto> Brands { get; set; } = new List<BrandDto>();
     public List<OSDto> Oses { get; set; } = new List<OSDto>();
+    public List<ModelDto> Models { get; set; } = new List<ModelDto>();
+    public List<MemoryDto> Memories { get; set; } = new List<MemoryDto>();
+    public List<RamDto> Rams { get; set; } = new List<RamDto>();
+
     private ElementReference scrollContainer;
     private bool arrows = true;
     private bool bullets = true;
     private bool enableSwipeGesture = true;
     private bool autocycle = true;
     private Transition transition = Transition.Fade;
+
+
 
     private Dictionary<string, string> _categoryUrlMap = new()
     {
@@ -227,6 +421,9 @@
         var categoryId = SmartPhones.First().CategoryId;
         Brands = (await BrandApi.GetBrandsByCategoryId(categoryId)).ToList();
         Oses = (await OSApi.GetOSes()).ToList();
+        Models = (await ModelApi.GetModels()).ToList();
+        Memories = (await MemoryApi.GetMemories()).ToList();
+        Rams = (await RamApi.GetRams()).ToList();
     }
     private string GetCategoryIcon(string categoryName)
     {
@@ -259,39 +456,69 @@
     }
 
 
-    // ... (keep all your existing properties and other methods)
 
-    private HashSet<int> selectedBrandIds = new HashSet<int>();
+    private HashSet<int> selectedBrands = new();
     private HashSet<int> selectedOses = new HashSet<int>();
+    private HashSet<int> selectedModels = new HashSet<int>();
+    private HashSet<int> selectedMemories = new HashSet<int>();
+    private HashSet<int> selectedRams = new HashSet<int>();
+    private bool showMobileFilters = false;
 
-    private async Task ApplyFilters()
+    private void ToggleMobileFilters()
+    {
+        showMobileFilters = !showMobileFilters;
+    }
+    private async Task ApplyFilters(bool closeSidebar = false)
+    {
+        await ApplyFiltersInternal();
+
+        // Close the mobile sidebar
+        if (closeSidebar)
+        {
+            showMobileFilters = false;
+        }
+    }
+    private async Task ResetFilters()
+    {
+        selectedBrands.Clear();
+        selectedOses.Clear();
+        selectedRams.Clear();
+        await ApplyFilters();
+    }
+    private async Task ApplyFiltersInternal()
     {
         // Get all phones first
         var allPhones = await SmartPhoneApi.GetSmartPhones();
         var filteredPhones = allPhones.AsEnumerable();
 
         // Apply brand filter if any brands are selected
-        if (selectedBrandIds.Count > 0)
+        if (selectedBrands.Count > 0)
         {
-            var brandFiltered = new List<SmartPhoneDto>();
-            foreach (var brandId in selectedBrandIds)
-            {
-                var phones = await SmartPhoneApi.GetSmartPhonesByBrandId(brandId);
-                brandFiltered.AddRange(phones);
-            }
-            filteredPhones = filteredPhones.Where(p => brandFiltered.Any(b => b.Id == p.Id));
+            filteredPhones = filteredPhones.Where(p => selectedBrands.Contains(p.BrandId));
         }
 
         // Apply OS filter if any OSes are selected
         if (selectedOses.Count > 0)
         {
-            var osFiltered = new List<SmartPhoneDto>();
-            foreach (var osId in selectedOses)
-            {
-                var phones = await SmartPhoneApi.GetSmartPhonesByOSId(osId);
-                osFiltered.AddRange(phones);
-            }
-            filteredPhones = filteredPhones.Where(p => osFiltered.Any(o => o.Id == p.Id));
+            filteredPhones = filteredPhones.Where(p => selectedOses.Contains(p.OSId));
+        }
+
+        // Apply Model filter if any Models are selected
+        if (selectedModels.Count > 0)
+        {
+            filteredPhones = filteredPhones.Where(p => selectedModels.Contains(p.ModelId));
+        }
+
+        // Apply Memory filter if any Memories are selected
+        if (selectedMemories.Count > 0)
+        {
+            filteredPhones = filteredPhones.Where(p => selectedMemories.Contains(p.MemoryId));
+        }
+
+        // Apply Ram filter if any Rams are selected
+        if (selectedRams.Count > 0)  
+        {
+            filteredPhones = filteredPhones.Where(p => selectedRams.Contains(p.RamId));
         }
 
         SmartPhones = filteredPhones.ToList();
@@ -300,13 +527,13 @@
 
     private async Task ToggleBrandSelection(int brandId)
     {
-        if (selectedBrandIds.Contains(brandId))
+        if (selectedBrands.Contains(brandId))
         {
-            selectedBrandIds.Remove(brandId);
+            selectedBrands.Remove(brandId);
         }
         else
         {
-            selectedBrandIds.Add(brandId);
+            selectedBrands.Add(brandId);
         }
         await ApplyFilters();
     }
@@ -324,12 +551,48 @@
         await ApplyFilters();
     }
 
-    // Remove the old FilterByBrand and FilterByOs methods
+    private async Task ToggleModelSelection(int modelId)
+    {
+        if (selectedModels.Contains(modelId))
+        {
+            selectedModels.Remove(modelId);
+        }
+        else
+        {
+            selectedModels.Add(modelId);
+        }
+        await ApplyFilters();
+    }
 
+    private async Task ToggleMemorySelection(int memoryId)
+    {
+        if (selectedMemories.Contains(memoryId))
+        {
+            selectedMemories.Remove(memoryId);
+        }
+        else
+        {
+            selectedMemories.Add(memoryId);
+        }
+        await ApplyFilters();
+    }
+
+    private async Task ToggleRamSelection(int ramId)
+    {
+        if (selectedRams.Contains(ramId))
+        {
+            selectedRams.Remove(ramId);
+        }
+        else
+        {
+            selectedRams.Add(ramId);
+        }
+        await ApplyFilters();
+    }
 
     private bool IsBrandSelected(int brandId)
     {
-        return selectedBrandIds.Contains(brandId);
+        return selectedBrands.Contains(brandId);
     }
     private string GetBrandCardStyle(int brandId)
     {

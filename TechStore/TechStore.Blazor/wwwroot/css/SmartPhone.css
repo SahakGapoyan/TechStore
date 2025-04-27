@@ -28,3 +28,116 @@
     font-weight: 500;
     text-transform: uppercase;
 }
+
+/* Mobile Filter Sidebar */
+.MudContainer {
+    position: absolute;
+}
+
+.sidebar-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding-bottom: 16px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: -16px -16px 16px -16px; /* Negative margins to stretch full width */
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Mobile Filter Sidebar */
+.filter-sidebar {
+    position: fixed;
+    top: 60px; /* Adjust this value to the height of your AppBar */
+    right: 0;
+    width: 80%;
+    max-width: 320px;
+    height: calc(100% - 60px); /* Make sure the height excludes the appbar height */
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    padding: 16px;
+    z-index: 1000;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+    /* Open sidebar */
+    .filter-sidebar.open {
+        transform: translateX(0);
+    }
+
+.filter-sidebar-header {
+    display: flex; /* Use flex to align items side by side */
+    justify-content: space-between; /* Space between title and button */
+    align-items: center; /* Vertically center the items */
+    padding-bottom: 16px; /* Add space at the bottom */
+    margin-bottom: 16px; /* Optional: Adds space between header and filter content */
+    border-bottom: 1px solid #ddd; /* Border separating header and filter content */
+}
+
+
+.mud-icon-button {
+    color: #333; /* Icon color */
+    background: none; /* No background */
+    border: none; /* No border */
+    cursor: pointer; /* Make it clickable */
+    font-size: 24px;
+    / /* Adjust size for visibility */
+}
+
+/* Overlay background when sidebar is open */
+.filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+    /* Show overlay when sidebar is open */
+    .filter-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+/* Button to toggle mobile filter */
+.filter-toggle-btn .mud-icon-button {
+    background-color: transparent; /* No background */
+    box-shadow: none; /* No shadow */
+    padding: 0; /* Remove padding */
+    border: none; /* Remove border */
+    display: inline-flex; /* Keep the button inline with other elements */
+    align-items: center; /* Vertically center the icon */
+    justify-content: center; /* Horizontally center the icon */
+    position: absolute; /* Position it outside the container */
+    top: 50%; /* Vertically center the button */
+    right: 24px; /* Position it on the right side */
+    transform: translateY(-50%); /* Adjust vertical position */
+    z-index: 2000;
+}
+
+/* Filter sections styling */
+.filter-section {
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.filter-title {
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
