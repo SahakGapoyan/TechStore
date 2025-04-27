@@ -273,7 +273,7 @@ else
         memorySize = memory?.Size ?? "Unknown";
 
         var os = await OSApi.GetOS(smartphone.OSId);
-        oSName = os?.Size ?? "Unknown";
+        oSName = os?.Name ?? "Unknown";
 
         var model = await ModelApi.GetModel(smartphone.ModelId);
         modelName = model.Name ?? "Unknown";
