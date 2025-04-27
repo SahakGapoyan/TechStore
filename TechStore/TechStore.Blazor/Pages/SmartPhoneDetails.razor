@@ -10,17 +10,17 @@
 @inject IOSApi OSApi
 @inject IModelApi ModelApi
 
-<MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem;">
-    @if (smartphone == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-    }
-    else
-    {
+@if (smartphone == null)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem auto; width: 100%; max-width: 1200px;">
         <!-- Breadcrumb navigation -->
         <MudText Typo="Typo.body2">
-            <MudLink OnClick="@(() => NavigateToHome())">Գլխավոր</MudLink> / 
-            <MudLink OnClick="@(() => NavigateToSmartphones())">Հեռախոսներ</MudLink> / 
+            <MudLink OnClick="@(() => NavigateToHome())">Գլխավոր</MudLink> /
+            <MudLink OnClick="@(() => NavigateToSmartphones())">Հեռախոսներ</MudLink> /
             <MudText Typo="Typo.body2" Style="display: inline; color: grey;">@smartphone.Name</MudText>
         </MudText>
 
@@ -28,12 +28,12 @@
             <MudItem xs="12" md="5">
                 <MudPaper Class="p-2 d-flex justify-center" Style="border-radius: 12px; height: 100%; position: relative; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
                     <MudImage Src="@smartphone.ImageUrl"
-                    Alt="@smartphone.Name"
-                    Style="max-width: 100%; max-height: 450px; object-fit: contain;" />
+                              Alt="@smartphone.Name"
+                              Style="max-width: 100%; max-height: 450px; object-fit: contain;" />
 
                     <MudPaper Elevation="1"
-                    Class="px-2 py-1"
-                    Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(smartphone.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
+                              Class="px-2 py-1"
+                              Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(smartphone.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
                         @(smartphone.IsAvailable ? "Առկա է" : "Առկա չէ")
                     </MudPaper>
                 </MudPaper>
@@ -51,13 +51,9 @@
                     <MudDivider />
 
                     <MudList T="string" Dense="true">
-                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b> @smartphone.RamId</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Processor:</b> @smartphone.Processor</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Battery:</b> @smartphone.BatteryCapacity mAh</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Camera:</b> @smartphone.CameraMegaPixel MP</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>5G:</b> @(smartphone.Has5G ? "Այո" : "Ոչ")</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Ջրակայուն:</b> @(smartphone.IsWaterResistant ? "Այո" : "Ոչ")</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>WiFi:</b> @(smartphone.Wifi ? "Այո" : "Ոչ")</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b>@ramSize GB</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Հիշողություն:</b>@memorySize GB</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Հայտարարության տարին:</b>@announcementYear</MudText></MudListItem>
                         <MudListItem T="string">
                             <MudText>
                                 <b>Առկա գույներ:</b>
@@ -86,63 +82,170 @@
                 </MudStack>
             </MudItem>
         </MudGrid>
-    }
-</MudPaper>
-<MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem; margin-top: 2rem;">
-    <MudStack Spacing="3">
+    </MudPaper>
 
-        <!-- General Section -->
-        <MudStack Spacing="1">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" />
-                <MudText Typo="Typo.h5">Ընդհանուր բնութագրեր</MudText>
-            </div>
 
-            <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5;">
-                <tbody>
-                    <tr>
-                        <td><b>Մոդել</b></td>
-                        <td>@modelName</td>
-                    </tr>
-                    <tr>
-                        <td><b>Հայտարարության տարին</b></td>
-                        <td>@announcementYear</td>
-                    </tr>
-                    <tr>
-                        <td><b>Օպերացիոն համակարգ</b></td>
-                        <td>@oSName</td>
-                    </tr>
-                </tbody>
-            </MudSimpleTable>
+    <MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem auto; width: 100%; max-width: 1200px;">
+        <MudStack Spacing="3">
 
+            <!-- General Section -->
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Ընդհանուր բնութագրեր</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Մոդել</b></td>
+                            <td style="width: 60%;">@modelName</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Հայտարարության տարին</b></td>
+                            <td style="width: 60%;">@announcementYear</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Օպերացիոն համակարգ</b></td>
+                            <td style="width: 60%;">@oSName</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <!-- Display Section -->
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.PhoneIphone" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Էկրան</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Էկրանի չափս</b></td>
+                            <td style="width: 60%;">@smartphone?.ScreenSize inch</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.CameraAlt" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Տեսախցիկ</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Հիմնական տեսախցիկ</b></td>
+                            <td style="width: 60%;">@smartphone?.CameraMegaPixel MP</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.Memory" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Հիշողություն և Պրոցեսոր</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Պրոցեսոր</b></td>
+                            <td style="width: 60%;">@smartphone?.Processor</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Օպերատիվ հիշողություն</b></td>
+                            <td style="width: 60%;">@ramSize GB</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Հիշողություն</b></td>
+                            <td style="width: 60%;">@memorySize GB</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.NetworkCheck" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Ցանց</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Wifi Ցանց</b></td>
+                            <td style="width: 60%;">@(smartphone.Wifi ? "Այո" : "Ոչ")</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>5G Ցանց</b></td>
+                            <td style="width: 60%;">@(smartphone.Has5G ? "Այո" : "Ոչ")</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.BatteryChargingFull" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Սնուցում</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Մարտկոցի Հզորությունը</b></td>
+                            <td style="width: 60%;">@smartphone?.BatteryCapacity</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountTree" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Այլ</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Ջրակայունությունը</b></td>
+                            <td style="width: 60%;">@(smartphone.IsWaterResistant ? "Այո" : "Ոչ")</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
 
         </MudStack>
 
-        <MudDivider Class="my-4" />
-
-        <!-- Display Section -->
-        <MudStack Spacing="1">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <MudIcon Icon="@Icons.Material.Filled.PhoneIphone" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">Էկրան</MudText>
-            </div>
-
-            <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5;">
-                <tbody>
-                    <tr>
-                        <td><b>Էկրանի չափս</b></td>
-                        <td>@smartphone?.ScreenSize</td>
-                    </tr>
-                </tbody>
-            </MudSimpleTable>
-
-        </MudStack>
-
-               <MudDivider Class="my-4" />
-
-
-    </MudStack>
-</MudPaper>
+    </MudPaper>
+}
 
 
 
@@ -167,12 +270,12 @@
         ramSize = ramSize = ram?.Size ?? "Unknown";
 
         var memory = await MemoryApi.GetMemory(smartphone.MemoryId);
-        memorySize =memory?.Size ?? "Unknown";
+        memorySize = memory?.Size ?? "Unknown";
 
-        var os=await OSApi.GetOS(smartphone.OSId);
+        var os = await OSApi.GetOS(smartphone.OSId);
         oSName = os?.Size ?? "Unknown";
 
-        var model=await ModelApi.GetModel(smartphone.ModelId);
+        var model = await ModelApi.GetModel(smartphone.ModelId);
         modelName = model.Name ?? "Unknown";
         announcementYear = model.AnnouncementYear;
     }
@@ -184,7 +287,7 @@
 
     private void Decrease()
     {
-        if(cartCount>0)
+        if (cartCount > 0)
         {
             cartCount--;
         }
