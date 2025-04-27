@@ -19,6 +19,7 @@ namespace TechStore.BLL.Interfaces
         Task<IEnumerable<TProductDto>> GetProducts(CancellationToken token = default);
         Task<(Result, IEnumerable<TProductDto>)> GetProductsByBrandId(int brandId, CancellationToken token = default);
         Task<(Result, IEnumerable<TProductDto>)> GetProductsByColorId(int colorId, CancellationToken token = default);
+        Task<(Result, IEnumerable<TProductDto>)> GetProductsByModelId(int modelId, CancellationToken token = default);
         Task AddProduct(TProductAddDto productAddDto, CancellationToken token = default);
         Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default);
         Task<Result> DeleteProduct(int tProductId, CancellationToken token = default);

@@ -140,5 +140,19 @@ namespace TechStore.Api.Controllers
 
             return Ok(result.Item2);
         }
+
+        [HttpGet("modelId/{modelId}")]
+        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhonesByModelId([FromRoute] int modelId, CancellationToken token = default)
+        {
+            var result = await _smartPhoneService.GetProductsByModelId(modelId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
+        }
     }
 }

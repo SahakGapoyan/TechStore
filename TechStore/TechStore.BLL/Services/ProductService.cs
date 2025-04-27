@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,6 +85,17 @@ namespace TechStore.BLL.Services
                 return (Result.Error(ErrorType.NotFound, $"Color with {colorId} ColorId not found."), null);
 
             return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByColorId(colorId)));
+        }
+
+        public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByModelId(int modelId, CancellationToken token = default)
+        {
+            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var model = await _uow.ModelRepository.GetModel(modelId, token);
+
+            if (model == null)
+                return (Result.Error(ErrorType.NotFound, $"Model with {modelId} ModelId not found."), null);
+
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByModelId(modelId)));
         }
 
         public async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
