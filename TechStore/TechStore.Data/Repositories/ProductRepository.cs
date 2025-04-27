@@ -52,8 +52,12 @@ namespace TechStore.Data.Repositories
 
         public async Task<IEnumerable<T>> GetProductsByModelId(int modelId, CancellationToken token = default)
         {
-            return await _dbSet.Where(p => p.ModelId == modelId).ToListAsync(token);
+            return await _dbSet
+                .Include(p => p.Color)
+                .Where(p => p.ModelId == modelId)
+                .ToListAsync(token);
         }
+
 
         public async Task UpdateProduct(T product)
         {

@@ -1,6 +1,7 @@
 ﻿@page "/smartphones/{Id:int}"
 @using System.Diagnostics.Metrics
 @using TechStore.Blazor.Apis
+@using TechStore.Blazor.DtoModels.Color
 @using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ISmartPhoneApi SmartPhoneApi
@@ -9,6 +10,7 @@
 @inject IMemoryApi MemoryApi
 @inject IOSApi OSApi
 @inject IModelApi ModelApi
+@inject IColorApi ColorApi
 
 @if (smartphone == null)
 {
@@ -26,20 +28,53 @@ else
 
         <MudGrid Style="margin-top: 1rem;">
             <MudItem xs="12" md="5">
-                <MudPaper Class="p-2 d-flex justify-center" Style="border-radius: 12px; height: 100%; position: relative; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-                    <MudImage Src="@smartphone.ImagesUrls.First()"
-                              Alt="@smartphone.Name"
-                              Style="max-width: 100%; max-height: 450px; object-fit: contain;" />
+                <MudPaper Class="p-2 d-flex flex-column" Style="border-radius: 12px; height: 100%; position: relative; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                    <!-- Main Image Container -->
+                    <div style="position: relative; margin-bottom: 1rem;">
+                        <MudImage Src="@currentMainImage"
+                                  Alt="@smartphone.Name"
+                                  Style="width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px;" />
 
-                    <MudPaper Elevation="1"
-                              Class="px-2 py-1"
-                              Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(smartphone.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
-                        @(smartphone.IsAvailable ? "Առկա է" : "Առկա չէ")
-                    </MudPaper>
+                        <!-- Navigation Arrows -->
+                        @if (smartphone.ImagesUrls.Count > 1)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                           OnClick="@(() => NavigateImages(-1))"
+                                           Class="image-nav-btn"
+                                           Style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);" />
+                            <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                           OnClick="@(() => NavigateImages(1))"
+                                           Class="image-nav-btn"
+                                           Style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);" />
+                        }
+
+                        <MudPaper Elevation="1"
+                                  Class="px-2 py-1"
+                                  Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(smartphone.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
+                            @(smartphone.IsAvailable ? "Առկա է" : "Առկա չէ")
+                        </MudPaper>
+                    </div>
+
+                    <!-- Thumbnail Slider -->
+                    @if (smartphone.ImagesUrls.Count > 1)
+                    {
+                        <div style="position: relative;">
+                            <div style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 8px 0;">
+                                @foreach (var imageUrl in smartphone.ImagesUrls)
+                                {
+                                    <div style="@($"cursor: pointer; min-width: 60px; border: {(imageUrl == currentMainImage ? "2px solid var(--mud-palette-primary)" : "1px solid #ddd")}; border-radius: 4px; transition: all 0.3s ease; flex-shrink: 0;")"
+                                         @onclick="@(() => ChangeMainImage(imageUrl))">
+                                        <MudImage Src="@imageUrl"
+                                                  Alt="Thumbnail"
+                                                  Style="width: 60px; height: 60px; object-fit: cover; border-radius: 3px;" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
                 </MudPaper>
             </MudItem>
-
-            <MudItem xs="12" md="7">
+            <MudItem xs="12" md="5">
                 <MudStack Spacing="2" Style="margin-top: 1rem;">
                     <MudText Typo="Typo.h5">@smartphone.Name</MudText>
                     <MudRating SelectedValue="4" ReadOnly="false" Size="Size.Small" />
@@ -51,17 +86,23 @@ else
                     <MudDivider />
 
                     <MudList T="string" Dense="true">
-                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b>@ramSize GB</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Հիշողություն:</b>@memorySize GB</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b>@ramSize</MudText></MudListItem>
+                        <MudListItem T="string"><MudText><b>Հիշողություն:</b>@memorySize</MudText></MudListItem>
                         <MudListItem T="string"><MudText><b>Հայտարարության տարին:</b>@announcementYear</MudText></MudListItem>
                         <MudListItem T="string">
                             <MudText>
                                 <b>Առկա գույներ:</b>
-                                <Mud Direction="Row" Spacing="1" AlignItems="AlignItems.Center">
-                                    <MudAvatar Size="Size.Small" Style="background-color:#000;" />
-                                    <MudAvatar Size="Size.Small" Style="background-color:#fff; border:0.5px solid #ccc;" />
-                                    <MudAvatar Size="Size.Small" Style="background-color:#e60000;" />
-                                </Mud>
+                                <MudGrid Spacing="2" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                    @foreach (var color in availableColors)
+                                    {
+                                        <MudItem>
+                                            <MudAvatar Size="Size.Small"
+                                                       Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer;")"
+                                                       @onclick="@(async () => await OnColorSelected(color.ProductId))" />
+                                        </MudItem>
+                                    }
+                                </MudGrid>
+
                             </MudText>
                         </MudListItem>
                     </MudList>
@@ -128,7 +169,7 @@ else
                     <tbody>
                         <tr>
                             <td style="width: 40%;"><b>Էկրանի չափս</b></td>
-                            <td style="width: 60%;">@smartphone?.ScreenSize inch</td>
+                            <td style="width: 60%;">@smartphone?.ScreenSize</td>
                         </tr>
                     </tbody>
                 </MudSimpleTable>
@@ -170,11 +211,11 @@ else
                         </tr>
                         <tr>
                             <td style="width: 40%;"><b>Օպերատիվ հիշողություն</b></td>
-                            <td style="width: 60%;">@ramSize GB</td>
+                            <td style="width: 60%;">@ramSize</td>
                         </tr>
                         <tr>
                             <td style="width: 40%;"><b>Հիշողություն</b></td>
-                            <td style="width: 60%;">@memorySize GB</td>
+                            <td style="width: 60%;">@memorySize</td>
                         </tr>
                     </tbody>
                 </MudSimpleTable>
@@ -216,7 +257,7 @@ else
                     <tbody>
                         <tr>
                             <td style="width: 40%;"><b>Մարտկոցի Հզորությունը</b></td>
-                            <td style="width: 60%;">@smartphone?.BatteryCapacity</td>
+                            <td style="width: 60%;">@smartphone?.BatteryCapacity mAh</td>
                         </tr>
                     </tbody>
                 </MudSimpleTable>
@@ -247,8 +288,6 @@ else
     </MudPaper>
 }
 
-
-
 @code {
     [Parameter]
     public int Id { get; set; }
@@ -261,28 +300,99 @@ else
     private string oSName = "";
     private string modelName = "";
     private int announcementYear = 0;
+    private string colorHexCode = "";
+    private List<(int ProductId, string HexCode)> availableColors = new();
+    private int selectedProductId;
+    private string currentMainImage = string.Empty; // Added for image gallery
+    private bool isLoading = false; // Added for loading state
+
     protected override async Task OnInitializedAsync()
     {
+        await LoadSmartphoneDataAsync();
+    }
 
-        smartphone = await SmartPhoneApi.GetSmartPhone(Id);
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadSmartphoneDataAsync();
+    }
 
-        var ram = await RamApi.GetRam(smartphone.RamId);
-        ramSize = ramSize = ram?.Size ?? "Unknown";
+    private async Task LoadSmartphoneDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+            smartphone = await SmartPhoneApi.GetSmartPhone(Id);
 
-        var memory = await MemoryApi.GetMemory(smartphone.MemoryId);
-        memorySize = memory?.Size ?? "Unknown";
+            // Set the first image as main image
+            if (smartphone != null && smartphone.ImagesUrls.Any())
+            {
+                currentMainImage = smartphone.ImagesUrls.First();
+            }
 
-        var os = await OSApi.GetOS(smartphone.OSId);
-        oSName = os?.Name ?? "Unknown";
+            var ram = await RamApi.GetRam(smartphone.RamId);
+            ramSize = ram?.Size ?? "Unknown";
 
-        var model = await ModelApi.GetModel(smartphone.ModelId);
-        modelName = model.Name ?? "Unknown";
-        announcementYear = model.AnnouncementYear;
+            var memory = await MemoryApi.GetMemory(smartphone.MemoryId);
+            memorySize = memory?.Size ?? "Unknown";
+
+            var os = await OSApi.GetOS(smartphone.OSId);
+            oSName = os?.Name ?? "Unknown";
+
+            var model = await ModelApi.GetModel(smartphone.ModelId);
+            modelName = model?.Name ?? "Unknown";
+            announcementYear = model?.AnnouncementYear ?? 0;
+
+            var color = await ColorApi.GetColor(smartphone.ColorId);
+            colorHexCode = color?.HexCode ?? "Unknown";
+
+            var products = await SmartPhoneApi.GetSmartPhonesByModelId(smartphone.ModelId);
+
+            availableColors = new List<(int ProductId, string HexCode)>();
+
+            foreach (var product in products)
+            {
+                var colorOfProduct = await ColorApi.GetColor(product.ColorId);
+                availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
+            }
+
+            selectedProductId = smartphone.Id;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ChangeMainImage(string imageUrl)
+    {
+        currentMainImage = imageUrl;
+        StateHasChanged();
+    }
+
+    private string GetBackgroundStyle(ColorDto colorDto)
+    {
+        return "background-color:" + colorDto.HexCode + "; border: 0.5px solid #ccc; cursor: pointer;";
+    }
+
+    async Task OnColorSelected(int productId)
+    {
+        Nav.NavigateTo($"/smartphones/{productId}", forceLoad: true);
+        await LoadSmartphoneDataAsync();
+        StateHasChanged();
     }
 
     private void IncrementCartCounter()
     {
         cartCount++;
+        StateHasChanged();
+    }
+    
+    private void NavigateImages(int direction)
+    {
+        var currentIndex = smartphone.ImagesUrls.IndexOf(currentMainImage);
+        var newIndex = (currentIndex + direction + smartphone.ImagesUrls.Count) % smartphone.ImagesUrls.Count;
+        currentMainImage = smartphone.ImagesUrls[newIndex];
+        StateHasChanged();
     }
 
     private void Decrease()
@@ -295,7 +405,9 @@ else
         {
             cartCount = 0;
         }
+        StateHasChanged();
     }
+
     void NavigateToHome()
     {
         Nav.NavigateTo("/");
