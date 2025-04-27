@@ -61,7 +61,7 @@ namespace TechStore.BLL.Services
             if (os == null)
                 return Result.Error(ErrorType.NotFound);
 
-            os.Size = oSUpdateDto.Size ?? os.Size;
+            os.Name = oSUpdateDto.Name ?? os.Name;
 
             await _uow.OSRepsoitory.UpdateOS(os);
             await _uow.SaveAsync(token);

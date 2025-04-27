@@ -4,6 +4,6 @@ namespace TechStore.Blazor.DtoModels.OS
 {
     public class OSDto:BaseDto
     {
-        public string Size { get; set; } = default!;
+        public string Name { get; set; } = default!;
     }
 }

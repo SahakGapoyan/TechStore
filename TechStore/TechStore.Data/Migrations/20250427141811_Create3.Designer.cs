@@ -12,8 +12,8 @@ using TechStore.Data.DbContext;
 namespace TechStore.Data.Migrations
 {
     [DbContext(typeof(TechStoreDbContext))]
-    [Migration("20250423113756_Creation")]
-    partial class Creation
+    [Migration("20250427141811_Create3")]
+    partial class Create3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,10 @@ namespace TechStore.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("HexCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -171,7 +175,7 @@ namespace TechStore.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Size")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

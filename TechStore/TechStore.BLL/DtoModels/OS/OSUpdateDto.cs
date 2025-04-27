@@ -8,6 +8,6 @@ namespace TechStore.BLL.DtoModels.OS
 {
     public class OSUpdateDto
     {
-        public string? Size { get; set; } 
+        public string? Name { get; set; } 
     }
 }
