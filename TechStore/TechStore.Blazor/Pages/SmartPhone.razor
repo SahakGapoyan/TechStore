@@ -2,6 +2,7 @@
 @using TechStore.Blazor.Apis
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.DtoModels.Model
 @using TechStore.Blazor.DtoModels.OS
@@ -15,6 +16,7 @@
 @inject IRamApi RamApi
 @inject IMemoryApi MemoryApi
 @inject IModelApi ModelApi
+@inject IColorApi ColorApi
 
 <MudGrid Class="mt-auto">
     @if (Categories is not null)
@@ -80,13 +82,13 @@
                 {
                     @foreach (var brand in Brands)
                     {
-                        <MudItem sm="3" >
+                        <MudItem sm="3">
                             <MudCard Class="product-card"
                                      Style="@GetBrandCardStyle(brand.Id)"
                                      @onclick="@(() => ToggleBrandSelection(brand.Id))">
 
                                 <div class="image-container"
-                                     style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                                     style="width: 100%;aspect-ratio: 5/3;display: flex;justify-content: center;align-items: center;">
                                     <MudCardMedia Image="@brand.ImageUrl" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
                                 </div>
                             </MudCard>
@@ -177,6 +179,26 @@
             </div>
         </div>
 
+        <!-- Color Filter -->
+        <div class="filter-section color-filter-container">
+            <MudText Typo="Typo.subtitle1" Class="filter-title" Style="margin-top: -24px;">ԱՌԿԱ ԳՈՒՅՆԵՐ</MudText>
+            <div class="os-chips-container">
+                @if (Colors is not null)
+                {
+                    @foreach (var color in Colors)
+                    {
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <!-- Color swatch -->
+                            <div class="color-swatch @(selectedColors.Contains(color.Id) ? "selected" : "")"
+                                 style="background-color: @color.HexCode;"
+                                 @onclick="@(() => ToggleColorSelection(color.Id))">
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
         <div style="display: flex; gap: 8px; margin-top: 24px;">
             <MudButton Variant="Variant.Outlined"
                        Color="Color.Secondary"
@@ -213,13 +235,13 @@
                                 {
                                     @foreach (var brand in Brands)
                                     {
-                                        <MudItem md="4" lg="4">
+                                        <MudItem md="5" lg="4">
                                             <MudCard Class="product-card"
                                                      Style="@GetBrandCardStyle(brand.Id)"
                                                      @onclick="@(() => ToggleBrandSelection(brand.Id))">
 
                                                 <div class="image-container"
-                                                     style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                                                     style="width: 100%;aspect-ratio: 5/3;display: flex;justify-content: center;align-items: center;">
                                                     <MudCardMedia Image="@brand.ImageUrl" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
                                                 </div>
                                             </MudCard>
@@ -309,9 +331,23 @@
                         </div>
                     </MudCard>
 
-                    <MudCard Style="padding: 16px; min-height: 200px;border-radius: 0; box-shadow: none;margin-block-start:1px;">
+                    <MudCard Class="color-filter-container" Style="padding: 16px; min-height: 200px; border-radius: 0; box-shadow: none; margin-bottom: 1px; margin-block-start: 1px;">
                         <MudText Typo="Typo.subtitle1" Color="Color.Dark" Style="font-weight: 600;">ԱՌԿԱ ԳՈՒՅՆԵՐ</MudText>
-                        <!-- You can add filter elements here -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                            @if (Colors is not null)
+                            {
+                                @foreach (var color in Colors)
+                                {
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <!-- Color swatch -->
+                                        <div class="color-swatch @(selectedColors.Contains(color.Id) ? "selected" : "")"
+                                             style="background-color: @color.HexCode;"
+                                             @onclick="@(() => ToggleColorSelection(color.Id))">
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
                     </MudCard>
                 </div>
             </div>
@@ -378,6 +414,7 @@
     public List<ModelDto> Models { get; set; } = new List<ModelDto>();
     public List<MemoryDto> Memories { get; set; } = new List<MemoryDto>();
     public List<RamDto> Rams { get; set; } = new List<RamDto>();
+    public List<ColorDto> Colors { get; set; } = new List<ColorDto>();
 
     private ElementReference scrollContainer;
     private bool arrows = true;
@@ -424,6 +461,7 @@
         Models = (await ModelApi.GetModels()).ToList();
         Memories = (await MemoryApi.GetMemories()).ToList();
         Rams = (await RamApi.GetRams()).ToList();
+        Colors = (await ColorApi.GetColors()).ToList();
     }
     private string GetCategoryIcon(string categoryName)
     {
@@ -462,6 +500,7 @@
     private HashSet<int> selectedModels = new HashSet<int>();
     private HashSet<int> selectedMemories = new HashSet<int>();
     private HashSet<int> selectedRams = new HashSet<int>();
+    private HashSet<int> selectedColors = new HashSet<int>();
     private bool showMobileFilters = false;
 
     private void ToggleMobileFilters()
@@ -482,7 +521,10 @@
     {
         selectedBrands.Clear();
         selectedOses.Clear();
+        selectedModels.Clear();
+        selectedMemories.Clear();
         selectedRams.Clear();
+        selectedColors.Clear();
         await ApplyFilters();
     }
     private async Task ApplyFiltersInternal()
@@ -516,9 +558,15 @@
         }
 
         // Apply Ram filter if any Rams are selected
-        if (selectedRams.Count > 0)  
+        if (selectedRams.Count > 0)
         {
             filteredPhones = filteredPhones.Where(p => selectedRams.Contains(p.RamId));
+        }
+
+        // Apply Color filter if any Colors are selected
+        if (selectedColors.Count > 0)
+        {
+            filteredPhones = filteredPhones.Where(p => selectedColors.Contains(p.ColorId));
         }
 
         SmartPhones = filteredPhones.ToList();
@@ -586,6 +634,19 @@
         else
         {
             selectedRams.Add(ramId);
+        }
+        await ApplyFilters();
+    }
+
+    private async Task ToggleColorSelection(int colorId)
+    {
+        if (selectedColors.Contains(colorId))
+        {
+            selectedColors.Remove(colorId);
+        }
+        else
+        {
+            selectedColors.Add(colorId);
         }
         await ApplyFilters();
     }
