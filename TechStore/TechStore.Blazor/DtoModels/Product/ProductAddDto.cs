@@ -10,6 +10,6 @@
         public int BrandId { get; set; }
         public int ModelId { get; set; }
         public int ColorId { get; set; }
-        public string ImageUrl { get; set; } = default!;
+        public List<string> ImagesUrls { get; set; } = new List<string>();
     }
 }

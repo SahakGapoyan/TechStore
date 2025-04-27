@@ -12,8 +12,8 @@ using TechStore.Data.DbContext;
 namespace TechStore.Data.Migrations
 {
     [DbContext(typeof(TechStoreDbContext))]
-    [Migration("20250427141811_Create3")]
-    partial class Create3
+    [Migration("20250427161612_ChangeProduct")]
+    partial class ChangeProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -269,7 +269,7 @@ namespace TechStore.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImagesUrls")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
