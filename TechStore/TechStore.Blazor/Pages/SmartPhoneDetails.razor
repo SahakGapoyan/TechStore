@@ -368,32 +368,16 @@ else
             availableColors = new List<(int ProductId, string HexCode)>();
             availableMemories = new List<(int ProductId, string MemorySize)>();
 
-            var seenColorHexCodes = new HashSet<string>();
-            availableColors.Clear();
-
             foreach (var product in products)
             {
-                var c= await ColorApi.GetColor(product.ColorId);
-                var hexCode = color?.HexCode ?? "#FFFFFF";
-
-                if (seenColorHexCodes.Add(hexCode))
-                {
-                    availableColors.Add((product.Id, hexCode));
-                }
+                var colorOfProduct = await ColorApi.GetColor(product.ColorId);
+                availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
             }
 
-
-            var seenMemorySizes = new HashSet<string>();
-            availableMemories.Clear();
             foreach (var product in products)
             {
-                var m = await MemoryApi.GetMemory(product.MemoryId);
-                var memorySize = memory?.Size ?? "no memory";
-
-                if (seenMemorySizes.Add(memorySize))
-                {
-                    availableMemories.Add((product.Id, memorySize));
-                }
+                var memoryOfProduct = await MemoryApi.GetMemory(product.MemoryId);
+                availableMemories.Add((product.Id, memoryOfProduct?.Size ?? "no memory"));
             }
 
             selectedProductId = smartphone.Id;
