@@ -97,7 +97,7 @@ else
                                     {
                                         <MudChip T="string"
                                                  Color="@(memory.ProductId == selectedProductId ? Color.Primary : Color.Default)"
-                                                 Style="cursor: pointer; margin: 0;"
+                                                 Style="cursor: pointer; margin: 0; border-radius: 0;"
                                                  OnClick="@(() => OnMemorySelected(memory.ProductId))">
                                             @memory.MemorySize
                                         </MudChip>
@@ -114,7 +114,7 @@ else
                                     @foreach (var color in availableColors)
                                     {
                                         <MudAvatar Size="Size.Small"
-                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0;")"
+                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0; border-radius: 0;")"
                                                    @onclick="@(async () => await OnColorSelected(color.ProductId))" />
                                     }
                                 </div>
