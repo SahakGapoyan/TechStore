@@ -59,13 +59,12 @@ else
                     @if (smartphone.ImagesUrls.Count > 1)
                     {
                         <div style="position: relative;">
-                            <div style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 8px 0;">
+                            <div style="display: flex; justify-content: center; gap: 8px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 8px 0;">
                                 @foreach (var imageUrl in smartphone.ImagesUrls)
                                 {
                                     <div style="@($"cursor: pointer; min-width: 60px; border: {(imageUrl == currentMainImage ? "2px solid var(--mud-palette-primary)" : "1px solid #ddd")}; border-radius: 4px; transition: all 0.3s ease; flex-shrink: 0;")"
                                          @onclick="@(() => ChangeMainImage(imageUrl))">
                                         <MudImage Src="@imageUrl"
-                                                  Alt="Thumbnail"
                                                   Style="width: 60px; height: 60px; object-fit: cover; border-radius: 3px;" />
                                     </div>
                                 }
@@ -74,7 +73,7 @@ else
                     }
                 </MudPaper>
             </MudItem>
-            <MudItem xs="12" md="5">
+            <MudItem xs="12" md="5" Style="height: 100%;">
                 <MudStack Spacing="2" Style="margin-top: 1rem;">
                     <MudText Typo="Typo.h5">@smartphone.Name</MudText>
                     <MudRating SelectedValue="4" ReadOnly="false" Size="Size.Small" />
@@ -84,28 +83,45 @@ else
                     <MudText Typo="Typo.subtitle2">@smartphone.Description</MudText>
 
                     <MudDivider />
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center;">
+                                <!-- RAM -->
+                                <div style="color: rgba(0, 0, 0, 0.54);">RAM</div>
+                                <div>@ramSize</div>
 
-                    <MudList T="string" Dense="true">
-                        <MudListItem T="string"><MudText><b>Օպերատիվ հիշողություն:</b>@ramSize</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Հիշողություն:</b>@memorySize</MudText></MudListItem>
-                        <MudListItem T="string"><MudText><b>Հայտարարության տարին:</b>@announcementYear</MudText></MudListItem>
-                        <MudListItem T="string">
-                            <MudText>
-                                <b>Առկա գույներ:</b>
-                                <MudGrid Spacing="2" Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                                <!-- Memory - Strict Horizontal Line -->
+                                <div style="color: rgba(0, 0, 0, 0.54);">Memory</div>
+                                <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; flex-wrap: nowrap;">
+                                    @foreach (var memory in availableMemories)
+                                    {
+                                        <MudChip T="string"
+                                                 Color="@(memory.ProductId == selectedProductId ? Color.Primary : Color.Default)"
+                                                 Style="cursor: pointer; margin: 0;"
+                                                 OnClick="@(() => OnMemorySelected(memory.ProductId))">
+                                            @memory.MemorySize
+                                        </MudChip>
+                                    }
+                                </div>
+
+                                <!-- Announcement Year -->
+                                <div style="color: rgba(0, 0, 0, 0.54);">Announcement Year</div>
+                                <div>@announcementYear</div>
+
+                                <!-- Colors -->
+                                <div style="color: rgba(0, 0, 0, 0.54);">Colors</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                                     @foreach (var color in availableColors)
                                     {
-                                        <MudItem>
-                                            <MudAvatar Size="Size.Small"
-                                                       Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer;")"
-                                                       @onclick="@(async () => await OnColorSelected(color.ProductId))" />
-                                        </MudItem>
+                                        <MudAvatar Size="Size.Small"
+                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0;")"
+                                                   @onclick="@(async () => await OnColorSelected(color.ProductId))" />
                                     }
-                                </MudGrid>
+                                </div>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
 
-                            </MudText>
-                        </MudListItem>
-                    </MudList>
 
                     <MudQueue Direction="Row" Spacing="1" Class="mt-2" AlignItems="Center">
                         <MudButton Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled">Գնել</MudButton>
@@ -302,6 +318,7 @@ else
     private int announcementYear = 0;
     private string colorHexCode = "";
     private List<(int ProductId, string HexCode)> availableColors = new();
+    private List<(int ProductId, string MemorySize)> availableMemories = new();
     private int selectedProductId;
     private string currentMainImage = string.Empty; // Added for image gallery
     private bool isLoading = false; // Added for loading state
@@ -348,11 +365,18 @@ else
             var products = await SmartPhoneApi.GetSmartPhonesByModelId(smartphone.ModelId);
 
             availableColors = new List<(int ProductId, string HexCode)>();
+            availableMemories = new List<(int ProductId, string MemorySize)>();
 
             foreach (var product in products)
             {
                 var colorOfProduct = await ColorApi.GetColor(product.ColorId);
                 availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
+            }
+
+            foreach (var product in products)
+            {
+                var memoryOfProduct = await MemoryApi.GetMemory(product.MemoryId);
+                availableMemories.Add((product.Id, memoryOfProduct?.Size ?? "no memory"));
             }
 
             selectedProductId = smartphone.Id;
@@ -380,13 +404,20 @@ else
         await LoadSmartphoneDataAsync();
         StateHasChanged();
     }
+    async Task OnMemorySelected(int productId)
+    {
+        Nav.NavigateTo($"/smartphones/{productId}", forceLoad: true);
+        await LoadSmartphoneDataAsync();
+        StateHasChanged();
+    }
 
     private void IncrementCartCounter()
     {
         cartCount++;
         StateHasChanged();
+
     }
-    
+
     private void NavigateImages(int direction)
     {
         var currentIndex = smartphone.ImagesUrls.IndexOf(currentMainImage);
