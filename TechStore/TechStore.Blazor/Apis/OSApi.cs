@@ -40,7 +40,7 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task<IEnumerable<OSDto>> GetOsesByCategoryId(int? categoryId)
+        public async Task<IEnumerable<OSDto>> GetOsesByCategoryId(int categoryId)
         {
             var response = await _httpClient.GetAsync($"api/OSes/categoryId/{categoryId}");
 

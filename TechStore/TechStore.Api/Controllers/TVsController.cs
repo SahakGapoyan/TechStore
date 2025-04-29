@@ -4,6 +4,7 @@ using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.DtoModels.SmartPhone;
 using TechStore.BLL.DtoModels.Tv;
 using TechStore.BLL.Interfaces;
+using TechStore.BLL.Services;
 
 namespace TechStore.Api.Controllers
 {
@@ -70,6 +71,48 @@ namespace TechStore.Api.Controllers
             }
 
             return Ok(result.Message);
+        }
+
+        [HttpGet("colorId/{colorId}")]
+        public async Task<ActionResult<List<TvDto>>> GetTvsByColorId([FromRoute] int colorId, CancellationToken token = default)
+        {
+            var result = await _tvService.GetProductsByColorId(colorId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("brandId/{brandId}")]
+        public async Task<ActionResult<List<TvDto>>> GetTvsByBrandId([FromRoute] int brandId, CancellationToken token = default)
+        {
+            var result = await _tvService.GetProductsByBrandId(brandId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("modelId/{modelId}")]
+        public async Task<ActionResult<List<TvDto>>> GetTvsByModelId([FromRoute] int modelId, CancellationToken token = default)
+        {
+            var result = await _tvService.GetProductsByModelId(modelId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
         }
     }
 }

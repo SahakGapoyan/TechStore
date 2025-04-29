@@ -6,6 +6,6 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<ModelDto>> GetModels();
         Task<ModelDto> GetModel(int id);
-        Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int? categoryId);
+        Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int categoryId);
     }
 }

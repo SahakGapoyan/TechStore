@@ -6,6 +6,6 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<ColorDto>> GetColors();
         Task<ColorDto> GetColor(int id);
-        Task<IEnumerable<ColorDto>> GetColorsByCategoryId(int? categoryId);
+        Task<IEnumerable<ColorDto>> GetColorsByCategoryId(int categoryId);
     }
 }

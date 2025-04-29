@@ -39,7 +39,7 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task<IEnumerable<RamDto>> GetRamsByCategoryId(int? categoryId)
+        public async Task<IEnumerable<RamDto>> GetRamsByCategoryId(int categoryId)
         {
             var response = await _httpClient.GetAsync($"api/Rams/categoryId/{categoryId}");
 

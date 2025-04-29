@@ -48,7 +48,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<SmartPhoneDto>> GetSmartPhones()
         {
-            var response = await _httpClient.GetAsync($"api/SmartPhones");
+            var response = await _httpClient.GetAsync("api/SmartPhones");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<IEnumerable<SmartPhoneDto>>();

@@ -12,6 +12,7 @@
 @inject ICategoryApi CategoryApi
 @inject ISmartPhoneApi SmartPhoneApi
 @inject ILaptopApi LaptopApi
+@inject ITvApi TvApi
 @inject IBrandApi BrandApi
 @inject IOSApi OSApi
 @inject IRamApi RamApi
@@ -626,14 +627,26 @@
         }
 
         SmartPhones = (await SmartPhoneApi.GetSmartPhones()).ToList();
-        var categoryId = SmartPhones.FirstOrDefault()?.CategoryId;
+        if (SmartPhones.Any())
+        {
+            var categoryId = SmartPhones.FirstOrDefault().CategoryId;
 
-        Brands = (await BrandApi.GetBrandsByCategoryId(categoryId)).ToList();
-        Oses = (await OSApi.GetOsesByCategoryId(categoryId)).ToList();
-        Models = (await ModelApi.GetModelsByCategoryId(categoryId)).ToList();
-        Memories = (await MemoryApi.GetMemoriesByCategoryId(categoryId)).ToList();
-        Rams = (await RamApi.GetRamsByCategoryId(categoryId)).ToList();
-        Colors = (await ColorApi.GetColorsByCategoryId(categoryId)).ToList();
+            Brands = (await BrandApi.GetBrandsByCategoryId(categoryId)).ToList();
+            Oses = (await OSApi.GetOsesByCategoryId(categoryId)).ToList();
+            Models = (await ModelApi.GetModelsByCategoryId(categoryId)).ToList();
+            Memories = (await MemoryApi.GetMemoriesByCategoryId(categoryId)).ToList();
+            Rams = (await RamApi.GetRamsByCategoryId(categoryId)).ToList();
+            Colors = (await ColorApi.GetColorsByCategoryId(categoryId)).ToList();
+        }
+        else
+        {
+            Brands = new List<BrandDto>();
+            Oses = new List<OSDto>();
+            Models = new List<ModelDto>();
+            Memories = new List<MemoryDto>();
+            Rams = new List<RamDto>();
+            Colors = new List<ColorDto>();
+        }
     }
     private string GetCategoryIcon(string categoryName)
     {

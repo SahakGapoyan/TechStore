@@ -39,7 +39,7 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int? categoryId)
+        public async Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int categoryId)
         {
             var response = await _httpClient.GetAsync($"api/Models/categoryId/{categoryId}");
 

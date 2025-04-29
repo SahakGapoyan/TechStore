@@ -14,6 +14,6 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<LaptopDto>> GetLaptopsByOSId(int osId);
         Task<IEnumerable<LaptopDto>> GetLaptopsByBrandId(int brandId);
         Task<IEnumerable<LaptopDto>> GetLaptopsByColorId(int colorId);
-        Task<IEnumerable<LaptopDto>> GetSmartPhonesByModelId(int modelId);
+        Task<IEnumerable<LaptopDto>> GetLaptopsByModelId(int modelId);
     }
 }
