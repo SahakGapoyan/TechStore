@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<Color>> GetColors(CancellationToken token);
         Task<Color?> GetColorById(int colorId, CancellationToken token = default);
+        Task<IEnumerable<Color>> GetColorssByCategoryId(int categoryId, CancellationToken token = default);
         Task AddColor(Color color, CancellationToken token = default);
         Task UpdateColor(Color color);
         Task DeleteColor(Color color);

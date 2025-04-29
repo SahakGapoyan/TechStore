@@ -6,5 +6,6 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<RamDto>> GetRams();
         Task<RamDto> GetRam(int id);
+        Task<IEnumerable<RamDto>> GetRamsByCategoryId(int? categoryId);
     }
 }

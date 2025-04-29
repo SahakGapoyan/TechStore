@@ -48,6 +48,12 @@ namespace TechStore.BLL.Services
             return _mapper.Map<OSDto>(await _uow.OSRepsoitory.GetOSById(osId, token));
         }
 
+        public async Task<IEnumerable<OSDto>> GetOsesByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var oses = await _uow.OSRepsoitory.GetOsesByCategoryId(categoryId, token);
+            return _mapper.Map<List<OSDto>>(oses);
+        }
+
         public async Task<IEnumerable<OSDto>> GetOSs(CancellationToken token = default)
         {
             var oSs = await _uow.OSRepsoitory.GetOSs(token);

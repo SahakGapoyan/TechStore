@@ -59,7 +59,7 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task<IEnumerable<BrandDto>> GetBrandsByCategoryId(int categoryId)
+        public async Task<IEnumerable<BrandDto>> GetBrandsByCategoryId(int? categoryId)
         {
             var response = await _httpClient.GetAsync($"api/Brands/categoryId/{categoryId}");
 

@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<Memory>> GetMemories(CancellationToken token = default);
         Task<Memory?> GetMemoryById(int memoryId, CancellationToken token = default);
+        Task<IEnumerable<Memory>> GetMemoriesByCategoryId(int categoryId, CancellationToken token = default);
         Task AddMemory(Memory memory, CancellationToken token = default);
         Task UpdateMemory(Memory memory);
         Task DeleteMemory(Memory memory);

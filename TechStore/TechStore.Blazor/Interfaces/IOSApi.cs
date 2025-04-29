@@ -6,5 +6,6 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<OSDto>> GetOSes();
         Task<OSDto> GetOS(int id);
+        Task<IEnumerable<OSDto>> GetOsesByCategoryId(int? categoryId);
     }
 }

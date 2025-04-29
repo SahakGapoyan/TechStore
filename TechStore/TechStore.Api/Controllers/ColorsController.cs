@@ -36,6 +36,12 @@ namespace TechStore.Api.Controllers
             return Ok(color);
         }
 
+        [HttpGet("categoryId/{categoryId}")]
+        public async Task<ActionResult<ColorDto>> GetColorsByCategoryId([FromRoute] int categoryId, CancellationToken token)
+        {
+            return Ok(await _colorService.GetColorsByCategoryId(categoryId, token));
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateColor([FromBody] ColorAddDto colorAddDto, CancellationToken token)
         {

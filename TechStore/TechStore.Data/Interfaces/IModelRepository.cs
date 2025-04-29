@@ -12,6 +12,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<Model>> GetModels(CancellationToken token = default);
         Task<Model?> GetModel(int modelId, CancellationToken token = default);
+        Task<IEnumerable<Model>> GetModelsByCategoryId(int categoryId, CancellationToken token = default);
         Task AddModel(Model model, CancellationToken token = default);
         Task Update(Model model);
         Task Delete(Model model);

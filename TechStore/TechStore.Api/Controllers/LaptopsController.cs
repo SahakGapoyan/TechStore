@@ -85,7 +85,7 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
         }
 
         [HttpGet("memoryId/{memoryId}")]
@@ -99,7 +99,7 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
         }
         [HttpGet("osId/{osId}")]
         public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByOSID([FromRoute] int osId, CancellationToken token = default)
@@ -112,7 +112,49 @@ namespace TechStore.Api.Controllers
                     return NotFound(result.Item1.Message);
             }
 
-            return Ok(result);
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("colorId/{colorId}")]
+        public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByColorId([FromRoute] int colorId, CancellationToken token = default)
+        {
+            var result = await _laptopService.GetProductsByColorId(colorId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("brandId/{brandId}")]
+        public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByBrandId([FromRoute] int brandId, CancellationToken token = default)
+        {
+            var result = await _laptopService.GetProductsByBrandId(brandId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
+        }
+
+        [HttpGet("modelId/{modelId}")]
+        public async Task<ActionResult<List<LaptopDto>>> GetLaptopsByModelId([FromRoute] int modelId, CancellationToken token = default)
+        {
+            var result = await _laptopService.GetProductsByModelId(modelId, token);
+
+            if (!result.Item1.Success)
+            {
+                if (result.Item1.ErrorType == ErrorType.NotFound)
+                    return NotFound(result.Item1.Message);
+            }
+
+            return Ok(result.Item2);
         }
     }
 }

@@ -54,6 +54,12 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<RamDto>>(rams);
         }
 
+        public async Task<IEnumerable<RamDto>> GetRamsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var rams = await _uow.RamRepository.GetRamsByCategoryId(categoryId, token);
+            return _mapper.Map<List<RamDto>>(rams);
+        }
+
         public async Task<Result> UpdateRam(int ramId, RamUpdateDto ramUpdateDto, CancellationToken token = default)
         {
             var ram = await _uow.RamRepository.GetRamById(ramId);

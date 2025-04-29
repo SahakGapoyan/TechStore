@@ -38,5 +38,17 @@ namespace TechStore.Blazor.Apis
 
             throw new Exception("Error" + response.ReasonPhrase);
         }
+
+        public async Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int? categoryId)
+        {
+            var response = await _httpClient.GetAsync($"api/Memories/categoryId/{categoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<MemoryDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
     }
 }

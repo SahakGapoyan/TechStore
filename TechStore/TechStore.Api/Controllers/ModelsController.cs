@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.DtoModels.Model;
 using TechStore.BLL.Interfaces;
+using TechStore.BLL.Services;
 
 namespace TechStore.Api.Controllers
 {
@@ -32,6 +33,12 @@ namespace TechStore.Api.Controllers
                 return NotFound();
             }
             return Ok(model);
+        }
+
+        [HttpGet("categoryId/{categoryId}")]
+        public async Task<ActionResult<ModelDto>> GetModelsByCategoryId([FromRoute] int categoryId, CancellationToken token)
+        {
+            return Ok(await _modelService.GetModelsByCategoryId(categoryId, token));
         }
 
         [HttpPost]

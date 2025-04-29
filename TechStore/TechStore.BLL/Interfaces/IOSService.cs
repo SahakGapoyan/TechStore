@@ -13,6 +13,7 @@ namespace TechStore.BLL.Interfaces
     {
         Task<IEnumerable<OSDto>> GetOSs(CancellationToken token = default);
         Task<OSDto?> GetOSById(int osId, CancellationToken token = default);
+        Task<IEnumerable<OSDto>> GetOsesByCategoryId(int categoryId, CancellationToken token = default);
         Task AddOS(OSAddDto oSAddDto, CancellationToken token = default);
         Task<Result> UpdateOS(int OsId, OSUpdateDto oSUpdateDto, CancellationToken token);
         Task<Result> DeleteOS(int OsId,  CancellationToken token);
