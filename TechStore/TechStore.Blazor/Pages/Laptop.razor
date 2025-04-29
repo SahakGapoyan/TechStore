@@ -1,8 +1,9 @@
-﻿@page "/category/smartphones"
+﻿@page "/category/laptops"
 @using TechStore.Blazor.Apis
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.DtoModels.Model
 @using TechStore.Blazor.DtoModels.OS
@@ -18,6 +19,8 @@
 @inject IMemoryApi MemoryApi
 @inject IModelApi ModelApi
 @inject IColorApi ColorApi
+
+
 
 
 <MudGrid Class="mt-auto">
@@ -522,37 +525,36 @@
                     </MudCard>
                 </div>
             </div>
-
             <!-- Right: Smartphones -->
             <div style="flex: 1;">
                 <MudGrid GutterSize="3">
-                    @if (SmartPhones is not null)
+                    @if (Laptops is not null)
                     {
-                        @foreach (var phone in SmartPhones)
+                        @foreach (var laptop in Laptops)
                         {
                             <MudItem xs="12" sm="6" md="4" lg="3">
                                 <MudCard Class="product-card"
                                          Style="height: 100%; width: 100%;max-width: 300px;"
-                                         @onclick="@(() => NavigateToSmartPhone(phone))">
+                                         @onclick="@(() => NavigateToLaptop(laptop))">
                                     <MudChip T="bool"
-                                             Color="@(phone.IsAvailable ? Color.Success : Color.Error)"
+                                             Color="@(laptop.IsAvailable ? Color.Success : Color.Error)"
                                              Variant="Variant.Filled"
                                              Class="ml-2 mt-2 availability-chip"
                                              Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                        @(phone.IsAvailable ? "Առկա է" : "Առկա չէ")
+                                        @(laptop.IsAvailable ? "Առկա է" : "Առկա չէ")
                                     </MudChip>
 
                                     <div class="image-container"
                                          style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
-                                        <MudCardMedia Image="@phone.ImagesUrls.FirstOrDefault()" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
+                                        <MudCardMedia Image="@laptop.ImagesUrls.FirstOrDefault()" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
                                     </div>
 
 
                                     <MudCardContent Class="px-4 pt-3 pb-1">
-                                        <MudText Typo="Typo.h6" Class="product-name">@phone.Name</MudText>
-                                        <MudText Typo="Typo.body2" Class="mb-2 product-description">@phone.Description</MudText>
+                                        <MudText Typo="Typo.h6" Class="product-name">@laptop.Name</MudText>
+                                        <MudText Typo="Typo.body2" Class="mb-2 product-description">@laptop.Description</MudText>
                                         <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
-                                            @($"{phone.Price:C}")
+                                            @($"{laptop.Price:C}")
                                         </MudText>
                                     </MudCardContent>
 
@@ -561,8 +563,8 @@
                                                    Color="Color.Primary"
                                                    EndIcon="@Icons.Material.Filled.ShoppingCart"
                                                    Class="buy-button"
-                                                   Disabled="@(!phone.IsAvailable)">
-                                            @(phone.IsAvailable ? "Add to Cart" : "Out of Stock")
+                                                   Disabled="@(!laptop.IsAvailable)">
+                                            @(laptop.IsAvailable ? "Add to Cart" : "Out of Stock")
                                         </MudButton>
                                     </MudCardActions>
                                 </MudCard>
@@ -579,7 +581,7 @@
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
-    public List<SmartPhoneDto> SmartPhones { get; set; } = new List<SmartPhoneDto>();
+    public List<LaptopDto> Laptops { get; set; } = new List<LaptopDto>();
     public List<BrandDto> Brands { get; set; } = new List<BrandDto>();
     public List<OSDto> Oses { get; set; } = new List<OSDto>();
     public List<ModelDto> Models { get; set; } = new List<ModelDto>();
@@ -625,8 +627,8 @@
             category.Icon = GetCategoryIcon(category.Name);
         }
 
-        SmartPhones = (await SmartPhoneApi.GetSmartPhones()).ToList();
-        var categoryId = SmartPhones.FirstOrDefault()?.CategoryId;
+        Laptops = (await LaptopApi.GetLaptops()).ToList();
+        var categoryId = Laptops.FirstOrDefault()?.CategoryId;
 
         Brands = (await BrandApi.GetBrandsByCategoryId(categoryId)).ToList();
         Oses = (await OSApi.GetOsesByCategoryId(categoryId)).ToList();
@@ -659,12 +661,10 @@
         }
     }
 
-    void NavigateToSmartPhone(SmartPhoneDto smartPhoneDto)
+    void NavigateToLaptop(LaptopDto laptopDto)
     {
-        Nav.NavigateTo($"smartphones/{smartPhoneDto.Id}");
+        Nav.NavigateTo($"laptops/{laptopDto.Id}");
     }
-
-
 
     private HashSet<int> selectedBrands = new();
     private HashSet<int> selectedOses = new HashSet<int>();
@@ -702,19 +702,19 @@
     private async Task ApplyFiltersInternal()
     {
         // Get all phones first
-        var allPhones = await SmartPhoneApi.GetSmartPhones();
-        var filteredPhones = allPhones.AsEnumerable();
+        var allLaptops = await LaptopApi.GetLaptops();
+        var filteredLaptops = allLaptops.AsEnumerable();
 
         // Apply brand filter if any brands are selected
         if (selectedBrands.Count > 0)
         {
-            filteredPhones = filteredPhones.Where(p => selectedBrands.Contains(p.BrandId));
+            filteredLaptops = filteredLaptops.Where(p => selectedBrands.Contains(p.BrandId));
         }
 
         // Apply OS filter if any OSes are selected
         if (selectedOses.Count > 0)
         {
-            filteredPhones = filteredPhones.Where(p => selectedOses.Contains(p.OSId));
+            filteredLaptops = filteredLaptops.Where(p => selectedOses.Contains(p.OsId));
         }
 
         // Apply Model filter if any Models are selected with Announcement Year
@@ -727,7 +727,7 @@
                 .ToList();
 
             // Then filter phones
-            filteredPhones = filteredPhones
+            filteredLaptops = filteredLaptops
                 .Where(p => modelIds.Contains(p.ModelId));
         }
 
@@ -735,26 +735,26 @@
         // Apply Memory filter if any Memories are selected
         if (selectedMemories.Count > 0)
         {
-            filteredPhones = filteredPhones.Where(p => selectedMemories.Contains(p.MemoryId));
+            filteredLaptops = filteredLaptops.Where(p => selectedMemories.Contains(p.MemoryId));
         }
 
         // Apply Ram filter if any Rams are selected
         if (selectedRams.Count > 0)
         {
-            filteredPhones = filteredPhones.Where(p => selectedRams.Contains(p.RamId));
+            filteredLaptops = filteredLaptops.Where(p => selectedRams.Contains(p.RamId));
         }
 
         // Apply Color filter if any Colors are selected
         if (selectedColors.Count > 0)
         {
-            filteredPhones = filteredPhones.Where(p => selectedColors.Contains(p.ColorId));
+            filteredLaptops = filteredLaptops.Where(p => selectedColors.Contains(p.ColorId));
         }
 
-        SmartPhones = filteredPhones.ToList();
+        Laptops = filteredLaptops.ToList();
         StateHasChanged();
     }
     bool showAllBrands = false;
-    int defaultVisibleCount = 4;
+    int defaultVisibleCount = 2;
 
     void ToggleShowAllBrands()
     {
@@ -881,3 +881,4 @@
     }
 
 }
+
