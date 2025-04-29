@@ -13,6 +13,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<Ram>> GetRams(CancellationToken token);
         Task<Ram?> GetRamById(int ramId, CancellationToken token = default);
+        Task<IEnumerable<Ram>> GetRamsByCategoryId(int categoryId, CancellationToken token = default);
         Task AddRam(Ram ram, CancellationToken token = default);
         Task UpdateRam(Ram ram);
         Task DeleteRam(Ram ram);

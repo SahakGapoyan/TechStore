@@ -36,6 +36,12 @@ namespace TechStore.Api.Controllers
             return Ok(OS);
         }
 
+        [HttpGet("categoryId/{categoryId}")]
+        public async Task<ActionResult<OSDto>> GetOsesByCategoryId([FromRoute] int categoryId, CancellationToken token)
+        {
+            return Ok(await _oSService.GetOsesByCategoryId(categoryId, token));
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateOS([FromBody] OSAddDto oSAddDto, CancellationToken token)
         {

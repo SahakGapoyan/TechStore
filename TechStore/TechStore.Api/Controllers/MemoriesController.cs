@@ -36,6 +36,12 @@ namespace TechStore.Api.Controllers
             return Ok(memory);
         }
 
+        [HttpGet("categoryId/{categoryId}")]
+        public async Task<ActionResult<MemoryDto>> GetMemoriesByCategoryId([FromRoute] int categoryId, CancellationToken token)
+        {
+            return Ok(await _memoryService.GetMemoriesByCategoryId(categoryId, token));
+        }
+
         [HttpPost]
         public async Task<ActionResult> CreateMemory([FromBody] MemoryAddDto memoryAddDto, CancellationToken token)
         {

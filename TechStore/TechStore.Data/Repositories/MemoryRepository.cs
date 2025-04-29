@@ -34,6 +34,16 @@ namespace TechStore.Data.Repositories
             return await _context.Memories.ToListAsync(token);
         }
 
+        public async Task<IEnumerable<Memory>> GetMemoriesByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.Memories
+                    .Where(m =>
+                        m.SmartPhones.Any(s => s.CategoryId == categoryId) ||
+                        m.Laptops.Any(l => l.CategoryId == categoryId)
+                    )
+                    .ToListAsync(token);
+        }
+
         public async Task<Memory?> GetMemoryById(int memoryId, CancellationToken token = default)
         {
             return await _context.Memories.FirstOrDefaultAsync(m => m.Id == memoryId, token);

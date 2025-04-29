@@ -52,6 +52,12 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<ColorDto>>(await _uow.ColorRepository.GetColors(token));
         }
 
+        public async Task<IEnumerable<ColorDto>> GetColorsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var colors = await _uow.ColorRepository.GetColorssByCategoryId(categoryId, token);
+            return _mapper.Map<List<ColorDto>>(colors);
+        }
+
         public async Task<Result> UpdateColor(int colorId, ColorUpdateDto colorUpdateDto, CancellationToken token = default)
         {
             var color = await _uow.ColorRepository.GetColorById(colorId, token);

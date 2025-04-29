@@ -39,6 +39,11 @@ namespace TechStore.Data.Repositories
             return await _context.Models.ToListAsync(token);
         }
 
+        public async Task<IEnumerable<Model>> GetModelsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.Models.Where(m => m.Products.Any(e => e.CategoryId == categoryId)).ToListAsync(token);
+        }
+
         public async Task Update(Model model)
         {
             _context.Models.Update(model);

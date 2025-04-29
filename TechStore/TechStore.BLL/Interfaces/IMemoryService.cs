@@ -13,6 +13,7 @@ namespace TechStore.BLL.Interfaces
     {
         Task<IEnumerable<MemoryDto>> GetMemories(CancellationToken token = default);
         Task<MemoryDto?> GetMemoryById(int memoryId, CancellationToken token = default);
+        Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int categoryId, CancellationToken token = default);
         Task AddMemory(MemoryAddDto memoryAddDto, CancellationToken token = default);
         Task<Result> UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto, CancellationToken token = default);
         Task<Result> DeleteMemory(int memoryId,CancellationToken token=default);

@@ -53,6 +53,12 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<ModelDto>>(await _uow.ModelRepository.GetModels(token));
         }
 
+        public async Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var models = await _uow.ModelRepository.GetModelsByCategoryId(categoryId, token);
+            return _mapper.Map<List<ModelDto>>(models);
+        }
+
         public async Task<Result> UpdateModel(int modelId, ModelUpdateDto modelUpdateDto, CancellationToken token = default)
         {
             var model = await _uow.ModelRepository.GetModel(modelId, token);

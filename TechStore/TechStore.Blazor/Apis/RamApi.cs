@@ -38,5 +38,17 @@ namespace TechStore.Blazor.Apis
 
             throw new Exception("Error" + response.ReasonPhrase);
         }
+
+        public async Task<IEnumerable<RamDto>> GetRamsByCategoryId(int? categoryId)
+        {
+            var response = await _httpClient.GetAsync($"api/Rams/categoryId/{categoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<RamDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
     }
 }

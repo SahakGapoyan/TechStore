@@ -6,5 +6,6 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<MemoryDto>> GetMemories();
         Task<MemoryDto> GetMemory(int id);
+        Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int? categoryId);
     }
 }

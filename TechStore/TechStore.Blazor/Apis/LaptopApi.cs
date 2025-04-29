@@ -92,5 +92,33 @@ namespace TechStore.Blazor.Apis
                 throw new Exception("Error " + response.ReasonPhrase);
             }
         }
+        public async Task<IEnumerable<LaptopDto>> GetLaptopsByBrandId(int brandId)
+        {
+            var response = await _httpClient.GetAsync($"api/Laptops/brandId/{brandId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<LaptopDto>>();
+            }
+            throw new Exception("Error " + response.ReasonPhrase);
+        }
+
+        public async Task<IEnumerable<LaptopDto>> GetLaptopsByColorId(int colorId)
+        {
+            var response = await _httpClient.GetAsync($"api/Laptops/colorId/{colorId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<LaptopDto>>();
+            }
+            throw new Exception("Error " + response.ReasonPhrase);
+        }
+        public async Task<IEnumerable<LaptopDto>> GetSmartPhonesByModelId(int modelId)
+        {
+            var response = await _httpClient.GetAsync($"api/Laptops/modelId/{modelId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<LaptopDto>>();
+            }
+            throw new Exception("Error " + response.ReasonPhrase);
+        }
     }
 }

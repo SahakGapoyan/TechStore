@@ -11,6 +11,7 @@ namespace TechStore.Data.Interfaces
     {
         Task<IEnumerable<OS>> GetOSs(CancellationToken token=default);
         Task<OS?> GetOSById(int osId, CancellationToken token=default);
+        Task<IEnumerable<OS>> GetOsesByCategoryId(int categoryId, CancellationToken token = default);
         Task AddOS(OS oS, CancellationToken token = default);
         Task UpdateOS(OS oS);
         Task DeleteOS(OS oS);

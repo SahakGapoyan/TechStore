@@ -38,6 +38,11 @@ namespace TechStore.Data.Repositories
             return await _context.Colors.ToListAsync();
         }
 
+        public async Task<IEnumerable<Color>> GetColorssByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.Colors.Where(c => c.Products.Any(e => e.CategoryId == categoryId)).ToListAsync(token);
+        }
+
         public async Task UpdateColor(Color color)
         {
             _context.Colors.Update(color);

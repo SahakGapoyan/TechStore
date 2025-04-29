@@ -10,7 +10,7 @@ using TechStore.Data.Interfaces;
 
 namespace TechStore.Data.Repositories
 {
-    public class OSRepository:IOSRepsoitory
+    public class OSRepository : IOSRepsoitory
     {
         private readonly TechStoreDbContext _context;
 
@@ -31,7 +31,17 @@ namespace TechStore.Data.Repositories
 
         public async Task<OS?> GetOSById(int osId, CancellationToken token = default)
         {
-            return await _context.OSs.FirstOrDefaultAsync(os => os.Id == osId, token);  
+            return await _context.OSs.FirstOrDefaultAsync(os => os.Id == osId, token);
+        }
+
+        public async Task<IEnumerable<OS>> GetOsesByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.OSs
+                         .Where(o =>
+                             o.SmartPhones.Any(s => s.CategoryId == categoryId) ||
+                             o.Laptops.Any(l => l.CategoryId == categoryId)
+                         )
+                         .ToListAsync(token);
         }
 
         public async Task<IEnumerable<OS>> GetOSs(CancellationToken token = default)

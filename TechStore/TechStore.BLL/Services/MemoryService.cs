@@ -48,6 +48,12 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<MemoryDto>>(await _uow.MemoryRepository.GetMemories(token));
         }
 
+        public async Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            var memories = await _uow.MemoryRepository.GetMemoriesByCategoryId(categoryId, token);
+            return _mapper.Map<List<MemoryDto>>(memories);
+        }
+
         public async Task<MemoryDto?> GetMemoryById(int memoryId, CancellationToken token = default)
         {
             return _mapper.Map<MemoryDto>(await _uow.MemoryRepository.GetMemoryById(memoryId, token));

@@ -38,6 +38,16 @@ namespace TechStore.Data.Repositories
             return await _context.Rams.ToListAsync();
         }
 
+        public async Task<IEnumerable<Ram>> GetRamsByCategoryId(int categoryId, CancellationToken token = default)
+        {
+            return await _context.Rams
+                    .Where(r =>
+                        r.SmartPhones.Any(s => s.CategoryId == categoryId) ||
+                        r.Laptops.Any(l => l.CategoryId == categoryId)
+                    )
+                    .ToListAsync(token);
+        }
+
         public async Task UpdateRam(Ram ram)
         {
             _context.Rams.Update(ram);
