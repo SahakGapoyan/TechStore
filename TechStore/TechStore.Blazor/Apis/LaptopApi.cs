@@ -37,7 +37,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<LaptopDto>> GetLaptops()
         {
-            var response = await _httpClient.GetAsync($"api/Laptops");
+            var response = await _httpClient.GetAsync("api/Laptops");
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<IEnumerable<LaptopDto>>();
@@ -111,7 +111,7 @@ namespace TechStore.Blazor.Apis
             }
             throw new Exception("Error " + response.ReasonPhrase);
         }
-        public async Task<IEnumerable<LaptopDto>> GetSmartPhonesByModelId(int modelId)
+        public async Task<IEnumerable<LaptopDto>> GetLaptopsByModelId(int modelId)
         {
             var response = await _httpClient.GetAsync($"api/Laptops/modelId/{modelId}");
             if (response.IsSuccessStatusCode)
