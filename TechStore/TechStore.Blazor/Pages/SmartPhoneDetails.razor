@@ -12,6 +12,7 @@
 @inject IModelApi ModelApi
 @inject IColorApi ColorApi
 
+
 @if (smartphone == null)
 {
     <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
@@ -114,7 +115,7 @@ else
                                     @foreach (var color in availableColors)
                                     {
                                         <MudAvatar Size="Size.Small"
-                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0; border-radius: 0;")"
+                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0;")"
                                                    @onclick="@(async () => await OnColorSelected(color.ProductId))" />
                                     }
                                 </div>
@@ -367,16 +368,32 @@ else
             availableColors = new List<(int ProductId, string HexCode)>();
             availableMemories = new List<(int ProductId, string MemorySize)>();
 
-            foreach (var product in products)
-            {
-                var colorOfProduct = await ColorApi.GetColor(product.ColorId);
-                availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
-            }
+            var seenColorHexCodes = new HashSet<string>();
+            availableColors.Clear();
 
             foreach (var product in products)
             {
-                var memoryOfProduct = await MemoryApi.GetMemory(product.MemoryId);
-                availableMemories.Add((product.Id, memoryOfProduct?.Size ?? "no memory"));
+                var c= await ColorApi.GetColor(product.ColorId);
+                var hexCode = color?.HexCode ?? "#FFFFFF";
+
+                if (seenColorHexCodes.Add(hexCode))
+                {
+                    availableColors.Add((product.Id, hexCode));
+                }
+            }
+
+
+            var seenMemorySizes = new HashSet<string>();
+            availableMemories.Clear();
+            foreach (var product in products)
+            {
+                var m = await MemoryApi.GetMemory(product.MemoryId);
+                var memorySize = memory?.Size ?? "no memory";
+
+                if (seenMemorySizes.Add(memorySize))
+                {
+                    availableMemories.Add((product.Id, memorySize));
+                }
             }
 
             selectedProductId = smartphone.Id;
