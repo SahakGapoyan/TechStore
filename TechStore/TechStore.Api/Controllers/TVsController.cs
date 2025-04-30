@@ -48,7 +48,7 @@ namespace TechStore.Api.Controllers
         public async Task<ActionResult> UpdateTV([FromRoute] int id, [FromBody] TvUpdateDto tvUpdateDto,
             CancellationToken token)
         {
-            var result = await _tvService.UpdateProduct(id, tvUpdateDto, token);
+            var result = await _tvService.UpdateTv(id, tvUpdateDto, token);
 
             if (!result.Success)
             {

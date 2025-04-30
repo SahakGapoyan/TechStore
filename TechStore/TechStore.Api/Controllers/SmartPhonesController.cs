@@ -47,7 +47,7 @@ namespace TechStore.Api.Controllers
         public async Task<ActionResult> UpdateSmartPhone([FromRoute] int id, [FromBody] SmartPhoneUpdateDto smartPhoneUpdateDto,
             CancellationToken token)
         {
-            var result = await _smartPhoneService.UpdateProduct(id, smartPhoneUpdateDto, token);
+            var result = await _smartPhoneService.UpdateSmartPhone(id, smartPhoneUpdateDto, token);
 
             if (!result.Success)
             {

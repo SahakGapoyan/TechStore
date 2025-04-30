@@ -50,5 +50,28 @@ namespace TechStore.BLL.Services
 
             return (Result.Ok(), _mapper.Map<List<LaptopDto>>(await _uow.LaptopRepository.GetLaptopsByRamId(ramId)));
         }
+
+        public async Task<Result> UpdateLaptop(int laptopId, LaptopUpdateDto laptopUpdateDto, CancellationToken token = default)
+        {
+            var result = await base.UpdateProduct(laptopId, laptopUpdateDto, token);
+            if (!result.Success)
+                return result;
+
+            var laptop = await _uow.LaptopRepository.GetProductById(laptopId, token);
+
+            laptop.OSId = laptopUpdateDto.OsId ?? laptop.OSId;
+            laptop.MemoryId = laptopUpdateDto.MemoryId ?? laptop.MemoryId;
+            laptop.RamId = laptopUpdateDto.RamId ?? laptop.RamId;
+            laptop.ScreenSize = laptopUpdateDto.ScreenSize ?? laptop.ScreenSize;
+            laptop.Processor = laptopUpdateDto.Processor ?? laptop.Processor;
+            laptop.BatteryLifeInHours = laptopUpdateDto.BatteryLifeInHours ?? laptop.BatteryLifeInHours;
+            laptop.HasTouchScreen = laptopUpdateDto.HasTouchScreen ?? laptop.HasTouchScreen;
+            laptop.HasFingerprintSensor = laptopUpdateDto.HasFingerprintSensor ?? laptop.HasFingerprintSensor;
+
+            await _uow.LaptopRepository.UpdateProduct(laptop);
+            await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully updated.");
+        }
     }
 }

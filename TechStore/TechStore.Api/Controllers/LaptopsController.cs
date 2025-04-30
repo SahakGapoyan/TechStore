@@ -49,7 +49,7 @@ namespace TechStore.Api.Controllers
         public async Task<ActionResult> UpdateLaptop([FromRoute] int id, [FromBody] LaptopUpdateDto laptopUpdateDto,
             CancellationToken token)
         {
-            var result = await _laptopService.UpdateProduct(id, laptopUpdateDto, token);
+            var result = await _laptopService.UpdateLaptop(id, laptopUpdateDto, token);
 
             if (!result.Success)
             {

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TechStore.BLL.DtoModels;
 using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.DtoModels.Product;
+using TechStore.BLL.DtoModels.SmartPhone;
 using TechStore.BLL.Interfaces;
 using TechStore.Data.Entity;
 using TechStore.Data.Interfaces;
@@ -97,8 +98,7 @@ namespace TechStore.BLL.Services
 
             return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByModelId(modelId)));
         }
-
-        public async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
+        public  async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
         {
             var mockProduct = await _uow.GetProductRepository<TProduct>(token);
             var product = await mockProduct.GetProductById(tProductId, token);
@@ -115,11 +115,10 @@ namespace TechStore.BLL.Services
             product.Price = productUpdateDto.Price ?? product.Price;
             product.ModelId = productUpdateDto.ModelId ?? product.ModelId;
             product.ImagesUrls = productUpdateDto.ImagesUrls ?? product.ImagesUrls;
-
-            await mockProduct.UpdateProduct(product);
-            await _uow.SaveAsync(token);
-
-            return Result.Ok("Successfully updated.");
+            
+            return Result.Ok();
         }
+        
+
     }
 }
