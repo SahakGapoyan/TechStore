@@ -71,6 +71,7 @@ namespace TechStore.BLL.Services
                 return Result.Error(ErrorType.NotFound);
 
             brand.Name = brandUpdateDto.Name ?? brand.Name;
+            brand.ImageUrl=brandUpdateDto.ImageUrl?? brand.ImageUrl;    
 
             await _uow.BrandRepository.UpdateBrand(brand);
             await _uow.SaveAsync(token);

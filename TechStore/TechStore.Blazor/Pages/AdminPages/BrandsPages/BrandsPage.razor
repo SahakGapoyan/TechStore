@@ -1,0 +1,107 @@
+﻿@page "/BrandsPage"
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.Interfaces
+<h3>OSesPage</h3>
+@inject IBrandApi BrandApi
+@inject IDialogService DialogService
+
+    <div class="mt-5">
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Success"
+                   OnClick="NavigateToCreatePage"
+                   StartIcon="@Icons.Material.Filled.Add">
+            Ավելացնել Բռենդ
+        </MudButton>
+    </div>
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else if (Brands.Count == 0)
+{
+    <p>Բռենդներ չկան</p>
+}
+else
+{
+    <MudDataGrid Items="@Brands" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" />
+            <PropertyColumn Property="x => x.Name" />
+            <TemplateColumn Title="Image">
+                <CellTemplate>
+                    @if (!string.IsNullOrWhiteSpace(context.Item.ImageUrl))
+                    {
+                        <a href="@context.Item.ImageUrl" target="_blank">@context.Item.ImageUrl</a>
+                    }
+                    else
+                    {
+                        <em>Նկար չկա</em>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                                   Size="@Size.Small"
+                                   Variant="@Variant.Filled"
+                                   Color="@Color.Primary">
+                            Փոփոխել
+                        </MudButton>
+                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                   Size="@Size.Small"
+                                   Variant="@Variant.Filled"
+                                   Color="@Color.Error">
+                            Ջնջել
+                        </MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private bool isLoading = true;
+    public List<BrandDto> Brands { get; set; } = new List<BrandDto>();
+
+    override protected async Task OnInitializedAsync()
+    {
+        Brands = (await BrandApi.GetBrands()).ToList();
+        isLoading = false;
+    }
+
+    private void OpenEditPage(BrandDto brandDto)
+    {
+        if (brandDto == null)
+        {
+            return;
+        }
+        Nav.NavigateTo($"/BrandsPage/BrandEditPage/{brandDto.Id}");
+    }
+
+    private async Task ShowDeleteConfirmation(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Հաստատում",
+            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս բռենդը?",
+            yesText: "Ջնջել",
+            cancelText: "Չեղարկել");
+
+        if (result == true)
+        {
+            await DeleteAsync(id);
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await BrandApi.DeleteBrand(id);
+        Brands = (await BrandApi.GetBrands()).ToList();
+    }
+
+    private void NavigateToCreatePage()
+    {
+        Nav.NavigateTo("/BrandsPage/BrandCreatePage");
+    }
+}

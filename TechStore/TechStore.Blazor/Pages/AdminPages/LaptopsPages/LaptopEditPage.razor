@@ -1,0 +1,218 @@
+﻿@page "/LaptopsPage/LaptopEditPage/{Id::int}"
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.Interfaces
+@inject ILaptopApi LaptopApi
+@inject IRamApi RamApi
+@inject IMemoryApi MemoryApi
+@inject IOSApi OSApi
+@inject IColorApi ColorApi
+@inject ICategoryApi CategoryApi
+@inject IBrandApi BrandApi
+@inject IModelApi ModelApi
+@inject NavigationManager Nav
+
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="LaptopDto.Name" Label="Name" />
+                <MudTextField @bind-Value="LaptopDto.Processor" Label="Processor" />
+                <MudTextField @bind-Value="LaptopDto.GPU" Label="GPU" />
+                <MudTextField @bind-Value="LaptopDto.BatteryLifeInHours" Label="Battery Life In Hours" />
+                <MudTextField @bind-Value="LaptopDto.ScreenSize" Label="ScreenSize" />
+                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+
+                    @if (LaptopDto.ImagesUrls != null)
+                    {
+                        @for (int i = 0; i < LaptopDto.ImagesUrls.Count; i++)
+                        {
+                            var index = i; // Capture the current index
+                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                <MudItem xs="11">
+                                    <MudTextField @bind-Value="LaptopDto.ImagesUrls[index]"
+                                                  Variant="Variant.Outlined"
+                                                  Label="Image URL" />
+                                </MudItem>
+                                <MudItem xs="1" Class="d-flex align-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveImageUrl(index))" />
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="AddImageUrl"
+                               Class="mt-2">
+                        Add Image URL
+                    </MudButton>
+                </MudPaper>
+                <MudTextField @bind-Value="LaptopDto.Price" Label="Price" For="@(() => LaptopDto.Price)" />
+                <MudTextField @bind-Value="LaptopDto.Description" Label="Description" Lines="3" />
+                <MudCheckBox @bind-Value="LaptopDto.IsAvailable" Label="Is Available" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <!-- Dropdown selectors for IDs -->
+                <MudSelect T="int" Label="RAM" @bind-Value="LaptopDto.RamId" Variant="Variant.Outlined">
+                    @foreach (var ram in AvailableRams)
+                    {
+                        <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Memory" @bind-Value="LaptopDto.MemoryId" Variant="Variant.Outlined">
+                    @foreach (var memory in AvailableMemories)
+                    {
+                        <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Color" @bind-Value="LaptopDto.ColorId" Variant="Variant.Outlined">
+                    @foreach (var color in AvailableColors)
+                    {
+                        <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+
+                <MudSelect T="int" Label="Operating System" @bind-Value="LaptopDto.OsId" Variant="Variant.Outlined">
+                    @foreach (var os in AvailableOSes)
+                    {
+                        <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+
+                <MudSelect T="int" Label="Category" @bind-Value="LaptopDto.CategoryId" Variant="Variant.Outlined">
+                    @foreach (var category in AvailableCategories)
+                    {
+                        <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+
+                <MudSelect T="int" Label="Brand" @bind-Value="LaptopDto.BrandId" Variant="Variant.Outlined">
+                    @foreach (var brand in AvailableBrands)
+                    {
+                        <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Model" @bind-Value="LaptopDto.ModelId" Variant="Variant.Outlined">
+                    @foreach (var model in AvailableBrands)
+                    {
+                        <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                    Save Changes
+                </MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                    Cancel
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private LaptopDto LaptopDto { get; set; } = new LaptopDto();
+    private List<RamDto> AvailableRams { get; set; } = new List<RamDto>();
+    private List<MemoryDto> AvailableMemories { get; set; } = new List<MemoryDto>();
+    private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+    private List<OSDto> AvailableOSes { get; set; } = new List<OSDto>();
+    private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
+    private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
+    private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+    // Add similar lists for Category, Brand, Model
+
+    protected override async Task OnInitializedAsync()
+    {
+        LaptopDto = await LaptopApi.GetLaptop(Id);
+
+        LaptopDto.ImagesUrls ??= new List<string>();
+        if (LaptopDto.ImagesUrls.Count == 0)
+        {
+            LaptopDto.ImagesUrls.Add(string.Empty);
+        }
+        AvailableRams = (await RamApi.GetRams()).ToList();
+        AvailableMemories = (await MemoryApi.GetMemories()).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
+        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+    }
+
+    private void AddImageUrl()
+    {
+        if (LaptopDto.ImagesUrls == null)
+        {
+            LaptopDto.ImagesUrls = new List<string>();
+        }
+
+        LaptopDto.ImagesUrls.Add(string.Empty);
+    }
+
+    private void RemoveImageUrl(int index)
+    {
+        if (LaptopDto.ImagesUrls == null ||
+            index < 0 ||
+            index >= LaptopDto.ImagesUrls.Count)
+        {
+            return;
+        }
+
+        LaptopDto.ImagesUrls.RemoveAt(index);
+
+        if (LaptopDto.ImagesUrls.Count == 0)
+        {
+            LaptopDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        var laptopUpdateDto = new LaptopUpdateDto
+            {
+                Name = LaptopDto.Name,
+                Price = LaptopDto.Price,
+                ColorId = LaptopDto.ColorId,
+                RamId = LaptopDto.RamId,
+                MemoryId = LaptopDto.MemoryId,
+                OsId=LaptopDto.OsId,
+                ModelId = LaptopDto.ModelId,
+                BrandId = LaptopDto.BrandId,
+                IsAvailable = LaptopDto.IsAvailable,
+                ImagesUrls = LaptopDto.ImagesUrls,
+                Processor = LaptopDto.Processor,
+                GPU=LaptopDto.GPU,
+                HasFingerprintSensor=LaptopDto.HasFingerprintSensor,
+                CategoryId = LaptopDto.CategoryId,
+                HasTouchScreen = LaptopDto.HasTouchScreen,
+                BatteryLifeInHours=LaptopDto.BatteryLifeInHours
+            };
+        await LaptopApi.Update(Id, laptopUpdateDto);
+        Nav.NavigateTo("/LaptopsPage");
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/LaptopsPage");
+    }
+}

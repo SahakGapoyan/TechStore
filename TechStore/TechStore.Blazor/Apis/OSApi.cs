@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using TechStore.Blazor.Configuration;
-using TechStore.Blazor.DtoModels.Brand;
 using TechStore.Blazor.DtoModels.OS;
 using TechStore.Blazor.Interfaces;
 
@@ -16,6 +15,25 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
+
+        public async Task AddOS(OSAddDto osAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/OSes", osAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteOS(int osId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/OSes/id/{osId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
         public async Task<OSDto> GetOS(int id)
         {
             var response = await _httpClient.GetAsync($"api/OSes/id/{id}");
@@ -50,6 +68,15 @@ namespace TechStore.Blazor.Apis
             }
 
             throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task UpdateOS(int osId, OSUpdateDto osUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/OSes/id/{osId}", osUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
         }
     }
 }

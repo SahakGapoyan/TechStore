@@ -16,6 +16,24 @@ namespace TechStore.Blazor.Apis
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
 
+        public async Task AddColor(ColorAddDto colorAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Colors", colorAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteColor(int colorId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Colors/id/{colorId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
         public async Task<ColorDto> GetColor(int id)
         {
             var response = await _httpClient.GetAsync($"api/Colors/id/{id}");
@@ -50,6 +68,15 @@ namespace TechStore.Blazor.Apis
             }
 
             throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task UpdateColor(int colorId, ColorUpdateDto colorUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Colors/id/{colorId}", colorUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
         }
     }
 }

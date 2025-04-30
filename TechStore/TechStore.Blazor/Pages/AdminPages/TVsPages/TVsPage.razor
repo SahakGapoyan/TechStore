@@ -1,0 +1,124 @@
+﻿@page "/TVsPage"
+<h3>TVsPage</h3>
+@using TechStore.Blazor.DtoModels.Tv
+@using TechStore.Blazor.Interfaces
+@inject ITvApi TvApi
+@inject IDialogService DialogService
+
+<div class="mt-5">
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Success"
+               OnClick="NavigateToCreatePage"
+               StartIcon="@Icons.Material.Filled.Add">
+        Ավելացնել Հեռուստացույց
+    </MudButton>
+</div>
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else if (TVs.Count == 0)
+{
+    <p>Հեռուստացույցներ չկան</p>
+}
+else
+{
+    <MudDataGrid Items="@TVs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Price" />
+            <PropertyColumn Property="x => x.IsAvailable" />
+            <PropertyColumn Property="x => x.CategoryId" />
+            <PropertyColumn Property="x => x.ColorId" />
+            <PropertyColumn Property="x => x.ModelId" />
+            <PropertyColumn Property="x => x.BrandId" />
+            <PropertyColumn Property="x => x.IsAvailable" />
+            <TemplateColumn Title="Images">
+                <CellTemplate>
+                    @if (context.Item.ImagesUrls != null && context.Item.ImagesUrls.Any())
+                    {
+                        <ul>
+                            @foreach (var url in context.Item.ImagesUrls)
+                            {
+                                <li><a href="@url" target="_blank">@url</a></li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <em>Ոչ մի նկար չկա</em>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.ScreenSize" />
+            <PropertyColumn Property="x => x.PanelType" />
+            <PropertyColumn Property="x => x.IsSmartTv" />
+
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                                   Size="@Size.Small"
+                                   Variant="@Variant.Filled"
+                                   Color="@Color.Primary">
+                            Փոփոխել
+                        </MudButton>
+                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                   Size="@Size.Small"
+                                   Variant="@Variant.Filled"
+                                   Color="@Color.Error">
+                            Ջնջել
+                        </MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private bool isLoading = true;
+    public List<TvDto> TVs { get; set; } = new List<TvDto>();
+
+    override protected async Task OnInitializedAsync()
+    {
+        TVs = (await TvApi.GetTvs()).ToList();
+        isLoading = false;
+    }
+
+    private void OpenEditPage(TvDto tvDto)
+    {
+        if (tvDto == null)
+        {
+            return;
+        }
+        Nav.NavigateTo($"/TVsPage/TVEditPage/{tvDto.Id}");
+    }
+
+
+    private async Task ShowDeleteConfirmation(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Հաստատում",
+            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս հետուստացույցը?",
+            yesText: "Ջնջել",
+            cancelText: "Չեղարկել");
+
+        if (result == true)
+        {
+            await DeleteAsync(id);
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await TvApi.DeleteTv(id);
+        TVs = (await TvApi.GetTvs()).ToList();
+    }
+
+    private void NavigateToCreatePage()
+    {
+        Nav.NavigateTo("/TVsPage/TVCreatePage");
+    }
+}

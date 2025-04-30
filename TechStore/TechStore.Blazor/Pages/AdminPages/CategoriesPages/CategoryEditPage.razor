@@ -1,0 +1,68 @@
+﻿@page "/CategoriesPage/CategoryEditPage/{id:int}"
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.Interfaces
+@inject ICategoryApi CategoryApi
+
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+        Edit Category
+    </MudText>
+
+    @if (CategoryDto == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
+    }
+    else
+    {
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="CategoryDto.Name"
+                Label="Name"
+                Variant="Variant.Outlined"
+                Class="mb-4"
+                FullWidth />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="CategoryDto.Description"
+                Label="Description"
+                Variant="Variant.Outlined"
+                Class="mb-4"
+                FullWidth />
+            </MudItem>
+        </MudGrid>
+
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="SaveAsync"
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Save"
+            Class="ml-2">
+                Save Changes
+            </MudButton>
+        </div>
+    }
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    [Parameter] public int id { get; set; }
+    private CategoryDto CategoryDto { get; set; } = new CategoryDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CategoryDto = await CategoryApi.GetCategory(id);
+    }
+
+    private async Task SaveAsync()
+    {
+        var categoryUpdateDto = new CategoryUpdateDto
+        {
+                Name = CategoryDto.Name,
+                Description = CategoryDto.Description
+            };
+        await CategoryApi.UpdateCategory(id, categoryUpdateDto);
+        Nav.NavigateTo("/categoriesPage");
+    }
+}

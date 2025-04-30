@@ -1,0 +1,307 @@
+﻿@page "/SmartphonesPage/SmartphoneCreatePage"
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.SmartPhone
+@using TechStore.Blazor.Interfaces
+@inject ISmartPhoneApi SmartPhoneApi
+@inject IRamApi RamApi
+@inject IMemoryApi MemoryApi
+@inject IOSApi OSApi
+@inject IColorApi ColorApi
+@inject ICategoryApi CategoryApi
+@inject IBrandApi BrandApi
+@inject IModelApi ModelApi
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+        Create New Smartphone
+    </MudText>
+
+    <MudGrid>
+        <!-- Left Column -->
+        <MudItem xs="12" md="6" Class="pr-md-4">
+            <MudTextField @bind-Value="SmartPhoneAddDto.Name"
+                          Label="Name"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth
+                          Required />
+
+            <MudTextField @bind-Value="SmartPhoneAddDto.Price"
+                          Label="Price"
+                          Variant="Variant.Outlined"
+                          For="@(() => SmartPhoneAddDto.Price)"
+                          Class="mb-4"
+                          FullWidth
+                          Required />
+
+            <MudTextField @bind-Value="SmartPhoneAddDto.Description"
+                          Label="Description"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          Class="mb-4"
+                          FullWidth />
+
+            <MudCheckBox @bind-Value="SmartPhoneAddDto.IsAvailable"
+                         Label="Is Available"
+                         Class="mb-4" />
+
+            <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+
+                @if (SmartPhoneAddDto.ImagesUrls != null)
+                {
+                    @for (int i = 0; i < SmartPhoneAddDto.ImagesUrls.Count; i++)
+                    {
+                        var index = i; // Capture the current index
+                        <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                            <MudItem xs="11">
+                                <MudTextField @bind-Value="SmartPhoneAddDto.ImagesUrls[index]"
+                                              Variant="Variant.Outlined"
+                                              Label="Image URL" />
+                            </MudItem>
+                            <MudItem xs="1" Class="d-flex align-center">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               OnClick="@(() => RemoveImageUrl(index))" />
+                            </MudItem>
+                        </MudGrid>
+                    }
+                }
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="AddImageUrl"
+                           Class="mt-2">
+                    Add Image URL
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+
+
+        <!-- Right Column -->
+        <MudItem xs="12" md="6">
+            <!-- Dropdown selectors -->
+            <MudSelect T="int"
+                       Label="Category"
+                       @bind-Value="SmartPhoneAddDto.CategoryId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var category in AvailableCategories)
+                {
+                    <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="int"
+                       Label="Brand"
+                       @bind-Value="SmartPhoneAddDto.BrandId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var brand in AvailableBrands)
+                {
+                    <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="int"
+                       Label="Model"
+                       @bind-Value="SmartPhoneAddDto.ModelId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var model in AvailableModels)
+                {
+                    <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+        <!-- Full width technical specs row -->
+        <MudItem xs="12" Class="mt-4">
+            <MudText Typo="Typo.subtitle1" Class="mb-3">Technical Specifications</MudText>
+
+            <MudGrid>
+                <MudItem xs="12" md="4" Class="pr-md-2">
+                    <MudSelect T="int"
+                               Label="RAM"
+                               @bind-Value="SmartPhoneAddDto.RamId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var ram in AvailableRams)
+                        {
+                            <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="px-md-2">
+                    <MudSelect T="int"
+                               Label="Memory"
+                               @bind-Value="SmartPhoneAddDto.MemoryId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var memory in AvailableMemories)
+                        {
+                            <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="pl-md-2">
+                    <MudSelect T="int"
+                               Label="Operating System"
+                               @bind-Value="SmartPhoneAddDto.OSId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var os in AvailableOSs)
+                        {
+                            <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <!-- Full width additional specs -->
+        <MudItem xs="12">
+            <MudGrid>
+                <MudItem xs="12" md="4" Class="pr-md-2">
+                    <MudTextField @bind-Value="SmartPhoneAddDto.ScreenSize"
+                                  Label="Screen Size"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="px-md-2">
+                    <MudTextField @bind-Value="SmartPhoneAddDto.Processor"
+                                  Label="Processor"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="pl-md-2">
+                    <MudSelect T="int"
+                               Label="Color"
+                               @bind-Value="SmartPhoneAddDto.ColorId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var color in AvailableColors)
+                        {
+                            <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <!-- Checkboxes -->
+        <MudItem xs="12">
+            <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.Has5G" Label="5G Support" Class="mr-4" />
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.IsWaterResistant" Label="Water Resistant" Class="mr-4" />
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.Wifi" Label="Wi-Fi" />
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton OnClick="NavigateBack"
+                   Color="Color.Default"
+                   Variant="Variant.Text"
+                   Class="mr-2">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="CreateSmartphone"
+                   Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Save"
+                   Class="ml-2">
+            Create Smartphone
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private SmartPhoneAddDto SmartPhoneAddDto { get; set; } = new SmartPhoneAddDto();
+
+    // Lists for dropdown options
+    private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+    private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
+    private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
+    private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+    private List<RamDto> AvailableRams { get; set; } = new List<RamDto>();
+    private List<MemoryDto> AvailableMemories { get; set; } = new List<MemoryDto>();
+    private List<OSDto> AvailableOSs { get; set; } = new List<OSDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load all dropdown options
+        AvailableCategories = (await CategoryApi.GetCategories()).ToList();
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
+        AvailableRams = (await RamApi.GetRams()).ToList();
+        AvailableMemories = (await MemoryApi.GetMemories()).ToList();
+        AvailableOSs = (await OSApi.GetOSes()).ToList();
+
+        SmartPhoneAddDto.ImagesUrls ??= new List<string>();
+        if (SmartPhoneAddDto.ImagesUrls.Count == 0)
+        {
+            SmartPhoneAddDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+    private void AddImageUrl()
+    {
+        if (SmartPhoneAddDto.ImagesUrls == null)
+        {
+            SmartPhoneAddDto.ImagesUrls = new List<string>();
+        }
+
+        SmartPhoneAddDto.ImagesUrls.Add(string.Empty);
+    }
+
+    private void RemoveImageUrl(int index)
+    {
+        if (SmartPhoneAddDto.ImagesUrls == null ||
+            index < 0 ||
+            index >= SmartPhoneAddDto.ImagesUrls.Count)
+        {
+            return;
+        }
+
+        SmartPhoneAddDto.ImagesUrls.RemoveAt(index);
+
+        if (SmartPhoneAddDto.ImagesUrls.Count == 0)
+        {
+            SmartPhoneAddDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private async Task CreateSmartphone()
+    {
+        await SmartPhoneApi.AddSmartPhone(SmartPhoneAddDto);
+        Nav.NavigateTo("/SmartphonesPage");
+    }
+
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("/SmartphonesPage");
+    }
+}

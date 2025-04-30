@@ -15,6 +15,25 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
+
+        public async Task AddTv(TvAddDto tvAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Tvs", tvAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteTv(int tvId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Tvs/id/{tvId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
         public async Task<TvDto> GetTv(int id)
         {
             var response = await _httpClient.GetAsync($"api/Tvs/{id}");
@@ -73,6 +92,15 @@ namespace TechStore.Blazor.Apis
             }
 
             throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Tvs/id/ {tvId}", tvUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
         }
     }
 }

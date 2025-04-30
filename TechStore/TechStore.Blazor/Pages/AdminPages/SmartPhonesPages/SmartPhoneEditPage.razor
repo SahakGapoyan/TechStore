@@ -1,0 +1,220 @@
+﻿@page "/SmartphonesPage/SmartphoneEditPage/{Id::int}"
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.SmartPhone
+@using TechStore.Blazor.Interfaces
+@inject ISmartPhoneApi SmartPhoneApi
+@inject IRamApi RamApi
+@inject IMemoryApi MemoryApi
+@inject IOSApi OSApi
+@inject IColorApi ColorApi
+@inject ICategoryApi CategoryApi
+@inject IBrandApi BrandApi
+@inject IModelApi ModelApi
+@inject NavigationManager Nav
+
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="SmartPhoneDto.Name" Label="Name" />
+                <MudTextField @bind-Value="SmartPhoneDto.ScreenSize" Label="ScreenSize" />
+                <MudTextField @bind-Value="SmartPhoneDto.Processor" Label="Processor" />
+                <MudTextField @bind-Value="SmartPhoneDto.BatteryCapacity" Label="Battery Capacity" />
+                <MudTextField @bind-Value="SmartPhoneDto.CameraMegaPixel" Label="Battery CameraMegapixel" />
+                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+
+                    @if (SmartPhoneDto.ImagesUrls != null)
+                    {
+                        @for (int i = 0; i < SmartPhoneDto.ImagesUrls.Count; i++)
+                        {
+                            var index = i; // Capture the current index
+                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                <MudItem xs="11">
+                                    <MudTextField @bind-Value="SmartPhoneDto.ImagesUrls[index]"
+                                                  Variant="Variant.Outlined"
+                                                  Label="Image URL" />
+                                </MudItem>
+                                <MudItem xs="1" Class="d-flex align-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveImageUrl(index))" />
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="AddImageUrl"
+                               Class="mt-2">
+                        Add Image URL
+                    </MudButton>
+                </MudPaper>
+                <MudTextField @bind-Value="SmartPhoneDto.Price" Label="Price" For="@(() => SmartPhoneDto.Price)" />
+                <MudTextField @bind-Value="SmartPhoneDto.Description" Label="Description" Lines="3" />
+                <MudCheckBox @bind-Value="SmartPhoneDto.IsAvailable" Label="Is Available" />
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <!-- Dropdown selectors for IDs -->
+                <MudSelect T="int" Label="RAM" @bind-Value="SmartPhoneDto.RamId" Variant="Variant.Outlined">
+                    @foreach (var ram in AvailableRams)
+                    {
+                        <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Memory" @bind-Value="SmartPhoneDto.MemoryId" Variant="Variant.Outlined">
+                    @foreach (var memory in AvailableMemories)
+                    {
+                        <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Operating System" @bind-Value="SmartPhoneDto.OSId" Variant="Variant.Outlined">
+                    @foreach (var os in AvailableOSs)
+                    {
+                        <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Color" @bind-Value="SmartPhoneDto.ColorId" Variant="Variant.Outlined">
+                    @foreach (var color in AvailableColors)
+                    {
+                        <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+
+                <MudSelect T="int" Label="Category" @bind-Value="SmartPhoneDto.CategoryId" Variant="Variant.Outlined">
+                    @foreach (var category in AvailableCategories)
+                    {
+                        <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+
+                <MudSelect T="int" Label="Brand" @bind-Value="SmartPhoneDto.BrandId" Variant="Variant.Outlined">
+                    @foreach (var brand in AvailableBrands)
+                    {
+                        <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <MudSelect T="int" Label="Model" @bind-Value="SmartPhoneDto.ModelId" Variant="Variant.Outlined">
+                    @foreach (var model in AvailableModels)
+                    {
+                        <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                    Save Changes
+                </MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                    Cancel
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private SmartPhoneDto SmartPhoneDto { get; set; } = new SmartPhoneDto();
+    private List<RamDto> AvailableRams { get; set; } = new List<RamDto>();
+    private List<MemoryDto> AvailableMemories { get; set; } = new List<MemoryDto>();
+    private List<OSDto> AvailableOSs { get; set; } = new List<OSDto>();
+    private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+    private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
+    private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
+    private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+
+    // Add similar lists for Category, Brand, Model
+
+    protected override async Task OnInitializedAsync()
+    {
+        SmartPhoneDto = await SmartPhoneApi.GetSmartPhone(Id);
+        SmartPhoneDto.ImagesUrls ??= new List<string>();
+        if (SmartPhoneDto.ImagesUrls.Count == 0)
+        {
+            SmartPhoneDto.ImagesUrls.Add(string.Empty);
+        }
+
+        AvailableRams = (await RamApi.GetRams()).ToList();
+        AvailableMemories = (await MemoryApi.GetMemories()).ToList();
+        AvailableOSs = (await OSApi.GetOSes()).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
+        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+    }
+
+    private async Task SaveChanges()
+    {
+        var smartPhoneUpdateDto = new SmartPhoneUpdateDto
+            {
+                Name = SmartPhoneDto.Name,
+                Price = SmartPhoneDto.Price,
+                BatteryCapacity = SmartPhoneDto.BatteryCapacity,
+                ColorId = SmartPhoneDto.ColorId,
+                RamId = SmartPhoneDto.RamId,
+                MemoryId = SmartPhoneDto.MemoryId,
+                ModelId = SmartPhoneDto.ModelId,
+                BrandId = SmartPhoneDto.BrandId,
+                IsAvailable = SmartPhoneDto.IsAvailable,
+                OSId = SmartPhoneDto.OSId,
+                CameraMegaPixel = SmartPhoneDto.CameraMegaPixel,
+                ScreenSize = SmartPhoneDto.ScreenSize,
+                Has5G = SmartPhoneDto.Has5G,
+                ImagesUrls = SmartPhoneDto.ImagesUrls,
+                IsWaterResistant = SmartPhoneDto.IsWaterResistant,
+                Processor = SmartPhoneDto.Processor,
+                Wifi = SmartPhoneDto.Wifi,
+                CategoryId = SmartPhoneDto.CategoryId
+            };
+        await SmartPhoneApi.Update(Id, smartPhoneUpdateDto);
+        Nav.NavigateTo("/SmartphonesPage");
+    }
+    private void AddImageUrl()
+    {
+        if (SmartPhoneDto.ImagesUrls == null)
+        {
+            SmartPhoneDto.ImagesUrls = new List<string>();
+        }
+
+        SmartPhoneDto.ImagesUrls.Add(string.Empty);
+    }
+
+    private void RemoveImageUrl(int index)
+    {
+        if (SmartPhoneDto.ImagesUrls == null ||
+            index < 0 ||
+            index >= SmartPhoneDto.ImagesUrls.Count)
+        {
+            return;
+        }
+
+        SmartPhoneDto.ImagesUrls.RemoveAt(index);
+
+        if (SmartPhoneDto.ImagesUrls.Count == 0)
+        {
+            SmartPhoneDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/SmartphonesPage");
+    }
+}
