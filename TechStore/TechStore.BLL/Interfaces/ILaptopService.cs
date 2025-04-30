@@ -14,5 +14,7 @@ namespace TechStore.BLL.Interfaces
         Task<(Result, IEnumerable<LaptopDto>)> GetLaptopsByRamId(int ramId, CancellationToken token = default);
         Task<(Result, IEnumerable<LaptopDto>)> GetLaptopsByMemoryId(int memoryId, CancellationToken token = default);
         Task<(Result, IEnumerable<LaptopDto>)> GetLaptopsByOSId(int osId, CancellationToken token = default);
+        Task<Result> UpdateLaptop(int laptopId, LaptopUpdateDto laptopUpdateDto, CancellationToken token = default);
+
     }
 }
