@@ -1,0 +1,60 @@
+﻿@page "/MemoriesPage/MemoryEditPage/{id::int}"
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.Interfaces
+@inject IMemoryApi MemoryApi
+
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+        Edit Memory
+    </MudText>
+
+    @if (MemoryDto == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
+    }
+    else
+    {
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="MemoryDto.Size"
+                              Label="Size"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"
+                              FullWidth />
+            </MudItem>
+        </MudGrid>
+
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="SaveAsync"
+                       Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Save"
+                       Class="ml-2">
+                Save Changes
+            </MudButton>
+        </div>
+    }
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    [Parameter] public int id { get; set; }
+    private MemoryDto MemoryDto { get; set; } = new MemoryDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        MemoryDto = await MemoryApi.GetMemory(id);
+    }
+
+    private async Task SaveAsync()
+    {
+        var memoryUpdateDto = new MemoryUpdateDto
+            {
+                Size = MemoryDto.Size
+            };
+        await MemoryApi.UpdateMemory(id, memoryUpdateDto);
+        Nav.NavigateTo("/MemoriesPage");
+    }
+}

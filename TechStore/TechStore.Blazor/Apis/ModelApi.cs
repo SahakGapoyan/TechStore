@@ -15,6 +15,25 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
+
+        public async Task AddModel(ModelAddDto modelAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Models", modelAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteModel(int modelId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Models/id/{modelId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
         public async Task<ModelDto> GetModel(int id)
         {
             var response = await _httpClient.GetAsync($"api/Models/id/{id}");
@@ -49,6 +68,15 @@ namespace TechStore.Blazor.Apis
             }
 
             throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task UpdateModel(int modelId, ModelUpdateDto modelUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Models/id/{modelId}", modelUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
         }
     }
 }

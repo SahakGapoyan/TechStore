@@ -1,0 +1,60 @@
+﻿@page "/ColorsPage/ColorCreatePage"
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.Interfaces
+@inject IColorApi ColorApi
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+        Create New Color
+    </MudText>
+
+    <MudGrid>
+        <MudItem xs="12" md="6" Class="pr-md-4">
+            <MudTextField @bind-Value="ColorAddDto.Name"
+                          Label="Name"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField @bind-Value="ColorAddDto.HexCode"
+                          Label="HexCode"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth />
+        </MudItem>
+    </MudGrid>
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton OnClick="NavigateBack"
+                   Color="Color.Default"
+                   Variant="Variant.Text"
+                   Class="mr-2">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="CreateAsync"
+                   Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Save"
+                   Class="ml-2">
+            Create Model
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private ColorAddDto ColorAddDto { get; set; } = new ColorAddDto();
+
+    private async Task CreateAsync()
+    {
+        await ColorApi.AddColor(ColorAddDto);
+        Nav.NavigateTo("/ColorsPage");
+    }
+
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("/ColorsPage");
+    }
+}

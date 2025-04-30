@@ -1,0 +1,67 @@
+﻿@page "/ModelsPage/ModelCreatePage"
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.Interfaces
+@inject IModelApi ModelApi
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+        Create New Model
+    </MudText>
+
+    <MudGrid>
+        <MudItem xs="12" md="6" Class="pr-md-4">
+            <MudTextField @bind-Value="ModelAddDto.Name"
+                          Label="Name"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField @bind-Value="ModelAddDto.AnnouncementYear"
+                          Label="AnnouncementYear"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField @bind-Value="ModelAddDto.Stock"
+                          Label="Stock"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth />
+        </MudItem>
+    </MudGrid>
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton OnClick="NavigateBack"
+                   Color="Color.Default"
+                   Variant="Variant.Text"
+                   Class="mr-2">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="CreateAsync"
+                   Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Save"
+                   Class="ml-2">
+            Create Model
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private ModelAddDto ModelAddDto { get; set; } = new ModelAddDto();
+
+    private async Task CreateAsync()
+    {
+        await ModelApi.AddModel(ModelAddDto);
+        Nav.NavigateTo("/ModelsPage");
+    }
+
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("/ModelsPage");
+    }
+}

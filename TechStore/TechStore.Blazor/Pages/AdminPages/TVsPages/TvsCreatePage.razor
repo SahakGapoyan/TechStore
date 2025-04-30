@@ -1,0 +1,246 @@
+﻿@page "/TVsPage/TVCreatePage"
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Tv
+@using TechStore.Blazor.Interfaces
+@inject ITvApi TvApi
+@inject IColorApi ColorApi
+@inject ICategoryApi CategoryApi
+@inject IBrandApi BrandApi
+@inject IModelApi ModelApi
+
+<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
+    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+        Create New Laptop
+    </MudText>
+
+    <MudGrid>
+        <!-- Left Column -->
+        <MudItem xs="12" md="6" Class="pr-md-4">
+            <MudTextField @bind-Value="TvAddDto.Name"
+                          Label="Name"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          FullWidth
+                          Required />
+
+            <MudTextField @bind-Value="TvAddDto.Price"
+                          Label="Price"
+                          Variant="Variant.Outlined"
+                          For="@(() => TvAddDto.Price)"
+                          Class="mb-4"
+                          FullWidth
+                          Required />>
+
+            <MudTextField @bind-Value="TvAddDto.Description"
+                          Label="Description"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          Class="mb-4"
+                          FullWidth />
+
+
+            <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+
+                @if (TvAddDto.ImagesUrls != null)
+                {
+                    @for (int i = 0; i < TvAddDto.ImagesUrls.Count; i++)
+                    {
+                        var index = i; // Capture the current index
+                        <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                            <MudItem xs="11">
+                                <MudTextField @bind-Value="TvAddDto.ImagesUrls[index]"
+                                              Variant="Variant.Outlined"
+                                              Label="Image URL" />
+                            </MudItem>
+                            <MudItem xs="1" Class="d-flex align-center">
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                               Color="Color.Error"
+                                               OnClick="@(() => RemoveImageUrl(index))" />
+                            </MudItem>
+                        </MudGrid>
+                    }
+                }
+
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="AddImageUrl"
+                           Class="mt-2">
+                    Add Image URL
+                </MudButton>
+            </MudPaper>
+
+        </MudItem>
+
+        <!-- Right Column -->
+        <MudItem xs="12" md="6">
+            <!-- Dropdown selectors -->
+            <MudSelect T="int"
+                       Label="Category"
+                       @bind-Value="TvAddDto.CategoryId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var category in AvailableCategories)
+                {
+                    <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="int"
+                       Label="Brand"
+                       @bind-Value="TvAddDto.BrandId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var brand in AvailableBrands)
+                {
+                    <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="int"
+                       Label="Model"
+                       @bind-Value="TvAddDto.ModelId"
+                       Variant="Variant.Outlined"
+                       Class="mb-4"
+                       FullWidth>
+                @foreach (var model in AvailableModels)
+                {
+                    <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+       
+        <!-- Full width additional specs -->
+        <MudItem xs="12">
+            <MudGrid>
+                <MudItem xs="12" md="4" Class="pr-md-2">
+                    <MudTextField @bind-Value="TvAddDto.ScreenSize"
+                                  Label="Screen Size"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="px-md-2">
+                    <MudTextField @bind-Value="TvAddDto.PanelType"
+                                  Label="Panel Type"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="pl-md-2">
+                    <MudSelect T="int"
+                               Label="Color"
+                               @bind-Value="TvAddDto.ColorId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var color in AvailableColors)
+                        {
+                            <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+
+        <!-- Checkboxes -->
+        <MudItem xs="12">
+            <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
+                <MudCheckBox @bind-Value="TvAddDto.IsSmartTv" Label="Smart Tv" Class="mr-4" />
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+
+    <div class="d-flex justify-end mt-4">
+        <MudButton OnClick="NavigateBack"
+                   Color="Color.Default"
+                   Variant="Variant.Text"
+                   Class="mr-2">
+            Cancel
+        </MudButton>
+        <MudButton OnClick="CreateSmartphone"
+                   Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.Save"
+                   Class="ml-2">
+            Create Laptop
+        </MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private TvAddDto TvAddDto { get; set; } = new TvAddDto();
+
+    // Lists for dropdown options
+    private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+    private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
+    private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
+    private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AvailableCategories = (await CategoryApi.GetCategories()).ToList();
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
+
+        TvAddDto.ImagesUrls ??= new List<string>();
+        if (TvAddDto.ImagesUrls.Count == 0)
+        {
+            TvAddDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private void AddImageUrl()
+    {
+        if (TvAddDto.ImagesUrls == null)
+        {
+            TvAddDto.ImagesUrls = new List<string>();
+        }
+
+        TvAddDto.ImagesUrls.Add(string.Empty);
+    }
+
+    private void RemoveImageUrl(int index)
+    {
+        if (TvAddDto.ImagesUrls == null ||
+            index < 0 ||
+            index >= TvAddDto.ImagesUrls.Count)
+        {
+            return;
+        }
+
+        TvAddDto.ImagesUrls.RemoveAt(index);
+
+        if (TvAddDto.ImagesUrls.Count == 0)
+        {
+            TvAddDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+
+    private async Task CreateSmartphone()
+    {
+        await TvApi.AddTv(TvAddDto);
+        Nav.NavigateTo("/TVsPage");
+    }
+
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("/TVsPage");
+    }
+}

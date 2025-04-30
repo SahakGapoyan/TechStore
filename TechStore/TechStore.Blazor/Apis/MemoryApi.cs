@@ -50,5 +50,32 @@ namespace TechStore.Blazor.Apis
 
             throw new Exception("Error" + response.ReasonPhrase);
         }
+
+        public async Task AddMemory(MemoryAddDto memoryAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Memories", memoryAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Memories/id/{memoryId}", memoryUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteMemory(int memoryId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Memories/id/{memoryId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
     }
 }

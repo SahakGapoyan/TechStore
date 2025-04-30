@@ -1,0 +1,97 @@
+﻿@page "/ModelsPage"
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.Interfaces
+<h3>ModelsPage</h3>
+@inject IModelApi ModelApi
+@inject IDialogService DialogService
+
+    <div class="mt-5">
+        <MudButton Variant="Variant.Filled"
+        Color="Color.Success"
+        OnClick="NavigateToCreatePage"
+        StartIcon="@Icons.Material.Filled.Add">
+            Ստեղծել նոր մոդել
+        </MudButton>
+    </div>
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else if (Models.Count == 0)
+{
+    <p>Մոդելներ չկան</p>
+}
+else
+{
+    <MudDataGrid Items="@Models" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.AnnouncementYear" />
+            <PropertyColumn Property="x => x.Stock" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                        Size="@Size.Small"
+                        Variant="@Variant.Filled"
+                        Color="@Color.Primary">
+                            Փոփոխել
+                        </MudButton>
+                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                   Size="@Size.Small"
+                                   Variant="@Variant.Filled"
+                                   Color="@Color.Error">
+                            Ջնջել
+                        </MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+}
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private bool isLoading = true;
+    public List<ModelDto> Models { get; set; } = new List<ModelDto>();
+    override protected async Task OnInitializedAsync()
+    {
+        Models = (await ModelApi.GetModels()).ToList();
+        isLoading = false;
+    }
+
+    private void OpenEditPage(ModelDto modelDto)
+    {
+        if (modelDto == null)
+        {
+            return;
+        }
+        Nav.NavigateTo($"/ModelsPage/ModelsEditPage/{modelDto.Id}");
+    }
+
+
+    private async Task ShowDeleteConfirmation(int id)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Հաստատում",
+            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս մոդելը?",
+            yesText: "Ջնջել",
+            cancelText: "Չեղարկել");
+
+        if (result == true)
+        {
+            await DeleteAsync(id);
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await ModelApi.DeleteModel(id);
+        Models = (await ModelApi.GetModels()).ToList();
+    }
+
+    private void NavigateToCreatePage()
+    {
+        Nav.NavigateTo("/ModelsPage/ModelCreatePage");
+    }
+}

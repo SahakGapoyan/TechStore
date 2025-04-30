@@ -1,0 +1,144 @@
+﻿@page "/TVsPage/TVEditPage/{Id::int}"
+<h3>TVsEditPage</h3>
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.Tv
+@using TechStore.Blazor.Interfaces
+@inject ITvApi TvApi
+@inject IColorApi ColorApi
+@inject ICategoryApi CategoryApi
+@inject IBrandApi BrandApi
+@inject IModelApi ModelApi
+@inject NavigationManager Nav
+
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="TvDto.Name" Label="Name" />
+                <MudTextField @bind-Value="TvDto.PanelType" Label="GPU" />
+                <MudTextField @bind-Value="TvDto.ScreenSize" Label="ScreenSize" />
+                <MudTextField @bind-Value="TvDto.Price" Label="Price" For="@(() => TvDto.Price)" />
+                <MudTextField @bind-Value="TvDto.Description" Label="Description" Lines="3" />
+                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+
+                    @if (TvDto.ImagesUrls != null)
+                    {
+                        @for (int i = 0; i < TvDto.ImagesUrls.Count; i++)
+                        {
+                            var index = i;
+                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                <MudItem xs="11">
+                                    <MudTextField @bind-Value="TvDto.ImagesUrls[index]"
+                                                  Variant="Variant.Outlined"
+                                                  Label="Image URL" />
+                                </MudItem>
+                                <MudItem xs="1" Class="d-flex align-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveImageUrl(index))" />
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    }
+
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="AddImageUrl"
+                               Class="mt-2">
+                        Add Image URL
+                    </MudButton>
+                </MudPaper>
+                <MudCheckBox @bind-Value="TvDto.IsAvailable" Label="Is Available" />
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                    Save Changes
+                </MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                    Cancel
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private TvDto TvDto { get; set; } = new TvDto();
+    private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+    private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
+    private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
+    private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        TvDto = await TvApi.GetTv(Id);
+        TvDto.ImagesUrls ??= new List<string>();
+        if (TvDto.ImagesUrls.Count == 0)
+        {
+            TvDto.ImagesUrls.Add(string.Empty);
+        }
+        AvailableColors = (await ColorApi.GetColors()).ToList();
+        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+    }
+
+    private void AddImageUrl()
+    {
+        if (TvDto.ImagesUrls == null)
+        {
+            TvDto.ImagesUrls = new List<string>();
+        }
+
+        TvDto.ImagesUrls.Add(string.Empty);
+    }
+
+    private void RemoveImageUrl(int index)
+    {
+        if (TvDto.ImagesUrls == null ||
+            index < 0 ||
+            index >= TvDto.ImagesUrls.Count)
+        {
+            return;
+        }
+
+        TvDto.ImagesUrls.RemoveAt(index);
+
+        if (TvDto.ImagesUrls.Count == 0)
+        {
+            TvDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        var tvUpdateDto = new TvUpdateDto
+            {
+                Name = TvDto.Name,
+                Price = TvDto.Price,
+                ColorId = TvDto.ColorId,
+                ModelId = TvDto.ModelId,
+                BrandId = TvDto.BrandId,
+                IsAvailable = TvDto.IsAvailable,
+                ImagesUrls = TvDto.ImagesUrls,
+                PanelType = TvDto.PanelType,
+                CategoryId = TvDto.CategoryId,
+                IsSmartTv = TvDto.IsSmartTv
+            };
+        await TvApi.UpdateTv(Id, tvUpdateDto);
+        Nav.NavigateTo("/TVsPage");
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/TVsPage");
+    }
+}

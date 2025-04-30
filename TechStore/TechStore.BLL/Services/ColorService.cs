@@ -66,6 +66,7 @@ namespace TechStore.BLL.Services
                 return Result.Error(ErrorType.NotFound);
             }
             color.Name = colorUpdateDto.Name ?? color.Name;
+            color.HexCode=colorUpdateDto.HexCode ?? color.HexCode;
             await _uow.ColorRepository.UpdateColor(color);
             await _uow.SaveAsync(token);
             return Result.Ok("Successfully Updated");

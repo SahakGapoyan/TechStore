@@ -15,6 +15,25 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
+
+        public async Task AddRam(RamAddDto ramAddDto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Rams", ramAddDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
+        public async Task DeleteRam(int ramId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Rams/id/{ramId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
+        }
+
         public async Task<RamDto> GetRam(int id)
         {
             var response = await _httpClient.GetAsync($"api/Rams/id/{id}");
@@ -49,6 +68,15 @@ namespace TechStore.Blazor.Apis
             }
 
             throw new Exception("Error" + response.ReasonPhrase);
+        }
+
+        public async Task UpdateRam(int ramId, RamUpdateDto ramUpdateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Rams/id/{ramId}", ramUpdateDto);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error " + response.ReasonPhrase);
+            }
         }
     }
 }

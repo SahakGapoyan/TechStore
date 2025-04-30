@@ -117,7 +117,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task Update(int id,SmartPhoneUpdateDto smartPhoneUpdateDto)
         {
-            var response = await _httpClient.PutAsJsonAsync("api/SmartPhones/id/{id}", smartPhoneUpdateDto);
+            var response = await _httpClient.PutAsJsonAsync($"api/SmartPhones/id/{id}", smartPhoneUpdateDto);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
