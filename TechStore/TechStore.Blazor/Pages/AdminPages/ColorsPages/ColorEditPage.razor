@@ -1,5 +1,4 @@
-﻿@page "/ColorsPage/ColorsEditPage/{id::int}"
-<h3>ColorsEditPage</h3>
+﻿@page "/colors/edit/{id::int}"
 @using TechStore.Blazor.DtoModels.Color
 @using TechStore.Blazor.Interfaces
 @inject IColorApi ColorApi
@@ -8,7 +7,7 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Edit Color
+        Խմբագրել Գույնը
     </MudText>
 
     @if (ColorDto == null)
@@ -20,14 +19,14 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
                 <MudTextField @bind-Value="ColorDto.Name"
-                              Label="Name"
+                              Label="Անունը"
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               FullWidth />
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudTextField @bind-Value="ColorDto.HexCode"
-                              Label="HexCode"
+                              Label="Գույնի կոդը"
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               FullWidth />
@@ -40,7 +39,7 @@
                        Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Save"
                        Class="ml-2">
-                Save Changes
+                Պահպանել
             </MudButton>
         </div>
     }
@@ -64,6 +63,6 @@
                 HexCode = ColorDto.HexCode
             };
         await ColorApi.UpdateColor(id, colorUpdateDto);
-        Nav.NavigateTo("/colorsPage");
+        Nav.NavigateTo("colors");
     }
 }

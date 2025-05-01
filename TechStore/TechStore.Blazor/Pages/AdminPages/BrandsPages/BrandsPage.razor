@@ -1,65 +1,85 @@
-﻿@page "/BrandsPage"
+﻿@page "/brands"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.Interfaces
-<h3>OSesPage</h3>
 @inject IBrandApi BrandApi
 @inject IDialogService DialogService
 
-    <div class="mt-5">
+<MudGrid>
+    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight: 600;">Բրենդներ</MudText>
+
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    OnClick="NavigateToCreatePage"
                    StartIcon="@Icons.Material.Filled.Add">
-            Ավելացնել Բռենդ
+            Ավելացնել Բրենդ
         </MudButton>
-    </div>
-@if (isLoading)
-{
-    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-}
-else if (Brands.Count == 0)
-{
-    <p>Բռենդներ չկան</p>
-}
-else
-{
-    <MudDataGrid Items="@Brands" Filterable="false" SortMode="@SortMode.None" Groupable="false">
-        <Columns>
-            <PropertyColumn Property="x => x.Id" />
-            <PropertyColumn Property="x => x.Name" />
-            <TemplateColumn Title="Image">
-                <CellTemplate>
-                    @if (!string.IsNullOrWhiteSpace(context.Item.ImageUrl))
-                    {
-                        <a href="@context.Item.ImageUrl" target="_blank">@context.Item.ImageUrl</a>
-                    }
-                    else
-                    {
-                        <em>Նկար չկա</em>
-                    }
-                </CellTemplate>
-            </TemplateColumn>
-            <TemplateColumn CellClass="d-flex justify-end">
-                <CellTemplate>
-                    <MudStack Row>
-                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Primary">
-                            Փոփոխել
-                        </MudButton>
-                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Error">
-                            Ջնջել
-                        </MudButton>
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
-}
+    </MudContainer>
+
+    <MudContainer Class="d-flex justify-space-between align-center"
+                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        @if (isLoading)
+        {
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        }
+        else if (Brands.Count == 0)
+        {
+            <p>Բրենդներ չկան</p>
+        }
+        else
+        {
+            <MudDataGrid Items="@Brands"
+                         Style="width: 100%;"
+                         Filterable="false"
+                         SortMode="@SortMode.None"
+                         Groupable="false">
+
+                <Columns>
+                    <PropertyColumn Property="x => x.Id"
+                                    Title="Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Name" 
+                                    Title="Անուն"
+                                    HeaderStyle="font-weight: 600;" />
+                    <TemplateColumn Title="Նկարի հղում"
+                                    HeaderStyle="font-weight: 600;">
+                        <CellTemplate>
+                            @if (!string.IsNullOrWhiteSpace(context.Item.ImageUrl))
+                            {
+                                <a href="@context.Item.ImageUrl" target="_blank">@context.Item.ImageUrl</a>
+                            }
+                            else
+                            {
+                                <em>Նկար չկա</em>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <TemplateColumn Title="Գործողություններ"
+                                    HeaderStyle="font-weight: 600;"
+                                    CellStyle="vertical-align: bottom; height: 100%;">
+                        <CellTemplate>
+                            <div style="display: flex; gap: 8px; align-items: flex-end; height: 100%;">
+                                <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary">
+                                    Փոփոխել
+                                </MudButton>
+                                <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Error">
+                                    Ջնջել
+                                </MudButton>
+                            </div>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        }
+    </MudContainer>
+</MudGrid>
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private bool isLoading = true;
@@ -77,14 +97,14 @@ else
         {
             return;
         }
-        Nav.NavigateTo($"/BrandsPage/BrandEditPage/{brandDto.Id}");
+        Nav.NavigateTo($"brands/edit/{brandDto.Id}");
     }
 
     private async Task ShowDeleteConfirmation(int id)
     {
         bool? result = await DialogService.ShowMessageBox(
             "Հաստատում",
-            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս բռենդը?",
+            "Դուք համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս բրենդը",
             yesText: "Ջնջել",
             cancelText: "Չեղարկել");
 
@@ -102,6 +122,6 @@ else
 
     private void NavigateToCreatePage()
     {
-        Nav.NavigateTo("/BrandsPage/BrandCreatePage");
+        Nav.NavigateTo("brands/create");
     }
 }

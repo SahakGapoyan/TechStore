@@ -1,4 +1,4 @@
-﻿@page "/CategoriesPage/CategoryEditPage/{id:int}"
+﻿@page "/categories/edit/{id:int}"
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
@@ -7,7 +7,7 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Edit Category
+        Խմբագրել Կատեգորիան
     </MudText>
 
     @if (CategoryDto == null)
@@ -19,14 +19,14 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
                 <MudTextField @bind-Value="CategoryDto.Name"
-                Label="Name"
+                Label="Անունը"
                 Variant="Variant.Outlined"
                 Class="mb-4"
                 FullWidth />
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudTextField @bind-Value="CategoryDto.Description"
-                Label="Description"
+                Label="Նկարագրությունը"
                 Variant="Variant.Outlined"
                 Class="mb-4"
                 FullWidth />
@@ -39,7 +39,7 @@
             Variant="Variant.Filled"
             EndIcon="@Icons.Material.Filled.Save"
             Class="ml-2">
-                Save Changes
+                Պահպանել
             </MudButton>
         </div>
     }
@@ -63,6 +63,6 @@
                 Description = CategoryDto.Description
             };
         await CategoryApi.UpdateCategory(id, categoryUpdateDto);
-        Nav.NavigateTo("/categoriesPage");
+        Nav.NavigateTo("categories");
     }
 }

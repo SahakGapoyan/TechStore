@@ -1,4 +1,4 @@
-﻿@page "/LaptopsPage/LaptopCreatePage"
+﻿@page "/laptops/create"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
@@ -20,21 +20,21 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Laptop
+        Ավելացնել Նոր Նոթբուք
     </MudText>
 
     <MudGrid>
         <!-- Left Column -->
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="LaptopAddDto.Name"
-                          Label="Name"
+                          Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth
                           Required />
 
             <MudTextField @bind-Value="LaptopAddDto.Price"
-                          Label="Price"
+                          Label="Գինը"
                           Variant="Variant.Outlined"
                           For="@(() => LaptopAddDto.Price)"
                           Class="mb-4"
@@ -42,28 +42,28 @@
                           Required />
 
             <MudTextField @bind-Value="LaptopAddDto.Description"
-                          Label="Description"
+                          Label="Նկարագրությունը"
                           Variant="Variant.Outlined"
                           Lines="3"
                           Class="mb-4"
                           FullWidth />
 
             <MudTextField @bind-Value="LaptopAddDto.GPU"
-                          Label="GPU"
+                          Label="Գրաֆիկական պրոցեսորը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth
                           Required />
 
             <MudTextField @bind-Value="LaptopAddDto.BatteryLifeInHours"
-                          Label="BatteryLifeInHours"
+                          Label="Մարտկոցի Կյանքի Տևողությունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth
                           Required />
 
             <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
                 @if (LaptopAddDto.ImagesUrls != null)
                 {
@@ -74,7 +74,7 @@
                             <MudItem xs="11">
                                 <MudTextField @bind-Value="LaptopAddDto.ImagesUrls[index]"
                                               Variant="Variant.Outlined"
-                                              Label="Image URL" />
+                                              Label="Նկարի Հղումը" />
                             </MudItem>
                             <MudItem xs="1" Class="d-flex align-center">
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
@@ -90,13 +90,13 @@
                            StartIcon="@Icons.Material.Filled.Add"
                            OnClick="AddImageUrl"
                            Class="mt-2">
-                    Add Image URL
+                    Ավելացնել Նկարի Հղում
                 </MudButton>
             </MudPaper>
 
 
             <MudCheckBox @bind-Value="LaptopAddDto.IsAvailable"
-                         Label="Is Available"
+                         Label="Առկա է"
                          Class="mb-4" />
         </MudItem>
 
@@ -104,7 +104,7 @@
         <MudItem xs="12" md="6">
             <!-- Dropdown selectors -->
             <MudSelect T="int"
-                       Label="Category"
+                       Label="Կատեգորիան"
                        @bind-Value="LaptopAddDto.CategoryId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -115,20 +115,8 @@
                 }
             </MudSelect>
 
-                <MudSelect T="int"
-                           Label="Operating System"
-                           @bind-Value="LaptopAddDto.OsId"
-                           Variant="Variant.Outlined"
-                           Class="mb-4"
-                           FullWidth>
-                    @foreach (var os in AvailableOSs)
-                    {
-                        <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
-                    }
-                </MudSelect>
-
             <MudSelect T="int"
-                       Label="Brand"
+                       Label="Բրենդը"
                        @bind-Value="LaptopAddDto.BrandId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -140,7 +128,7 @@
             </MudSelect>
 
             <MudSelect T="int"
-                       Label="Model"
+                       Label="Մոդելը"
                        @bind-Value="LaptopAddDto.ModelId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -154,12 +142,12 @@
 
         <!-- Full width technical specs row -->
         <MudItem xs="12" Class="mt-4">
-            <MudText Typo="Typo.subtitle1" Class="mb-3">Technical Specifications</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mb-3">Տեխնիկական Բնութագրեր</MudText>
 
             <MudGrid>
                 <MudItem xs="12" md="4" Class="pr-md-2">
                     <MudSelect T="int"
-                               Label="RAM"
+                               Label="Օպերատիվ Հիշողությունը"
                                @bind-Value="LaptopAddDto.RamId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -173,7 +161,7 @@
 
                 <MudItem xs="12" md="4" Class="px-md-2">
                     <MudSelect T="int"
-                               Label="Memory"
+                               Label="Հիշողությունը"
                                @bind-Value="LaptopAddDto.MemoryId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -181,6 +169,20 @@
                         @foreach (var memory in AvailableMemories)
                         {
                             <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+
+                <MudItem xs="12" md="4" Class="pl-md-2">
+                    <MudSelect T="int"
+                               Label="Օպերացիոն Համակարգը"
+                               @bind-Value="LaptopAddDto.OsId"
+                               Variant="Variant.Outlined"
+                               Class="mb-4"
+                               FullWidth>
+                        @foreach (var os in AvailableOSs)
+                        {
+                            <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
                         }
                     </MudSelect>
                 </MudItem>
@@ -192,7 +194,7 @@
             <MudGrid>
                 <MudItem xs="12" md="4" Class="pr-md-2">
                     <MudTextField @bind-Value="LaptopAddDto.ScreenSize"
-                                  Label="Screen Size"
+                                  Label="Էկրանի Չափսը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -200,7 +202,7 @@
 
                 <MudItem xs="12" md="4" Class="px-md-2">
                     <MudTextField @bind-Value="LaptopAddDto.Processor"
-                                  Label="Processor"
+                                  Label="Պրոցեսորը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -208,7 +210,7 @@
 
                 <MudItem xs="12" md="4" Class="pl-md-2">
                     <MudSelect T="int"
-                               Label="Color"
+                               Label="Գույնը"
                                @bind-Value="LaptopAddDto.ColorId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -225,8 +227,8 @@
         <!-- Checkboxes -->
         <MudItem xs="12">
             <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
-                <MudCheckBox @bind-Value="LaptopAddDto.HasTouchScreen" Label="Touch Screen" Class="mr-4" />
-                <MudCheckBox @bind-Value="LaptopAddDto.HasFingerprintSensor" Label="Fingerprint Sensor" Class="mr-4" />
+                <MudCheckBox @bind-Value="LaptopAddDto.HasTouchScreen" Label="Ունի Սենսորային Էկրան" Class="mr-4" />
+                <MudCheckBox @bind-Value="LaptopAddDto.HasFingerprintSensor" Label="Ունի Մատնահետքի Սենսոր" Class="mr-4" />
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -236,14 +238,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateSmartphone"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Laptop
+            Ստեղծել Նոթբուք
         </MudButton>
     </div>
 </MudPaper>
@@ -309,11 +311,11 @@
     private async Task CreateSmartphone()
     {
         await LaptopApi.AddLaptop(LaptopAddDto);
-        Nav.NavigateTo("/LaptopsPage");
+        Nav.NavigateTo("laptops");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/LaptopsPage");
+        Nav.NavigateTo("laptops");
     }
 }

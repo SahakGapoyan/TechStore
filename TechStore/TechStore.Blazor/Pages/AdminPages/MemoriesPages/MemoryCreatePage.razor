@@ -1,4 +1,4 @@
-﻿@page "/MemoriesPage/MemoryCreatePage"
+﻿@page "/memories/create"
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.DtoModels.Ram
 @using TechStore.Blazor.Interfaces
@@ -7,13 +7,13 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Ram
+        Ավելացնել Նոր Հիշողություն
     </MudText>
 
     <MudGrid>
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="MemoryAddDto.Size"
-                          Label="Size"
+                          Label="Ծավալը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth />
@@ -25,14 +25,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateAsync"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Category
+            Ստեղծել Հիշողություն
         </MudButton>
     </div>
 </MudPaper>
@@ -44,11 +44,11 @@
     private async Task CreateAsync()
     {
         await MemoryApi.AddMemory(MemoryAddDto);
-        Nav.NavigateTo("/MemoriesPage");
+        Nav.NavigateTo("memories");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/MemoriesPage");
+        Nav.NavigateTo("memories");
     }
 }

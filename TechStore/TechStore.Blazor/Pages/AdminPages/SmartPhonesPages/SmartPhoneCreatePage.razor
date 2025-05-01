@@ -1,4 +1,4 @@
-﻿@page "/SmartphonesPage/SmartphoneCreatePage"
+﻿@page "/smartphones/create"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
@@ -20,21 +20,21 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Smartphone
+        Ավելացնել Նոր Հեռախոս
     </MudText>
 
     <MudGrid>
         <!-- Left Column -->
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="SmartPhoneAddDto.Name"
-                          Label="Name"
+                          Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth
                           Required />
 
             <MudTextField @bind-Value="SmartPhoneAddDto.Price"
-                          Label="Price"
+                          Label="Գինը"
                           Variant="Variant.Outlined"
                           For="@(() => SmartPhoneAddDto.Price)"
                           Class="mb-4"
@@ -42,18 +42,15 @@
                           Required />
 
             <MudTextField @bind-Value="SmartPhoneAddDto.Description"
-                          Label="Description"
+                          Label="Նկարագրությունը"
                           Variant="Variant.Outlined"
                           Lines="3"
                           Class="mb-4"
                           FullWidth />
 
-            <MudCheckBox @bind-Value="SmartPhoneAddDto.IsAvailable"
-                         Label="Is Available"
-                         Class="mb-4" />
 
             <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
                 @if (SmartPhoneAddDto.ImagesUrls != null)
                 {
@@ -64,7 +61,7 @@
                             <MudItem xs="11">
                                 <MudTextField @bind-Value="SmartPhoneAddDto.ImagesUrls[index]"
                                               Variant="Variant.Outlined"
-                                              Label="Image URL" />
+                                              Label="Նկարի հղումը" />
                             </MudItem>
                             <MudItem xs="1" Class="d-flex align-center">
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
@@ -80,9 +77,13 @@
                            StartIcon="@Icons.Material.Filled.Add"
                            OnClick="AddImageUrl"
                            Class="mt-2">
-                    Add Image URL
+                    Ավելացնել Նկարի Հղում
                 </MudButton>
             </MudPaper>
+
+            <MudCheckBox @bind-Value="SmartPhoneAddDto.IsAvailable"
+                         Label="Առկա է"
+                         Class="mb-4" />
         </MudItem>
 
 
@@ -90,7 +91,7 @@
         <MudItem xs="12" md="6">
             <!-- Dropdown selectors -->
             <MudSelect T="int"
-                       Label="Category"
+                       Label="Կատեգորիան"
                        @bind-Value="SmartPhoneAddDto.CategoryId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -102,7 +103,7 @@
             </MudSelect>
 
             <MudSelect T="int"
-                       Label="Brand"
+                       Label="Բրենդը"
                        @bind-Value="SmartPhoneAddDto.BrandId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -114,7 +115,7 @@
             </MudSelect>
 
             <MudSelect T="int"
-                       Label="Model"
+                       Label="Մոդելը"
                        @bind-Value="SmartPhoneAddDto.ModelId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -128,12 +129,12 @@
 
         <!-- Full width technical specs row -->
         <MudItem xs="12" Class="mt-4">
-            <MudText Typo="Typo.subtitle1" Class="mb-3">Technical Specifications</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mb-3">Տեխնիկական Բնութագրեր</MudText>
 
             <MudGrid>
                 <MudItem xs="12" md="4" Class="pr-md-2">
                     <MudSelect T="int"
-                               Label="RAM"
+                               Label="Օպերատիվ Հիշողությունը"
                                @bind-Value="SmartPhoneAddDto.RamId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -147,7 +148,7 @@
 
                 <MudItem xs="12" md="4" Class="px-md-2">
                     <MudSelect T="int"
-                               Label="Memory"
+                               Label="Հիշողությունը"
                                @bind-Value="SmartPhoneAddDto.MemoryId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -161,7 +162,7 @@
 
                 <MudItem xs="12" md="4" Class="pl-md-2">
                     <MudSelect T="int"
-                               Label="Operating System"
+                               Label="Օպերացիոն Համակարգը"
                                @bind-Value="SmartPhoneAddDto.OSId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -180,7 +181,7 @@
             <MudGrid>
                 <MudItem xs="12" md="4" Class="pr-md-2">
                     <MudTextField @bind-Value="SmartPhoneAddDto.ScreenSize"
-                                  Label="Screen Size"
+                                  Label="Էկրանի Չափսը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -188,7 +189,7 @@
 
                 <MudItem xs="12" md="4" Class="px-md-2">
                     <MudTextField @bind-Value="SmartPhoneAddDto.Processor"
-                                  Label="Processor"
+                                  Label="Պրոցեսորը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -196,7 +197,7 @@
 
                 <MudItem xs="12" md="4" Class="pl-md-2">
                     <MudSelect T="int"
-                               Label="Color"
+                               Label="Գույնը"
                                @bind-Value="SmartPhoneAddDto.ColorId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -213,9 +214,9 @@
         <!-- Checkboxes -->
         <MudItem xs="12">
             <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
-                <MudCheckBox @bind-Value="SmartPhoneAddDto.Has5G" Label="5G Support" Class="mr-4" />
-                <MudCheckBox @bind-Value="SmartPhoneAddDto.IsWaterResistant" Label="Water Resistant" Class="mr-4" />
-                <MudCheckBox @bind-Value="SmartPhoneAddDto.Wifi" Label="Wi-Fi" />
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.Has5G" Label="5G Ցանցը" Class="mr-4" />
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.IsWaterResistant" Label="Ջրակայունությունը" Class="mr-4" />
+                <MudCheckBox @bind-Value="SmartPhoneAddDto.Wifi" Label="WiFi Ցանցը" />
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -225,14 +226,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateSmartphone"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Smartphone
+            Ստեղծել Հեռախոս
         </MudButton>
     </div>
 </MudPaper>
@@ -297,11 +298,11 @@
     private async Task CreateSmartphone()
     {
         await SmartPhoneApi.AddSmartPhone(SmartPhoneAddDto);
-        Nav.NavigateTo("/SmartphonesPage");
+        Nav.NavigateTo("smartphones");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/SmartphonesPage");
+        Nav.NavigateTo("smartphones");
     }
 }

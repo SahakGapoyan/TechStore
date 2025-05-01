@@ -1,4 +1,4 @@
-﻿@page "/MemoriesPage/MemoryEditPage/{id::int}"
+﻿@page "/memories/edit/{id::int}"
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.Interfaces
 @inject IMemoryApi MemoryApi
@@ -7,7 +7,7 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Edit Memory
+        Խմբագրել Հիշողությունը
     </MudText>
 
     @if (MemoryDto == null)
@@ -19,7 +19,7 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
                 <MudTextField @bind-Value="MemoryDto.Size"
-                              Label="Size"
+                              Label="Ծավալը"
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               FullWidth />
@@ -32,7 +32,7 @@
                        Variant="Variant.Filled"
                        EndIcon="@Icons.Material.Filled.Save"
                        Class="ml-2">
-                Save Changes
+                Պահպանել
             </MudButton>
         </div>
     }
@@ -55,6 +55,6 @@
                 Size = MemoryDto.Size
             };
         await MemoryApi.UpdateMemory(id, memoryUpdateDto);
-        Nav.NavigateTo("/MemoriesPage");
+        Nav.NavigateTo("memories");
     }
 }

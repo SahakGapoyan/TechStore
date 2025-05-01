@@ -1,88 +1,139 @@
-﻿@page "/SmartPhonesPage"
-<h3>SmartPhonesPage</h3>
+﻿@page "/smartphones"
 @using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ISmartPhoneApi SmartPhoneApi
 @inject IDialogService DialogService
 
 
-    <div class="mt-5">
+<MudGrid>
+    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight: 600;">Հեռախոսներ</MudText>
+
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    OnClick="NavigateToCreatePage"
                    StartIcon="@Icons.Material.Filled.Add">
             Ավելացնել Հեռախոս
         </MudButton>
-    </div>
-@if (isLoading)
-{
-    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-}
-else if (SmartPhones.Count == 0)
-{
-    <p>Հեռախոսներ չկան</p>
-}
-else
-{
-    <MudDataGrid Items="@SmartPhones" Filterable="false" SortMode="@SortMode.None" Groupable="false">
-        <Columns>
-            <PropertyColumn Property="x => x.Id" />
-            <PropertyColumn Property="x => x.Name" />
-            <PropertyColumn Property="x => x.Price" />
-            <PropertyColumn Property="x => x.IsAvailable" />
-            <PropertyColumn Property="x => x.CategoryId" />
-            <PropertyColumn Property="x => x.OSId" />
-            <PropertyColumn Property="x => x.Processor" />
-            <PropertyColumn Property="x => x.CameraMegaPixel" />
-            <PropertyColumn Property="x => x.RamId" />
-            <PropertyColumn Property="x => x.ColorId" />
-            <PropertyColumn Property="x => x.MemoryId" />
-            <PropertyColumn Property="x => x.ModelId" />
-            <PropertyColumn Property="x => x.BrandId" />
-            <PropertyColumn Property="x => x.BatteryCapacity" />
-            <PropertyColumn Property="x => x.Has5G" />
-            <PropertyColumn Property="x => x.Wifi" />
-            <PropertyColumn Property="x => x.IsWaterResistant" />
-            <PropertyColumn Property="x => x.IsAvailable" />
-            <TemplateColumn Title="Images">
-                <CellTemplate>
-                    @if (context.Item.ImagesUrls != null && context.Item.ImagesUrls.Any())
-                    {
-                        <ul>
-                            @foreach (var url in context.Item.ImagesUrls)
+    </MudContainer>
+
+    <MudContainer Class="d-flex justify-space-between align-center"
+                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        @if (isLoading)
+        {
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        }
+        else if (SmartPhones.Count == 0)
+        {
+            <p>Հեռախոսներ չկան</p>
+        }
+        else
+        {
+            <MudDataGrid Items="@SmartPhones"
+                         Style="width: 100%;"
+                         Filterable="false"
+                         SortMode="@SortMode.None"
+                         Groupable="false">
+                <Columns>
+                    <PropertyColumn Property="x => x.Id"
+                                    Title="Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Name"
+                                    Title="Անուն"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Price"
+                                    Title="Գին"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.IsAvailable"
+                                    Title="Առկա է"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.CategoryId"
+                                    Title="Կատեգորիայի Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.OSId"
+                                    Title="Օպերացիոն Համակարգի Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Processor"
+                                    Title="Պրոցեսոր"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.CameraMegaPixel"
+                                    Title="Տեսախցիկի Փիքսելներ"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.RamId"
+                                    Title="Օպերատիվ Հիշողության Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.ColorId"
+                                    Title="Գույնի Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.MemoryId"
+                                    Title="Հիշողության Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.ModelId"
+                                    Title="Մոդելի Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.BrandId"
+                                    Title="Բրենդի Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.BatteryCapacity"
+                                    Title="Մարտկոցի Հզորություն"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Has5G"
+                                    Title="5G Ցանց"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Wifi"
+                                    Title="WiFi Ցանց"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.IsWaterResistant"
+                                    Title="Ջրակայունություն"
+                                    HeaderStyle="font-weight: 600;" />
+                    <TemplateColumn Title="Նկարների հղումներ"
+                                    HeaderStyle="font-weight: 600;">
+                        <CellTemplate>
+                            @if (context.Item.ImagesUrls != null && context.Item.ImagesUrls.Any())
                             {
-                                <li><a href="@url" target="_blank">@url</a></li>
+                                <ul>
+                                    @foreach (var url in context.Item.ImagesUrls)
+                                    {
+                                        <li><a href="@url" target="_blank">@url</a></li>
+                                    }
+                                </ul>
                             }
-                        </ul>
-                    }
-                    else
-                    {
-                        <em>Ոչ մի նկար չկա</em>
-                    }
-                </CellTemplate>
-            </TemplateColumn>
-            <PropertyColumn Property="x => x.ScreenSize" />
-            <TemplateColumn CellClass="d-flex justify-end">
-                <CellTemplate>
-                    <MudStack Row>
-                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Primary">
-                            Փոփոխել
-                        </MudButton>
-                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Error">
-                            Ջնջել
-                        </MudButton>
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
-}
+                            else
+                            {
+                                <em>Ոչ մի նկար չկա</em>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <PropertyColumn Property="x => x.ScreenSize"
+                                    Title="Էկրանի Չափս"
+                                    HeaderStyle="font-weight: 600;" />
+                    <TemplateColumn Title="Գործողություններ"
+                                    HeaderStyle="font-weight: 600;"
+                                    CellStyle="vertical-align: bottom; height: 100%;">
+                        <CellTemplate>
+                            <div style="display: flex; gap: 8px; align-items: flex-end; height: 100%;">
+                                <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary">
+                                    Փոփոխել
+                                </MudButton>
+                                <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Error">
+                                    Ջնջել
+                                </MudButton>
+                            </div>
+                        </CellTemplate>
+                    </TemplateColumn>
+
+                </Columns>
+            </MudDataGrid>
+        }
+    </MudContainer>
+</MudGrid>
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private bool isLoading = true;
@@ -100,7 +151,7 @@ else
         {
             return;
         }
-        Nav.NavigateTo($"/SmartPhonesPage/SmartPhoneEditPage/{smartPhoneDto.Id}");
+        Nav.NavigateTo($"smartphones/edit/{smartPhoneDto.Id}");
     }
 
 
@@ -108,7 +159,7 @@ else
     {
         bool? result = await DialogService.ShowMessageBox(
             "Հաստատում",
-            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս հեռախոսը?",
+            "Դուք համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս հեռախոսը",
             yesText: "Ջնջել",
             cancelText: "Չեղարկել");
 
@@ -126,6 +177,6 @@ else
 
     private void NavigateToCreatePage()
     {
-        Nav.NavigateTo("/SmartPhonesPage/SmartPhoneCreatePage");
+        Nav.NavigateTo("smartphones/create");
     }
 }

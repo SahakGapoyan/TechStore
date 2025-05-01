@@ -1,4 +1,4 @@
-﻿@page "/TVsPage/TVCreatePage"
+﻿@page "/tvs/create"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
@@ -18,21 +18,21 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Laptop
+        Ավելացնել Նոր Հեռուստացույց
     </MudText>
 
     <MudGrid>
         <!-- Left Column -->
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="TvAddDto.Name"
-                          Label="Name"
+                          Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth
                           Required />
 
             <MudTextField @bind-Value="TvAddDto.Price"
-                          Label="Price"
+                          Label="Գինը"
                           Variant="Variant.Outlined"
                           For="@(() => TvAddDto.Price)"
                           Class="mb-4"
@@ -40,7 +40,7 @@
                           Required />>
 
             <MudTextField @bind-Value="TvAddDto.Description"
-                          Label="Description"
+                          Label="Նկարագրությունը"
                           Variant="Variant.Outlined"
                           Lines="3"
                           Class="mb-4"
@@ -48,7 +48,7 @@
 
 
             <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
                 @if (TvAddDto.ImagesUrls != null)
                 {
@@ -59,7 +59,7 @@
                             <MudItem xs="11">
                                 <MudTextField @bind-Value="TvAddDto.ImagesUrls[index]"
                                               Variant="Variant.Outlined"
-                                              Label="Image URL" />
+                                              Label="Նկարի Հղումը" />
                             </MudItem>
                             <MudItem xs="1" Class="d-flex align-center">
                                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
@@ -75,9 +75,13 @@
                            StartIcon="@Icons.Material.Filled.Add"
                            OnClick="AddImageUrl"
                            Class="mt-2">
-                    Add Image URL
+                    Ավելացնել Նկարի Հղում
                 </MudButton>
             </MudPaper>
+
+            <MudCheckBox @bind-Value="TvAddDto.IsAvailable"
+                         Label="Առկա է"
+                         Class="mb-4" />
 
         </MudItem>
 
@@ -85,7 +89,7 @@
         <MudItem xs="12" md="6">
             <!-- Dropdown selectors -->
             <MudSelect T="int"
-                       Label="Category"
+                       Label="Կատեգորիան"
                        @bind-Value="TvAddDto.CategoryId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -97,7 +101,7 @@
             </MudSelect>
 
             <MudSelect T="int"
-                       Label="Brand"
+                       Label="Բրենդը"
                        @bind-Value="TvAddDto.BrandId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -109,7 +113,7 @@
             </MudSelect>
 
             <MudSelect T="int"
-                       Label="Model"
+                       Label="Մոդելը"
                        @bind-Value="TvAddDto.ModelId"
                        Variant="Variant.Outlined"
                        Class="mb-4"
@@ -120,13 +124,14 @@
                 }
             </MudSelect>
         </MudItem>
-       
+
         <!-- Full width additional specs -->
-        <MudItem xs="12">
+        <MudItem xs="12" Class="mt-4">
+            <MudText Typo="Typo.subtitle1" Class="mb-3">Տեխնիկական Բնութագրեր</MudText>
             <MudGrid>
                 <MudItem xs="12" md="4" Class="pr-md-2">
                     <MudTextField @bind-Value="TvAddDto.ScreenSize"
-                                  Label="Screen Size"
+                                  Label="Էկրանի Չափսը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -134,7 +139,7 @@
 
                 <MudItem xs="12" md="4" Class="px-md-2">
                     <MudTextField @bind-Value="TvAddDto.PanelType"
-                                  Label="Panel Type"
+                                  Label="Էկրանի Տեսակը"
                                   Variant="Variant.Outlined"
                                   Class="mb-4"
                                   FullWidth />
@@ -142,7 +147,7 @@
 
                 <MudItem xs="12" md="4" Class="pl-md-2">
                     <MudSelect T="int"
-                               Label="Color"
+                               Label="Գույնը"
                                @bind-Value="TvAddDto.ColorId"
                                Variant="Variant.Outlined"
                                Class="mb-4"
@@ -159,7 +164,7 @@
         <!-- Checkboxes -->
         <MudItem xs="12">
             <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
-                <MudCheckBox @bind-Value="TvAddDto.IsSmartTv" Label="Smart Tv" Class="mr-4" />
+                <MudCheckBox @bind-Value="TvAddDto.IsSmartTv" Label="Սմարթ Tv" Class="mr-4" />
             </MudStack>
         </MudItem>
     </MudGrid>
@@ -169,14 +174,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateSmartphone"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Laptop
+            Ստեղծել Հեռուստացույց
         </MudButton>
     </div>
 </MudPaper>
@@ -236,11 +241,11 @@
     private async Task CreateSmartphone()
     {
         await TvApi.AddTv(TvAddDto);
-        Nav.NavigateTo("/TVsPage");
+        Nav.NavigateTo("tvs");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/TVsPage");
+        Nav.NavigateTo("tvs");
     }
 }

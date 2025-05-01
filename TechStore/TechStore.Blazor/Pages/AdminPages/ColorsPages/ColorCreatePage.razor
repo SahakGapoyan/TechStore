@@ -1,4 +1,4 @@
-﻿@page "/ColorsPage/ColorCreatePage"
+﻿@page "/colors/create"
 @using TechStore.Blazor.DtoModels.Color
 @using TechStore.Blazor.Interfaces
 @inject IColorApi ColorApi
@@ -6,20 +6,20 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Color
+        Ավելացնել Նոր Գույն
     </MudText>
 
     <MudGrid>
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="ColorAddDto.Name"
-                          Label="Name"
+                          Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth />
         </MudItem>
         <MudItem xs="12" md="6">
             <MudTextField @bind-Value="ColorAddDto.HexCode"
-                          Label="HexCode"
+                          Label="Գույնի կոդը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth />
@@ -31,14 +31,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateAsync"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Model
+            Ստեղծել Գույն
         </MudButton>
     </div>
 </MudPaper>
@@ -50,11 +50,11 @@
     private async Task CreateAsync()
     {
         await ColorApi.AddColor(ColorAddDto);
-        Nav.NavigateTo("/ColorsPage");
+        Nav.NavigateTo("colors");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/ColorsPage");
+        Nav.NavigateTo("colors");
     }
 }
