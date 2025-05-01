@@ -86,19 +86,19 @@ else
                     <MudDivider />
                     <MudGrid>
                         <MudItem xs="12" md="6">
-                            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center;">
+                            <div style="display: grid; grid-template-columns: 120px 1fr; column-gap: 20px; row-gap: 10px; align-items: center;">
                                 <!-- RAM -->
-                                <div style="color: rgba(0, 0, 0, 0.54);">RAM</div>
+                                <div style="color: rgba(0, 0, 0, 0.54);">Օպերատիվ հիշողություն</div>
                                 <div>@ramSize</div>
 
-                                <!-- Memory - Strict Horizontal Line -->
-                                <div style="color: rgba(0, 0, 0, 0.54);">Memory</div>
-                                <div style="display: flex; flex-direction: row; gap: 8px; align-items: center; flex-wrap: nowrap;">
+                                <!-- Memory -->
+                                <div style="color: rgba(0, 0, 0, 0.54); margin-bottom: 4px;">Հիշողություն</div>
+                                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
                                     @foreach (var memory in availableMemories)
                                     {
                                         <MudChip T="string"
                                                  Color="@(memory.ProductId == selectedProductId ? Color.Primary : Color.Default)"
-                                                 Style="cursor: pointer; margin: 0; border-radius: 0;"
+                                                 Style="cursor: pointer; border-radius: 0px; padding: 4px 12px; font-size: 14px; min-width: 80px; text-align: center; white-space: nowrap;"
                                                  OnClick="@(() => OnMemorySelected(memory.ProductId))">
                                             @memory.MemorySize
                                         </MudChip>
@@ -106,22 +106,26 @@ else
                                 </div>
 
                                 <!-- Announcement Year -->
-                                <div style="color: rgba(0, 0, 0, 0.54);">Announcement Year</div>
+                                <div style="color: rgba(0, 0, 0, 0.54);">Հայտարարության տարին</div>
                                 <div>@announcementYear</div>
 
                                 <!-- Colors -->
-                                <div style="color: rgba(0, 0, 0, 0.54);">Colors</div>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <div style="color: rgba(0, 0, 0, 0.54); margin-bottom: 4px;">Առկա գույներ</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
                                     @foreach (var color in availableColors)
                                     {
+                                        var borderColor = color.ProductId == selectedProductId ? "#2196F3" : "#ccc";
+                                        var avatarStyle = $"background-color:{color.HexCode}; border: 2px solid {borderColor}; cursor: pointer;";
+
                                         <MudAvatar Size="Size.Small"
-                                                   Style="@($"background-color:{color.HexCode}; border: 2px solid {(color.ProductId == selectedProductId ? "#2196F3" : "#ccc")}; cursor: pointer; margin: 0;")"
-                                                   @onclick="@(async () => await OnColorSelected(color.ProductId))" />
+                                                   Style="@avatarStyle"
+                                                   @onclick="async () => await OnColorSelected(color.ProductId)" />
                                     }
                                 </div>
                             </div>
                         </MudItem>
                     </MudGrid>
+
 
 
                     <MudQueue Direction="Row" Spacing="1" Class="mt-2" AlignItems="Center">
@@ -365,20 +369,35 @@ else
 
             var products = await SmartPhoneApi.GetSmartPhonesByModelId(smartphone.ModelId);
 
-            availableColors = new List<(int ProductId, string HexCode)>();
-            availableMemories = new List<(int ProductId, string MemorySize)>();
+            availableColors = (await Task.WhenAll(products
+                .GroupBy(p => p.ColorId)
+                .Select(g => g.First())
+                .Select(async p =>
+                {
+                    var c = await ColorApi.GetColor(p.ColorId);
+                    return (p.Id, c?.HexCode ?? "#FFFFFF");
+                }))).ToList();
 
-            foreach (var product in products)
-            {
-                var colorOfProduct = await ColorApi.GetColor(product.ColorId);
-                availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
-            }
+            availableMemories = (await Task.WhenAll(products
+                .GroupBy(p => p.MemoryId)
+                .Select(g => g.First())
+                .Select(async p =>
+                {
+                    var m = await MemoryApi.GetMemory(p.MemoryId);
+                    return (p.Id, m?.Size ?? "no memory");
+                }))).ToList();
 
-            foreach (var product in products)
-            {
-                var memoryOfProduct = await MemoryApi.GetMemory(product.MemoryId);
-                availableMemories.Add((product.Id, memoryOfProduct?.Size ?? "no memory"));
-            }
+            // foreach (var product in products)
+            // {
+            //     var colorOfProduct = await ColorApi.GetColor(product.ColorId);
+            //     availableColors.Add((product.Id, colorOfProduct?.HexCode ?? "#FFFFFF"));
+            // }
+
+            // foreach (var product in products)
+            // {
+            //     var memoryOfProduct = await MemoryApi.GetMemory(product.MemoryId);
+            //     availableMemories.Add((product.Id, memoryOfProduct?.Size ?? "no memory"));
+            // }
 
             selectedProductId = smartphone.Id;
         }
