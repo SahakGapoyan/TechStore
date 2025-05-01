@@ -4,6 +4,7 @@
 @using TechStore.Blazor.DtoModels.Product
 @using TechStore.Blazor.Interfaces
 @inherits LayoutComponentBase
+@implements IDisposable
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -18,8 +19,9 @@
             My Application
         </MudText>
 
-        <!-- Product Search - Fixed with white background and visible icon -->
+        <!-- Product Search -->
         <MudAutocomplete T="ProductSuggestionDto"
+                         @ref="_autoCompleteRef"
                          @bind-Value="_selectedProduct"
                          SearchFunc="@SearchProducts"
                          ToStringFunc="@(p => p?.Name ?? string.Empty)"
@@ -28,15 +30,14 @@
                          Variant="Variant.Outlined"
                          Dense="true"
                          DebounceInterval="300"
-                         @bind-SearchText="_searchText"
+                         @bind-Text="_searchText"
                          Immediate="true"
                          CloseOnClick="false"
-                         CoerceText="false"
-                         CoerceValue="false"
                          Adornment="Adornment.End"
                          Class="mx-4 white-search-box"
                          Style="position: relative;"
-                         OnAdornmentClick="@(async () => await TriggerSearch())"
+                         OnAdornmentClick="@TriggerSearch"
+                         OnKeyDown="@OnKeyDownHandler"
                          OnItemSelected="@OnProductSelected"
                          AdornmentIcon="@Icons.Material.Filled.Search">
             <ItemTemplate>
@@ -44,11 +45,7 @@
             </ItemTemplate>
         </MudAutocomplete>
 
-
-        <!-- Spacer -->
         <MudSpacer />
-
-        <!-- Sign In / User Button -->
         <SignInButton />
     </MudAppBar>
 
@@ -61,7 +58,6 @@
             @Body
         </div>
 
-        <!-- Footer -->
         <footer class="py-6 text-center" style="background-color: black;">
             <MudText Typo="Typo.body2" Style="color: white;">
                 © @DateTime.Now.Year My Application. All rights reserved.
@@ -73,26 +69,57 @@
 @code {
     private ProductSuggestionDto? _selectedProduct;
     private string _searchText = string.Empty;
+    private MudAutocomplete<ProductSuggestionDto>? _autoCompleteRef;
+
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
     bool _drawerOpen = false;
+
+    protected override void OnInitialized()
+    {
+        Nav.LocationChanged += HandleLocationChanged;
+        
+        // Initialize search text from current URL if on search page
+        var uri = new Uri(Nav.Uri);
+        if (uri.AbsolutePath.Contains("search"))
+        {
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            _searchText = query["query"] ?? string.Empty;
+        }
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        // Only clear if we're not on a search-related page
+        if (!e.Location.Contains("search") && !e.Location.Contains("smartphones") && !e.Location.Contains("laptops"))
+        {
+            _searchText = string.Empty;
+            _selectedProduct = null;
+        }
+        else if (e.Location.Contains("search"))
+        {
+            // When navigating to search page, update search text from URL
+            var uri = new Uri(e.Location);
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            _searchText = query["query"] ?? string.Empty;
+        }
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= HandleLocationChanged;
+    }
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
 
-    private void NavigateToSearch()
-    {
-        if (!string.IsNullOrWhiteSpace(_searchText))
-        {
-            Nav.NavigateTo($"search/?query={Uri.EscapeDataString(_searchText)}");
-        }
-    }
     private async Task<IEnumerable<ProductSuggestionDto>> SearchProducts(string value, CancellationToken token)
     {
-        _searchText = value; // Store the search text if needed
         if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
             return Enumerable.Empty<ProductSuggestionDto>();
 
@@ -116,8 +143,8 @@
     {
         if (product == null) return;
 
-        _selectedProduct = null; // Reset selection
-
+        _selectedProduct = null;
+        
         switch (product.ProductType?.ToLower())
         {
             case "smartphone":
@@ -126,18 +153,54 @@
             case "laptop":
                 Nav.NavigateTo($"laptops/{product.Id}");
                 break;
-            default:
-                break;
         }
     }
+
+    private async Task OnKeyDownHandler(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await TriggerSearch();
+            // Keep the text in the search bar
+            if (_autoCompleteRef != null)
+            {
+                _searchText = _autoCompleteRef.Text;
+            }
+        }
+    }
+
     private async Task TriggerSearch()
     {
-        // Force update the bound value immediately
-        StateHasChanged();
+        if (_autoCompleteRef is null)
+            return;
 
-        if (!string.IsNullOrWhiteSpace(_searchText))
+        var currentText = _autoCompleteRef.Text;
+
+        if (!string.IsNullOrWhiteSpace(currentText))
         {
-            Nav.NavigateTo($"search?query={Uri.EscapeDataString(_searchText)}");
+            // Keep the search text in the component
+            _searchText = currentText;
+            Nav.NavigateTo($"search?query={Uri.EscapeDataString(currentText)}");
+            StateHasChanged(); // Force update to ensure text stays
+        }
+    }
+    private void HandleSearchBlur()
+    {
+        // When search loses focus, ensure we maintain the current search text
+        if (!string.IsNullOrWhiteSpace(_searchText) &&
+            Nav.Uri.Contains("search?query="))
+        {
+            // Get the current query from URL to ensure sync
+            var uri = new Uri(Nav.Uri);
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            var urlQuery = query["query"] ?? string.Empty;
+
+            // Only update if different to prevent unnecessary renders
+            if (_searchText != urlQuery)
+            {
+                _searchText = urlQuery;
+                StateHasChanged();
+            }
         }
     }
 }
@@ -147,9 +210,9 @@
         background-color: white !important;
     }
 
-        .white-search-box .mud-input-outlined .mud-input-slot {
-            background-color: white !important;
-        }
+    .white-search-box .mud-input-outlined .mud-input-slot {
+        background-color: white !important;
+    }
 
     .white-search-box .mud-input-root {
         background-color: white !important;
@@ -163,4 +226,3 @@
         border-radius: 4px;
     }
 </style>
-
