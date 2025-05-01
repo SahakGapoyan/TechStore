@@ -27,7 +27,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task DeleteTv(int tvId)
         {
-            var response = await _httpClient.DeleteAsync($"api/Tvs/id/{tvId}");
+            var response = await _httpClient.DeleteAsync($"api/TVs/id/{tvId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);
@@ -36,7 +36,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<TvDto> GetTv(int id)
         {
-            var response = await _httpClient.GetAsync($"api/Tvs/{id}");
+            var response = await _httpClient.GetAsync($"api/TVs/id/{id}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -48,7 +48,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<TvDto>> GetTvs()
         {
-            var response = await _httpClient.GetAsync("api/Tvs");
+            var response = await _httpClient.GetAsync("api/TVs");
 
             if (response.IsSuccessStatusCode)
             {
@@ -60,7 +60,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<TvDto>> GetTvsByBrandId(int brandId)
         {
-            var response = await _httpClient.GetAsync($"api/Tvs/{brandId}");
+            var response = await _httpClient.GetAsync($"api/TVs/brandId/{brandId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -72,7 +72,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<TvDto>> GetTvsByColorId(int colorId)
         {
-            var response = await _httpClient.GetAsync($"api/Tvs/{colorId}");
+            var response = await _httpClient.GetAsync($"api/TVs/colorId/{colorId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -84,7 +84,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task<IEnumerable<TvDto>> GetTvsByModelId(int modelId)
         {
-            var response = await _httpClient.GetAsync($"api/Tvs/{modelId}");
+            var response = await _httpClient.GetAsync($"api/TVs/modelId/{modelId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -96,7 +96,7 @@ namespace TechStore.Blazor.Apis
 
         public async Task UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/Tvs/id/ {tvId}", tvUpdateDto);
+            var response = await _httpClient.PutAsJsonAsync($"api/TVs/id/{tvId}", tvUpdateDto);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception("Error " + response.ReasonPhrase);

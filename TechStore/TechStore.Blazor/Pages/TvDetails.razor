@@ -1,0 +1,331 @@
+﻿@page "/tvs/{Id:int}"
+@using System.Diagnostics.Metrics
+@using TechStore.Blazor.Apis
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
+@using TechStore.Blazor.DtoModels.SmartPhone
+@using TechStore.Blazor.DtoModels.Tv
+@using TechStore.Blazor.Interfaces
+@inject ICategoryApi CategoryApi
+@inject ISmartPhoneApi SmartPhoneApi
+@inject ILaptopApi LaptopApi
+@inject ITvApi TvApi
+@inject IBrandApi BrandApi
+@inject IOSApi OSApi
+@inject IRamApi RamApi
+@inject IMemoryApi MemoryApi
+@inject IModelApi ModelApi
+@inject IColorApi ColorApi
+
+@if (tv == null)
+{
+    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem auto; width: 100%; max-width: 1200px;">
+        <!-- Breadcrumb navigation -->
+        <MudText Typo="Typo.body2">
+            <MudLink OnClick="@(() => NavigateToHome())">Գլխավոր</MudLink> /
+            <MudLink OnClick="@(() => NavigateToTvs())">Հեռուստացույցներ</MudLink> /
+            <MudText Typo="Typo.body2" Style="display: inline; color: grey;">@tv.Name</MudText>
+        </MudText>
+
+        <MudGrid Style="margin-top: 1rem;">
+            <MudItem xs="12" md="5">
+                <MudPaper Class="p-2 d-flex flex-column" Style="border-radius: 12px; height: 100%; position: relative; padding: 1rem; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                    <!-- Main Image Container -->
+                    <div style="position: relative; margin-bottom: 1rem;">
+                        <MudImage Src="@currentMainImage"
+                                  Alt="@tv.Name"
+                                  Style="width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px;" />
+
+                        <!-- Navigation Arrows -->
+                        @if (tv.ImagesUrls.Count > 1)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+                                           OnClick="@(() => NavigateImages(-1))"
+                                           Class="image-nav-btn"
+                                           Style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);" />
+                            <MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+                                           OnClick="@(() => NavigateImages(1))"
+                                           Class="image-nav-btn"
+                                           Style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);" />
+                        }
+
+                        <MudPaper Elevation="1"
+                                  Class="px-2 py-1"
+                                  Style="@($"position: absolute; top: 1vw; left: 1vw; background-color: {(tv.IsAvailable ? "#4caf50" : "#f44336")}; color: white; border-radius: 4px; font-size: clamp(0.6rem, 1vw, 0.9rem); white-space: nowrap;")">
+                            @(tv.IsAvailable ? "Առկա է" : "Առկա չէ")
+                        </MudPaper>
+                    </div>
+
+                    <!-- Thumbnail Slider -->
+                    @if (tv.ImagesUrls.Count > 1)
+                    {
+                        <div style="position: relative;">
+                            <div style="display: flex; justify-content: center; gap: 8px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; padding: 8px 0;">
+                                @foreach (var imageUrl in tv.ImagesUrls)
+                                {
+                                    <div style="@($"cursor: pointer; min-width: 60px; border: {(imageUrl == currentMainImage ? "2px solid var(--mud-palette-primary)" : "1px solid #ddd")}; border-radius: 4px; transition: all 0.3s ease; flex-shrink: 0;")"
+                                         @onclick="@(() => ChangeMainImage(imageUrl))">
+                                        <MudImage Src="@imageUrl"
+                                                  Style="width: 60px; height: 60px; object-fit: cover; border-radius: 3px;" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" md="5" Style="height: 100%;">
+                <MudStack Spacing="2" Style="margin-top: 1rem;">
+                    <MudText Typo="Typo.h5">@tv.Name</MudText>
+                    <MudRating SelectedValue="4" ReadOnly="false" Size="Size.Small" />
+                    <MudDivider />
+
+                    <MudText Typo="Typo.h6" Color="Color.Primary">Գին: @tv.Price.ToString("C")</MudText>
+                    <MudText Typo="Typo.subtitle2">@tv.Description</MudText>
+
+                    <MudDivider />
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <div style="display: grid; grid-template-columns: 120px 1fr; column-gap: 20px; row-gap: 10px; align-items: center;">
+                           
+                                <!-- Announcement Year -->
+                                <div style="color: rgba(0, 0, 0, 0.54);">Հայտարարության տարին</div>
+                                <div>@announcementYear</div>
+
+                                <!-- Colors -->
+                                <div style="color: rgba(0, 0, 0, 0.54); margin-bottom: 4px;">Առկա գույներ</div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+                                    @foreach (var color in availableColors)
+                                    {
+                                        var borderColor = color.ProductId == selectedProductId ? "#2196F3" : "#ccc";
+                                        var avatarStyle = $"background-color:{color.HexCode}; border: 2px solid {borderColor}; cursor: pointer;";
+
+                                        <MudAvatar Size="Size.Small"
+                                                   Style="@avatarStyle"
+                                                   @onclick="async () => await OnColorSelected(color.ProductId)" />
+                                    }
+                                </div>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+
+
+
+                    <MudQueue Direction="Row" Spacing="1" Class="mt-2" AlignItems="Center">
+                        <MudButton Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled">Գնել</MudButton>
+
+                        <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Color="Color.Primary" Size="Size.Small" @onclick="IncrementCartCounter">
+                            <MudBadge Color="Color.Secondary" BadgeContent="@cartCount" AnchorOrigin="Origin.TopRight" />
+                        </MudIconButton>
+
+                        <MudQueue Direction="Row" AlignItems="AlignItems.Center" Spacing="1.5">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Add" @onclick="IncrementCartCounter" />
+                            <MudText Typo="Typo.button">@cartCount</MudText>
+                            <MudIconButton Icon="@Icons.Material.Outlined.Remove" @onclick="Decrease" />
+                        </MudQueue>
+                    </MudQueue>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+
+    <MudPaper Class="p-6" Elevation="1" Style="padding: 2rem; margin: 1rem auto; width: 100%; max-width: 1200px;">
+        <MudStack Spacing="3">
+
+            <!-- General Section -->
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Ընդհանուր բնութագրեր</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Մոդել</b></td>
+                            <td style="width: 60%;">@modelName</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Հայտարարության տարին</b></td>
+                            <td style="width: 60%;">@announcementYear</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;"><b>Smart Tv</b></td>
+                            <td style="width: 60%;">@(tv.IsSmartTv ? "Այո" : "Ոչ")</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+            <!-- Display Section -->
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.Tv" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Էկրան</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Էկրանի չափս</b></td>
+                            <td style="width: 60%;">@tv?.ScreenSize</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+            <MudDivider Class="my-4" />
+
+
+            <MudStack Spacing="1">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <MudIcon Icon="@Icons.Material.Filled.AccountTree" Color="Color.Primary" />
+                    <MudText Typo="Typo.h5">Այլ</MudText>
+                </div>
+
+                <MudSimpleTable Dense="true" Bordered="true" Striped="true" Class="my-2" Style="background-color: #f5f5f5; table-layout: fixed; width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%;"><b>Վահանակի տեսակը</b></td>
+                            <td style="width: 60%;">@tv.PanelType</td>
+                        </tr>
+                    </tbody>
+                </MudSimpleTable>
+
+            </MudStack>
+
+        </MudStack>
+
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    private TvDto tv;
+    private int cartCount = 0;
+    private string modelName = ""; 
+    private int announcementYear = 0;
+    private string colorHexCode = "";
+    private List<(int ProductId, string HexCode)> availableColors = new();
+    private int selectedProductId;
+    private string currentMainImage = string.Empty; // Added for image gallery
+    private bool isLoading = false; // Added for loading state
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTvDataAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadTvDataAsync();
+    }
+
+    private async Task LoadTvDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+            tv = await TvApi.GetTv(Id);
+
+            // Set the first image as main image
+            if (tv != null && tv.ImagesUrls.Any())
+            {
+                currentMainImage = tv.ImagesUrls.First();
+            }
+
+            var model = await ModelApi.GetModel(tv.ModelId);
+            modelName = model?.Name ?? "Unknown";
+            announcementYear = model?.AnnouncementYear ?? 0;
+
+            var color = await ColorApi.GetColor(tv.ColorId);
+            colorHexCode = color?.HexCode ?? "Unknown";
+
+            var products = await TvApi.GetTvsByModelId(tv.ModelId);
+
+            availableColors = (await Task.WhenAll(products
+                .GroupBy(p => p.ColorId)
+                .Select(g => g.First())
+                .Select(async p =>
+                {
+                    var c = await ColorApi.GetColor(p.ColorId);
+                    return (p.Id, c?.HexCode ?? "#FFFFFF");
+                }))).ToList();
+
+            selectedProductId = tv.Id;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ChangeMainImage(string imageUrl)
+    {
+        currentMainImage = imageUrl;
+        StateHasChanged();
+    }
+
+    private string GetBackgroundStyle(ColorDto colorDto)
+    {
+        return "background-color:" + colorDto.HexCode + "; border: 0.5px solid #ccc; cursor: pointer;";
+    }
+
+    async Task OnColorSelected(int productId)
+    {
+        Nav.NavigateTo($"/tvs/{productId}", forceLoad: true);
+        await LoadTvDataAsync();
+        StateHasChanged();
+    }
+
+    private void IncrementCartCounter()
+    {
+        cartCount++;
+        StateHasChanged();
+
+    }
+
+    private void NavigateImages(int direction)
+    {
+        var currentIndex = tv.ImagesUrls.IndexOf(currentMainImage);
+        var newIndex = (currentIndex + direction + tv.ImagesUrls.Count) % tv.ImagesUrls.Count;
+        currentMainImage = tv.ImagesUrls[newIndex];
+        StateHasChanged();
+    }
+
+    private void Decrease()
+    {
+        if (cartCount > 0)
+        {
+            cartCount--;
+        }
+        else
+        {
+            cartCount = 0;
+        }
+        StateHasChanged();
+    }
+
+    void NavigateToHome()
+    {
+        Nav.NavigateTo("/");
+    }
+
+    void NavigateToTvs()
+    {
+        Nav.NavigateTo("category/tvs");
+    }
+}
