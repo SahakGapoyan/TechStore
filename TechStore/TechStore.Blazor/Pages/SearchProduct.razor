@@ -43,13 +43,13 @@
     }
 </MudGrid>
 
-<div style="display: flex; flex-direction: column; gap: 0;">
+<div style="display: flex; flex-direction: column; gap: 2px; max-width: 1200px; margin: 0 auto; padding: 0 ;">
     <!-- Phones Header -->
-    <MudContainer Class="d-flex"
-                  Style="padding: 16px; background-color: white; max-width: 1200px; margin: 0 auto;margin-bottom: 1px; width: 100%;position:relative;">
+    <MudContainer Style="padding: 16px; background-color: white; width: 100%;">
         <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight:500;text-align: left; width: 100%;">Որոնման արդյունք՝  @Query</MudText>
     </MudContainer>
-    <MudGrid GutterSize="3">
+
+    <MudGrid GutterSize="3" Style="width: 100%;">
         @if (SmartPhones is not null)
         {
             @foreach (var phone in SmartPhones)
