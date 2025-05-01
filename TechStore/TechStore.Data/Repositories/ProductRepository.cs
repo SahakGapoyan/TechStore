@@ -58,6 +58,16 @@ namespace TechStore.Data.Repositories
                 .ToListAsync(token);
         }
 
+        public async Task<IEnumerable<T>> GetProductSuggestions(string query, CancellationToken token = default)
+        {
+            query = query?.ToLower().Trim() ?? string.Empty;
+
+            return await _dbSet
+                .Where(p => p.Name.ToLower().Contains(query))
+                .OrderBy(p => p.Name)
+                .Take(10)
+                .ToListAsync(token);
+        }
 
         public async Task UpdateProduct(T product)
         {

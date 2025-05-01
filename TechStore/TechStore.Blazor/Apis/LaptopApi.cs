@@ -3,6 +3,7 @@ using System.Formats.Asn1;
 using System.Net.Http.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Laptop;
+using TechStore.Blazor.DtoModels.Product;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -119,6 +120,18 @@ namespace TechStore.Blazor.Apis
                 return await response.Content.ReadFromJsonAsync<IEnumerable<LaptopDto>>();
             }
             throw new Exception("Error " + response.ReasonPhrase);
+        }
+
+        public async Task<IEnumerable<ProductSuggestionDto>> GetLaptopSuggestions(string query)
+        {
+            var response = await _httpClient.GetAsync($"api/laptops/suggestions?query={Uri.EscapeDataString(query)}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<ProductSuggestionDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
         }
     }
 }

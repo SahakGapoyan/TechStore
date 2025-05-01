@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TechStore.BLL.DtoModels.Enums;
+using TechStore.BLL.DtoModels.Product;
 using TechStore.BLL.DtoModels.SmartPhone;
 using TechStore.BLL.Interfaces;
 using TechStore.BLL.Services;
@@ -153,6 +154,12 @@ namespace TechStore.Api.Controllers
             }
 
             return Ok(result.Item2);
+        }
+
+        [HttpGet("suggestions")]
+        public async Task<ActionResult<List<SmartPhoneDto>>> GetSmartPhoneSuggestions([FromQuery] string query, CancellationToken token)
+        {
+            return Ok(await _smartPhoneService.GetProductSuggestions(query, token));
         }
     }
 }
