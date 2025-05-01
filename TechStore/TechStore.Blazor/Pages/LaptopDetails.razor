@@ -285,15 +285,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadSmartphoneDataAsync();
+        await LoadLaptopDataAsync();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        await LoadSmartphoneDataAsync();
+        await LoadLaptopDataAsync();
     }
 
-    private async Task LoadSmartphoneDataAsync()
+    private async Task LoadLaptopDataAsync()
     {
         try
         {
@@ -354,8 +354,8 @@ else
 
     async Task OnColorSelected(int productId)
     {
-        Nav.NavigateTo($"/smartphones/{productId}", forceLoad: true);
-        await LoadSmartphoneDataAsync();
+        Nav.NavigateTo($"/laptops/{productId}", forceLoad: true);
+        await LoadLaptopDataAsync();
         StateHasChanged();
     }
 
