@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor
+@inject ISmartPhoneApi SmartphoneApi
+@inject ILaptopApi LaptopApi
+@using TechStore.Blazor.DtoModels.Product
+@using TechStore.Blazor.Interfaces
+@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -6,9 +11,45 @@
 <MudSnackbarProvider />
 
 <MudLayout Style="display: flex; flex-direction: column; min-height: 100vh;">
-    <MudAppBar>
+    <MudAppBar Elevation="4" Color="Color.Primary">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        My Application
+
+        <MudText Typo="Typo.h6" Class="ml-2 mr-auto">
+            My Application
+        </MudText>
+
+        <!-- Product Search - Fixed with white background and visible icon -->
+        <MudAutocomplete T="ProductSuggestionDto"
+                         @bind-Value="_selectedProduct"
+                         SearchFunc="@SearchProducts"
+                         ToStringFunc="@(p => p?.Name ?? string.Empty)"
+                         MinCharacters="2"
+                         Placeholder="Search products..."
+                         Variant="Variant.Outlined"
+                         Dense="true"
+                         DebounceInterval="300"
+                         @bind-SearchText="_searchText"
+                         Immediate="true"
+                         CloseOnClick="false"
+                         CoerceText="false"
+                         CoerceValue="false"
+                         Adornment="Adornment.End"
+                         Class="mx-4 white-search-box"
+                         Style="position: relative;"
+                         OnAdornmentClick="@(async () => await TriggerSearch())"
+                         OnItemSelected="@OnProductSelected"
+                         AdornmentIcon="@Icons.Material.Filled.Search">
+            <ItemTemplate>
+                <MudText>@context.Name</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
+
+
+        <!-- Spacer -->
+        <MudSpacer />
+
+        <!-- Sign In / User Button -->
+        <SignInButton />
     </MudAppBar>
 
     <MudDrawer @bind-Open="@_drawerOpen">
@@ -30,10 +71,96 @@
 </MudLayout>
 
 @code {
+    private ProductSuggestionDto? _selectedProduct;
+    private string _searchText = string.Empty;
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+
     bool _drawerOpen = false;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    private void NavigateToSearch()
+    {
+        if (!string.IsNullOrWhiteSpace(_searchText))
+        {
+            Nav.NavigateTo($"search/?query={Uri.EscapeDataString(_searchText)}");
+        }
+    }
+    private async Task<IEnumerable<ProductSuggestionDto>> SearchProducts(string value, CancellationToken token)
+    {
+        _searchText = value; // Store the search text if needed
+        if (string.IsNullOrWhiteSpace(value) || value.Length < 2)
+            return Enumerable.Empty<ProductSuggestionDto>();
+
+        try
+        {
+            var smartphoneTask = SmartphoneApi.GetSmartPhoneSuggestions(value);
+            var laptopTask = LaptopApi.GetLaptopSuggestions(value);
+            await Task.WhenAll(smartphoneTask, laptopTask);
+
+            return (await smartphoneTask).Concat(await laptopTask)
+                          .OrderBy(p => p.Name)
+                          .Take(10);
+        }
+        catch
+        {
+            return Enumerable.Empty<ProductSuggestionDto>();
+        }
+    }
+
+    private async Task OnProductSelected(ProductSuggestionDto? product)
+    {
+        if (product == null) return;
+
+        _selectedProduct = null; // Reset selection
+
+        switch (product.ProductType?.ToLower())
+        {
+            case "smartphone":
+                Nav.NavigateTo($"smartphones/{product.Id}");
+                break;
+            case "laptop":
+                Nav.NavigateTo($"laptops/{product.Id}");
+                break;
+            default:
+                break;
+        }
+    }
+    private async Task TriggerSearch()
+    {
+        // Force update the bound value immediately
+        StateHasChanged();
+
+        if (!string.IsNullOrWhiteSpace(_searchText))
+        {
+            Nav.NavigateTo($"search?query={Uri.EscapeDataString(_searchText)}");
+        }
+    }
 }
+
+<style>
+    .white-search-box .mud-input-outlined {
+        background-color: white !important;
+    }
+
+        .white-search-box .mud-input-outlined .mud-input-slot {
+            background-color: white !important;
+        }
+
+    .white-search-box .mud-input-root {
+        background-color: white !important;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        background-color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+</style>
+

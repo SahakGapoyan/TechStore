@@ -1,0 +1,245 @@
+﻿@page "/search"
+@using TechStore.Blazor.Apis
+@using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Color
+@using TechStore.Blazor.DtoModels.Laptop
+@using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.OS
+@using TechStore.Blazor.DtoModels.Product
+@using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.SmartPhone
+@using TechStore.Blazor.Interfaces
+@inject ICategoryApi CategoryApi
+@inject ISmartPhoneApi SmartPhoneApi
+@inject ITvApi TvApi
+@inject ILaptopApi LaptopApi
+
+<MudGrid Class="mt-auto">
+    @if (Categories is not null)
+    {
+        <MudContainer Class="mt-auto">
+            <div style="display: flex; align-items: center; justify-content:center">
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="ScrollLeft" />
+
+                <div class="hide-scrollbar" style="overflow-x: auto; white-space: nowrap; scroll-behavior: smooth; width: auto;" @ref="scrollContainer">
+                    <div style="display: flex; gap: 1rem;">
+                        @foreach (var category in Categories)
+                        {
+                            <MudCard Class="card-hover" Style="min-width: 150px; cursor: pointer; height: auto;" @onclick="@(() => NavigateToCategory(category.Name.ToLower()))">
+                                <MudCardContent Style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 16px;">
+                                    <MudIcon Icon="@category.Icon" Size="Size.Medium" Style="margin-bottom: 8px;" />
+                                    <MudText Typo="Typo.h6" Style="margin: 0; text-align: center;">@category.Name</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
+                    </div>
+                </div>
+
+                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="ScrollRight" />
+            </div>
+        </MudContainer>
+    }
+</MudGrid>
+
+<div style="display: flex; flex-direction: column; gap: 0;">
+    <!-- Phones Header -->
+    <MudContainer Class="d-flex"
+                  Style="padding: 16px; background-color: white; max-width: 1200px; margin: 0 auto;margin-bottom: 1px; width: 100%;position:relative;">
+        <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight:500;text-align: left; width: 100%;">Որոնման արդյունք՝  @Query</MudText>
+    </MudContainer>
+    <MudGrid GutterSize="3">
+        @if (SmartPhones is not null)
+        {
+            @foreach (var phone in SmartPhones)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Class="product-card"
+                             Style="height: 100%; width: 100%;max-width: 300px;"
+                             @onclick="@(() => NavigateToSmartPhone(phone))">
+                        <MudChip T="bool"
+                                 Color="@(phone.IsAvailable ? Color.Success : Color.Error)"
+                                 Variant="Variant.Filled"
+                                 Class="ml-2 mt-2 availability-chip"
+                                 Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            @(phone.IsAvailable ? "Առկա է" : "Առկա չէ")
+                        </MudChip>
+
+                        <div class="image-container"
+                             style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                            <MudCardMedia Image="@phone.ImagesUrls.FirstOrDefault()" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
+                        </div>
+
+
+                        <MudCardContent Class="px-4 pt-3 pb-1">
+                            <MudText Typo="Typo.h6" Class="product-name">@phone.Name</MudText>
+                            <MudText Typo="Typo.body2" Class="mb-2 product-description">@phone.Description</MudText>
+                            <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
+                                @($"{phone.Price:C}")
+                            </MudText>
+                        </MudCardContent>
+
+                        <MudCardActions Class="px-4 pb-3">
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       EndIcon="@Icons.Material.Filled.ShoppingCart"
+                                       Class="buy-button"
+                                       Disabled="@(!phone.IsAvailable)">
+                                @(phone.IsAvailable ? "Add to Cart" : "Out of Stock")
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+        @if (Laptops is not null)
+        {
+            @foreach (var laptop in Laptops)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <MudCard Class="product-card"
+                             Style="height: 100%; width: 100%;max-width: 300px;"
+                             @onclick="@(() => NavigateToLaptop(laptop))">
+                        <MudChip T="bool"
+                                 Color="@(laptop.IsAvailable ? Color.Success : Color.Error)"
+                                 Variant="Variant.Filled"
+                                 Class="ml-2 mt-2 availability-chip"
+                                 Style="color: white; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                            @(laptop.IsAvailable ? "Առկա է" : "Առկա չէ")
+                        </MudChip>
+
+                        <div class="image-container"
+                             style="width: 100%;aspect-ratio: 1;display: flex;justify-content: center;align-items: center;">
+                            <MudCardMedia Image="@laptop.ImagesUrls.FirstOrDefault()" Class="product-image" Style="width: 100%;height: 100%; object-fit: cover;" />
+                        </div>
+
+
+                        <MudCardContent Class="px-4 pt-3 pb-1">
+                            <MudText Typo="Typo.h6" Class="product-name">@laptop.Name</MudText>
+                            <MudText Typo="Typo.body2" Class="mb-2 product-description">@laptop.Description</MudText>
+                            <MudText Typo="Typo.subtitle1" Color="Color.Primary" Class="price-text">
+                                @($"{laptop.Price:C}")
+                            </MudText>
+                        </MudCardContent>
+
+                        <MudCardActions Class="px-4 pb-3">
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       EndIcon="@Icons.Material.Filled.ShoppingCart"
+                                       Class="buy-button"
+                                       Disabled="@(!laptop.IsAvailable)">
+                                @(laptop.IsAvailable ? "Add to Cart" : "Out of Stock")
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+</div>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "query")]
+    public string? Query { get; set; }
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
+    public List<SmartPhoneDto> SmartPhones { get; set; } = new List<SmartPhoneDto>();
+    public List<LaptopDto> Laptops { get; set; } = new List<LaptopDto>();
+
+    private List<ProductSuggestionDto> _smartphones = new();
+    private List<ProductSuggestionDto> _laptops = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = (await CategoryApi.GetCategories()).ToList();
+        foreach (var category in Categories)
+        {
+            category.Icon = GetCategoryIcon(category.Name);
+        }
+    }
+
+    private string GetCategoryIcon(string categoryName)
+    {
+        var lowerName = categoryName.ToLower();
+
+        return lowerName switch
+        {
+            "հեռախոսներ" => Icons.Material.Filled.PhoneIphone,
+            "նոթբուքներ" => Icons.Material.Filled.Laptop,
+            "հեռուստացույցներ" => Icons.Material.Filled.Tv,
+            _ => Icons.Material.Filled.DeviceUnknown// Default icon
+        };
+    }
+    protected override async Task OnParametersSetAsync()
+{
+    if (!string.IsNullOrWhiteSpace(Query))
+    {
+        try
+        {
+            // Get suggestion IDs first
+            var phoneSuggestions = (await SmartPhoneApi.GetSmartPhoneSuggestions(Query)).ToList();
+            var laptopSuggestions = (await LaptopApi.GetLaptopSuggestions(Query)).ToList();
+
+            // Convert to List<Task> first
+            var phoneTasks = phoneSuggestions.Select(s => SmartPhoneApi.GetSmartPhone(s.Id)).ToList();
+            var laptopTasks = laptopSuggestions.Select(s => LaptopApi.GetLaptop(s.Id)).ToList();
+
+            // Combine as IEnumerable<Task> (non-generic)
+            var allTasks = phoneTasks.Cast<Task>().Concat(laptopTasks.Cast<Task>());
+
+            await Task.WhenAll(allTasks);
+
+            // Assign results
+            SmartPhones = phoneTasks.Select(t => t.Result).ToList();
+            Laptops = laptopTasks.Select(t => t.Result).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Search error: {ex.Message}");
+        }
+    }
+}
+    private Dictionary<string, string> _categoryUrlMap = new()
+    {
+        { "հեռախոսներ","smartphones" },
+        { "նոթբուքներ", "laptops" },
+        { "հեռուստացույցներ", "tvs" },
+        // Add more as needed
+    };
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+    private ElementReference scrollContainer;
+
+    private async Task ScrollLeft()
+    {
+        await JS.InvokeVoidAsync("scrollElementBy", scrollContainer, -300);
+    }
+
+    private async Task ScrollRight()
+    {
+        await JS.InvokeVoidAsync("scrollElementBy", scrollContainer, 300);
+    }
+
+    void NavigateToCategory(string categoryName)
+    {
+        if (_categoryUrlMap.TryGetValue(categoryName, out var urlSlug))
+        {
+            Nav.NavigateTo($"category/{urlSlug}");
+        }
+        else
+        {
+            Nav.NavigateTo($"category/{Uri.EscapeDataString(categoryName.ToLower())}");
+        }
+    }
+
+    void NavigateToSmartPhone(SmartPhoneDto smartPhoneDto)
+    {
+        Nav.NavigateTo($"smartphones/{smartPhoneDto.Id}");
+    }
+    void NavigateToLaptop(LaptopDto laptopDto)
+    {
+        Nav.NavigateTo($"laptops/{laptopDto.Id}");
+    }
+}
