@@ -58,10 +58,113 @@
             @Body
         </div>
 
-        <footer class="py-6 text-center" style="background-color: black;">
-            <MudText Typo="Typo.body2" Style="color: white;">
-                © @DateTime.Now.Year My Application. All rights reserved.
-            </MudText>
+        <!-- Footer -->
+        <footer style="background-color: black; padding: 2rem 0;">
+            <MudContainer MaxWidth="MaxWidth.False" Style="color: white;">
+                <MudGrid>
+                    <!-- Column 1 -->
+                    <MudItem xs="12" sm="6" md="3">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <!-- Icon -->
+                            <MudIcon Icon="@Icons.Material.Filled.Call" Size="Size.Large"
+                                     Style="margin-top:2px" />
+
+                            <!-- Text Section -->
+                            <div>
+                                <MudText Typo="Typo.subtitle1">
+                                    <a href="tel:+37410102030" Style="color:inherit; transition: border-bottom 0.2s ease; border-bottom: 1px solid transparent;"
+                                       onmouseover="this.style.borderBottom='1px solid gray'"
+                                       onmouseout="this.style.borderBottom='1px solid transparent';"> +374 10 10 20 30</a>,
+                                    <a href="tel:+37411112131" Style="color:inherit; transition: border-bottom 0.2s ease; border-bottom: 1px solid transparent;"
+                                       onmouseover="this.style.borderBottom='1px solid gray'"
+                                       onmouseout="this.style.borderBottom='1px solid transparent';">+374 11 11 21 31</a>
+                                </MudText>
+
+                                <MudText Typo="Typo.subtitle2" Style="color: gray;">Սպասարկման ծառայություն</MudText>
+                                <MudText Typo="Typo.subtitle2" Style="color: gray;">Աշխատանքային ժամերը՝ 10:00 - 21:00</MudText>
+                            </div>
+                        </div>
+                    </MudItem>
+
+
+                    <!-- Column 2 -->
+                    <MudItem xs="12" sm="6" md="3">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <!-- Icon -->
+                            <MudIcon Icon="@(Icons.Material.Filled.LocalShipping)" Size="Size.Large"
+                                     Style="margin-top:2px" />
+
+                            <!-- Text Section -->
+                            <div>
+                                <MudText Typo="Typo.subtitle1">Առաքում</MudText>
+                                <MudText Typo="Typo.subtitle2" Style="color:gray">1 աշխատանքային օրվա ընթացքում</MudText>
+                                <MudText Typo="Typo.subtitle2" Style="color:gray">10:00 - 21:00</MudText>
+                            </div>
+                        </div>
+                    </MudItem>
+
+                    <!-- Column 3 -->
+                    <MudItem xs="12" sm="6" md="3">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <!-- Icon -->
+                            <MudIcon Icon="@Icons.Material.Filled.LocationOn" Size="Size.Large"
+                                     Style="margin-top:2px" />
+
+                            <!-- Text Section -->
+                            <div>
+                                <MudText Typo="Typo.subtitle1">Հասցե</MudText>
+                                <MudText Typo="Typo.subtitle2" Style="color:gray">Ք․Երևան</MudText>
+                                <a href="https://www.google.com/maps/search/?api=1&query=1+Ալեք+Մանուկյան+փողոց"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   style="text-decoration: none;">
+                                    <MudText Typo="Typo.subtitle2"
+                                             Style="color:gray; transition: border-bottom 0.2s ease; border-bottom: 1px solid transparent;"
+                                             onmouseover="this.style.borderBottom='1px solid gray'"
+                                             onmouseout="this.style.borderBottom='1px solid transparent'">
+                                        1 Ալեք Մանուկյան փողոց
+                                    </MudText>
+                                </a>
+
+                            </div>
+                        </div>
+                    </MudItem>
+
+
+
+                    <!-- Column 4 -->
+                    <MudItem xs="12" sm="6" md="3">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <!-- Icon -->
+                            <MudIcon Icon="@Icons.Material.Filled.ConnectWithoutContact" Size="Size.Large"
+                                     Style="margin-top:2px" />
+
+                            <!-- Text Section -->
+                            <div>
+                                <MudText Typo="Typo.subtitle1">Հետևեք մեզ</MudText>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <MudText Typo="Typo.subtitle2" Style="color:gray">Հետևեք մեզ ինստագրամում</MudText>
+                                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+                                        <img src="Images/instagram.png" alt="Instagram" style="width: 24px; height: 24px;" />
+                                    </a>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <MudText Typo="Typo.subtitle2" Style="color:gray">Հետևեք մեզ ֆեյսբուքում</MudText>
+                                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+                                        <img src="Images/facebook.png" alt="Facebook" style="width: 24px; height: 24px;" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </MudItem>
+                </MudGrid>
+
+                <!-- Copyright row -->
+                <MudDivider Class="my-4" />
+                <MudText Typo="Typo.caption" Align="Align.Center">
+                    © @DateTime.Now.Year TechStore. All rights reserved.
+                </MudText>
+            </MudContainer>
         </footer>
     </MudMainContent>
 </MudLayout>
