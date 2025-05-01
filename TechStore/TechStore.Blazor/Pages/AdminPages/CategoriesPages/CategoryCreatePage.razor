@@ -1,4 +1,4 @@
-﻿@page "/CategoriesPage/CategoryCreatePage"
+﻿@page "/categories/create"
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
@@ -6,20 +6,20 @@
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Create New Category
+        Ավելացնել Նոր Կատեգորիա
     </MudText>
 
     <MudGrid>
         <MudItem xs="12" md="6" Class="pr-md-4">
             <MudTextField @bind-Value="CategoryAddDto.Name"
-                          Label="Name"
+                          Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth />
         </MudItem>
         <MudItem xs="12" md="6">
             <MudTextField @bind-Value="CategoryAddDto.Description"
-                          Label="Description"
+                          Label="Նկարագրությունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
                           FullWidth />
@@ -31,14 +31,14 @@
                    Color="Color.Default"
                    Variant="Variant.Text"
                    Class="mr-2">
-            Cancel
+            Չեղարկել
         </MudButton>
         <MudButton OnClick="CreateAsync"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
                    Class="ml-2">
-            Create Category
+           Ստեղծել Կատեգորիա 
         </MudButton>
     </div>
 </MudPaper>
@@ -50,11 +50,11 @@
     private async Task CreateAsync()
     {
         await CategoryApi.AddCategory(CategoryAddDto);
-        Nav.NavigateTo("/categoriesPage");
+        Nav.NavigateTo("categories");
     }
 
     private void NavigateBack()
     {
-        Nav.NavigateTo("/categoriesPage");
+        Nav.NavigateTo("categories");
     }
 }

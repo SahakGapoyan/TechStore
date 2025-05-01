@@ -1,5 +1,4 @@
-﻿@page "/TVsPage/TVEditPage/{Id::int}"
-<h3>TVsEditPage</h3>
+﻿@page "/tvs/edit/{Id::int}"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
@@ -14,61 +13,73 @@
 @inject IModelApi ModelApi
 @inject NavigationManager Nav
 
-<MudCard>
-    <MudCardContent>
-        <MudGrid>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="TvDto.Name" Label="Name" />
-                <MudTextField @bind-Value="TvDto.PanelType" Label="GPU" />
-                <MudTextField @bind-Value="TvDto.ScreenSize" Label="ScreenSize" />
-                <MudTextField @bind-Value="TvDto.Price" Label="Price" For="@(() => TvDto.Price)" />
-                <MudTextField @bind-Value="TvDto.Description" Label="Description" Lines="3" />
-                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                    <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+<MudGrid>
+    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Հեռուստացույցը
+        </MudText>
+    </MudContainer>
 
-                    @if (TvDto.ImagesUrls != null)
-                    {
-                        @for (int i = 0; i < TvDto.ImagesUrls.Count; i++)
-                        {
-                            var index = i;
-                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
-                                <MudItem xs="11">
-                                    <MudTextField @bind-Value="TvDto.ImagesUrls[index]"
-                                                  Variant="Variant.Outlined"
-                                                  Label="Image URL" />
-                                </MudItem>
-                                <MudItem xs="1" Class="d-flex align-center">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveImageUrl(index))" />
-                                </MudItem>
-                            </MudGrid>
-                        }
-                    }
+    <MudContainer Class="d-flex justify-space-between align-center"
+                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudCard Style="width: 100%;">
+            <MudCardContent>
+                <MudGrid Style="width: 100%;" GutterSize="3">
+                    <MudItem xs="12" md="6">
+                        <MudTextField @bind-Value="TvDto.Name" Label="Անունը" />
+                        <MudTextField @bind-Value="TvDto.PanelType" Label="Գրաֆիկական պրոցեսորը" />
+                        <MudTextField @bind-Value="TvDto.ScreenSize" Label="Էկրանի Չափսը" />
+                        <MudTextField @bind-Value="TvDto.Price" Label="Գինը" For="@(() => TvDto.Price)" />
+                        <MudTextField @bind-Value="TvDto.Description" Label="Նկարագրությունը" Lines="3" />
+                        <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
-                    <MudButton Variant="Variant.Text"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.Add"
-                               OnClick="AddImageUrl"
-                               Class="mt-2">
-                        Add Image URL
-                    </MudButton>
-                </MudPaper>
-                <MudCheckBox @bind-Value="TvDto.IsAvailable" Label="Is Available" />
-            </MudItem>
+                            @if (TvDto.ImagesUrls != null)
+                            {
+                                @for (int i = 0; i < TvDto.ImagesUrls.Count; i++)
+                                {
+                                    var index = i;
+                                    <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                        <MudItem xs="11">
+                                            <MudTextField @bind-Value="TvDto.ImagesUrls[index]"
+                                                          Variant="Variant.Outlined"
+                                                          Label="Նկարի Հղումը" />
+                                        </MudItem>
+                                        <MudItem xs="1" Class="d-flex align-center">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                           Color="Color.Error"
+                                                           OnClick="@(() => RemoveImageUrl(index))" />
+                                        </MudItem>
+                                    </MudGrid>
+                                }
+                            }
 
-            <MudItem xs="12">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
-                    Save Changes
-                </MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
-                    Cancel
-                </MudButton>
-            </MudItem>
-        </MudGrid>
-    </MudCardContent>
-</MudCard>
+                            <MudButton Variant="Variant.Text"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="AddImageUrl"
+                                       Class="mt-2">
+                                Ավելացնել Նկարի Հղում
+                            </MudButton>
+                        </MudPaper>
+                        <MudCheckBox @bind-Value="TvDto.IsAvailable" Label="Առկա է" />
+                    </MudItem>
 
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                            Պահպանել
+                        </MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                            Չեղարկել
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+</MudGrid>
 @code {
     [Parameter] public int Id { get; set; }
 
@@ -104,8 +115,8 @@
     private void RemoveImageUrl(int index)
     {
         if (TvDto.ImagesUrls == null ||
-            index < 0 ||
-            index >= TvDto.ImagesUrls.Count)
+        index < 0 ||
+        index >= TvDto.ImagesUrls.Count)
         {
             return;
         }
@@ -134,11 +145,11 @@
                 IsSmartTv = TvDto.IsSmartTv
             };
         await TvApi.UpdateTv(Id, tvUpdateDto);
-        Nav.NavigateTo("/TVsPage");
+        Nav.NavigateTo("tvs");
     }
 
     private void Cancel()
     {
-        Nav.NavigateTo("/TVsPage");
+        Nav.NavigateTo("tvs");
     }
-}
+        }

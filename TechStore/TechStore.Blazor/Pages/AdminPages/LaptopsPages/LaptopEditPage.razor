@@ -1,4 +1,4 @@
-﻿@page "/LaptopsPage/LaptopEditPage/{Id::int}"
+﻿@page "/laptops/edit/{Id::int}"
 @using TechStore.Blazor.DtoModels.Brand
 @using TechStore.Blazor.DtoModels.Category
 @using TechStore.Blazor.DtoModels.Color
@@ -18,118 +18,129 @@
 @inject IModelApi ModelApi
 @inject NavigationManager Nav
 
-<MudCard>
-    <MudCardContent>
-        <MudGrid>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="LaptopDto.Name" Label="Name" />
-                <MudTextField @bind-Value="LaptopDto.Processor" Label="Processor" />
-                <MudTextField @bind-Value="LaptopDto.GPU" Label="GPU" />
-                <MudTextField @bind-Value="LaptopDto.BatteryLifeInHours" Label="Battery Life In Hours" />
-                <MudTextField @bind-Value="LaptopDto.ScreenSize" Label="ScreenSize" />
-                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                    <MudText Typo="Typo.subtitle2" Class="mb-2">Image URLs</MudText>
+<MudGrid>
+    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Հեռախոսը
+        </MudText>
+    </MudContainer>
+    <MudContainer Class="d-flex justify-space-between align-center"
+                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudCard Style="width: 100%;">
+            <MudCardContent>
+                <MudGrid Style="width: 100%;" GutterSize="3">
+                    <MudItem xs="12" md="6">
+                        <MudTextField @bind-Value="LaptopDto.Name" Label="Անունը" />
+                        <MudTextField @bind-Value="LaptopDto.Processor" Label="Պրոցեսորը" />
+                        <MudTextField @bind-Value="LaptopDto.GPU" Label="Գրաֆիկական պրոցեսորը" />
+                        <MudTextField @bind-Value="LaptopDto.BatteryLifeInHours" Label="Մարտկոցի Կյանքի Տևողությունը" />
+                        <MudTextField @bind-Value="LaptopDto.ScreenSize" Label="Էկրանի Չափսը" />
+                        <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                            <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
-                    @if (LaptopDto.ImagesUrls != null)
-                    {
-                        @for (int i = 0; i < LaptopDto.ImagesUrls.Count; i++)
-                        {
-                            var index = i; // Capture the current index
-                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
-                                <MudItem xs="11">
-                                    <MudTextField @bind-Value="LaptopDto.ImagesUrls[index]"
-                                                  Variant="Variant.Outlined"
-                                                  Label="Image URL" />
-                                </MudItem>
-                                <MudItem xs="1" Class="d-flex align-center">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveImageUrl(index))" />
-                                </MudItem>
-                            </MudGrid>
-                        }
-                    }
+                            @if (LaptopDto.ImagesUrls != null)
+                            {
+                                @for (int i = 0; i < LaptopDto.ImagesUrls.Count; i++)
+                                {
+                                    var index = i; // Capture the current index
+                                    <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                        <MudItem xs="11">
+                                            <MudTextField @bind-Value="LaptopDto.ImagesUrls[index]"
+                                                          Variant="Variant.Outlined"
+                                                          Label="Նկարի Հղումը" />
+                                        </MudItem>
+                                        <MudItem xs="1" Class="d-flex align-center">
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                           Color="Color.Error"
+                                                           OnClick="@(() => RemoveImageUrl(index))" />
+                                        </MudItem>
+                                    </MudGrid>
+                                }
+                            }
 
-                    <MudButton Variant="Variant.Text"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.Add"
-                               OnClick="AddImageUrl"
-                               Class="mt-2">
-                        Add Image URL
-                    </MudButton>
-                </MudPaper>
-                <MudTextField @bind-Value="LaptopDto.Price" Label="Price" For="@(() => LaptopDto.Price)" />
-                <MudTextField @bind-Value="LaptopDto.Description" Label="Description" Lines="3" />
-                <MudCheckBox @bind-Value="LaptopDto.IsAvailable" Label="Is Available" />
-            </MudItem>
+                            <MudButton Variant="Variant.Text"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.Add"
+                                       OnClick="AddImageUrl"
+                                       Class="mt-2">
+                                Ավելացնել Նկարի Հղում
+                            </MudButton>
+                        </MudPaper>
+                        <MudTextField @bind-Value="LaptopDto.Price" Label="Գինը" For="@(() => LaptopDto.Price)" />
+                        <MudTextField @bind-Value="LaptopDto.Description" Label="Նկարագրությունը" Lines="3" />
+                        <MudCheckBox @bind-Value="LaptopDto.IsAvailable" Label="Առկա է" />
+                    </MudItem>
 
-            <MudItem xs="12" md="6">
-                <!-- Dropdown selectors for IDs -->
-                <MudSelect T="int" Label="RAM" @bind-Value="LaptopDto.RamId" Variant="Variant.Outlined">
-                    @foreach (var ram in AvailableRams)
-                    {
-                        <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
-                    }
-                </MudSelect>
+                    <MudItem xs="12" md="6">
+                        <!-- Dropdown selectors for IDs -->
+                        <MudSelect T="int" Label="Օպերատիվ Հիշողությունը" @bind-Value="LaptopDto.RamId" Variant="Variant.Outlined">
+                            @foreach (var ram in AvailableRams)
+                            {
+                                <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
+                            }
+                        </MudSelect>
 
-                <MudSelect T="int" Label="Memory" @bind-Value="LaptopDto.MemoryId" Variant="Variant.Outlined">
-                    @foreach (var memory in AvailableMemories)
-                    {
-                        <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
-                    }
-                </MudSelect>
+                        <MudSelect T="int" Label="Հիշողությունը" @bind-Value="LaptopDto.MemoryId" Variant="Variant.Outlined">
+                            @foreach (var memory in AvailableMemories)
+                            {
+                                <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
+                            }
+                        </MudSelect>
 
-                <MudSelect T="int" Label="Color" @bind-Value="LaptopDto.ColorId" Variant="Variant.Outlined">
-                    @foreach (var color in AvailableColors)
-                    {
-                        <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
-                    }
-                </MudSelect>
-
-
-                <MudSelect T="int" Label="Operating System" @bind-Value="LaptopDto.OsId" Variant="Variant.Outlined">
-                    @foreach (var os in AvailableOSes)
-                    {
-                        <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
-                    }
-                </MudSelect>
-
-
-                <MudSelect T="int" Label="Category" @bind-Value="LaptopDto.CategoryId" Variant="Variant.Outlined">
-                    @foreach (var category in AvailableCategories)
-                    {
-                        <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                        <MudSelect T="int" Label="Գույնը" @bind-Value="LaptopDto.ColorId" Variant="Variant.Outlined">
+                            @foreach (var color in AvailableColors)
+                            {
+                                <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                            }
+                        </MudSelect>
 
 
-                <MudSelect T="int" Label="Brand" @bind-Value="LaptopDto.BrandId" Variant="Variant.Outlined">
-                    @foreach (var brand in AvailableBrands)
-                    {
-                        <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
-                    }
-                </MudSelect>
+                        <MudSelect T="int" Label="Օպերացիոն Համակարգը" @bind-Value="LaptopDto.OsId" Variant="Variant.Outlined">
+                            @foreach (var os in AvailableOSes)
+                            {
+                                <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
+                            }
+                        </MudSelect>
 
-                <MudSelect T="int" Label="Model" @bind-Value="LaptopDto.ModelId" Variant="Variant.Outlined">
-                    @foreach (var model in AvailableBrands)
-                    {
-                        <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
 
-            <MudItem xs="12">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
-                    Save Changes
-                </MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
-                    Cancel
-                </MudButton>
-            </MudItem>
-        </MudGrid>
-    </MudCardContent>
-</MudCard>
+                        <MudSelect T="int" Label="Կատեգորիան" @bind-Value="LaptopDto.CategoryId" Variant="Variant.Outlined">
+                            @foreach (var category in AvailableCategories)
+                            {
+                                <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
+                            }
+                        </MudSelect>
 
+
+                        <MudSelect T="int" Label="Բրենդը" @bind-Value="LaptopDto.BrandId" Variant="Variant.Outlined">
+                            @foreach (var brand in AvailableBrands)
+                            {
+                                <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <MudSelect T="int" Label="Մոդելը" @bind-Value="LaptopDto.ModelId" Variant="Variant.Outlined">
+                            @foreach (var model in AvailableBrands)
+                            {
+                                <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                            Պահպանել
+                        </MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                            Չեղարկել
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+    </MudContainer>
+</MudGrid>
 @code {
     [Parameter] public int Id { get; set; }
 
@@ -195,24 +206,24 @@
                 ColorId = LaptopDto.ColorId,
                 RamId = LaptopDto.RamId,
                 MemoryId = LaptopDto.MemoryId,
-                OsId=LaptopDto.OsId,
+                OsId = LaptopDto.OsId,
                 ModelId = LaptopDto.ModelId,
                 BrandId = LaptopDto.BrandId,
                 IsAvailable = LaptopDto.IsAvailable,
                 ImagesUrls = LaptopDto.ImagesUrls,
                 Processor = LaptopDto.Processor,
-                GPU=LaptopDto.GPU,
-                HasFingerprintSensor=LaptopDto.HasFingerprintSensor,
+                GPU = LaptopDto.GPU,
+                HasFingerprintSensor = LaptopDto.HasFingerprintSensor,
                 CategoryId = LaptopDto.CategoryId,
                 HasTouchScreen = LaptopDto.HasTouchScreen,
-                BatteryLifeInHours=LaptopDto.BatteryLifeInHours
+                BatteryLifeInHours = LaptopDto.BatteryLifeInHours
             };
         await LaptopApi.Update(Id, laptopUpdateDto);
-        Nav.NavigateTo("/LaptopsPage");
+        Nav.NavigateTo("laptops");
     }
 
     private void Cancel()
     {
-        Nav.NavigateTo("/LaptopsPage");
+        Nav.NavigateTo("laptops");
     }
 }

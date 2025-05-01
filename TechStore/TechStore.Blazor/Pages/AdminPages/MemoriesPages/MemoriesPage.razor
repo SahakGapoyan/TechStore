@@ -1,53 +1,72 @@
-﻿@page "/MemoriesPage"
+﻿@page "/memories"
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.Interfaces
-<h3>MemoriesPage</h3>
 @inject IMemoryApi MemoryApi
 @inject IDialogService DialogService
 
-    <div class="mt-5">
+<MudGrid>
+    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+        <MudText Typo="Typo.h5" Color="Color.Dark" Style="font-weight: 600;">Հիշողություններ</MudText>
+
         <MudButton Variant="Variant.Filled"
                    Color="Color.Success"
                    OnClick="NavigateToCreatePage"
                    StartIcon="@Icons.Material.Filled.Add">
             Ավելացնել Հիշողություն
         </MudButton>
-    </div>
-@if (isLoading)
-{
-    <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-}
-else if (Memories.Count == 0)
-{
-    <p>Ռամեր չկան</p>
-}
-else
-{
-    <MudDataGrid Items="@Memories" Filterable="false" SortMode="@SortMode.None" Groupable="false">
-        <Columns>
-            <PropertyColumn Property="x => x.Id" />
-            <PropertyColumn Property="x => x.Size" />
-            <TemplateColumn CellClass="d-flex justify-end">
-                <CellTemplate>
-                    <MudStack Row>
-                        <MudButton OnClick="@(() => OpenEditPage(context.Item))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Primary">
-                            Փոփոխել
-                        </MudButton>
-                        <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
-                                   Size="@Size.Small"
-                                   Variant="@Variant.Filled"
-                                   Color="@Color.Error">
-                            Ջնջել
-                        </MudButton>
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
-}
+    </MudContainer>
+
+    <MudContainer Class="d-flex justify-space-between align-center"
+                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+
+        @if (isLoading)
+        {
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        }
+        else if (Memories.Count == 0)
+        {
+            <p>Հիշողություններ չկան</p>
+        }
+        else
+        {
+            <MudDataGrid Items="@Memories"
+                         Style="width: 100%;"
+                         Filterable="false"
+                         SortMode="@SortMode.None"
+                         Groupable="false">
+                <Columns>
+                    <PropertyColumn Property="x => x.Id"
+                                    Title="Համար"
+                                    HeaderStyle="font-weight: 600;" />
+                    <PropertyColumn Property="x => x.Size"
+                                    Title="Ծավալ"
+                                    HeaderStyle="font-weight: 600;" />
+                    <TemplateColumn Title="Գործողություններ"
+                                    HeaderStyle="font-weight: 600;"
+                                    CellStyle="vertical-align: bottom; height: 100%;">
+                        <CellTemplate>
+                            <div style="display: flex; gap: 8px; align-items: flex-end; height: 100%;">
+                                <MudButton OnClick="@(() => OpenEditPage(context.Item))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary">
+                                    Փոփոխել
+                                </MudButton>
+                                <MudButton OnClick="@(() => ShowDeleteConfirmation(context.Item.Id))"
+                                           Size="Size.Small"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Error">
+                                    Ջնջել
+                                </MudButton>
+                            </div>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+            </MudDataGrid>
+        }
+    </MudContainer>
+</MudGrid>
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private bool isLoading = true;
@@ -65,7 +84,7 @@ else
         {
             return;
         }
-        Nav.NavigateTo($"/MemoriesPage/MemoryEditPage/{memoryDto.Id}");
+        Nav.NavigateTo($"memories/edit/{memoryDto.Id}");
     }
 
 
@@ -73,7 +92,7 @@ else
     {
         bool? result = await DialogService.ShowMessageBox(
             "Հաստատում",
-            "Դուք համոզված եք, որ ցանկանում եք ջնջել այս հիշողությունը?",
+            "Դուք համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս հիշողությունը",
             yesText: "Ջնջել",
             cancelText: "Չեղարկել");
 
@@ -91,6 +110,6 @@ else
 
     private void NavigateToCreatePage()
     {
-        Nav.NavigateTo("/MemoriesPage/MemoryCreatePage");
+        Nav.NavigateTo("memories/create");
     }
 }
