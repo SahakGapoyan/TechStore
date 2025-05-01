@@ -1,4 +1,5 @@
 ﻿using TechStore.Blazor.DtoModels.Laptop;
+using TechStore.Blazor.DtoModels.Product;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -15,5 +16,6 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<LaptopDto>> GetLaptopsByBrandId(int brandId);
         Task<IEnumerable<LaptopDto>> GetLaptopsByColorId(int colorId);
         Task<IEnumerable<LaptopDto>> GetLaptopsByModelId(int modelId);
+        Task<IEnumerable<ProductSuggestionDto>> GetLaptopSuggestions(string query);
     }
 }

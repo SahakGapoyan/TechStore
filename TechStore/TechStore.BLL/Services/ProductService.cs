@@ -21,6 +21,7 @@ namespace TechStore.BLL.Services
         where TProductDto : ProductDto
         where TProductAddDto : ProductAddDto
         where TProductUpdateDto : ProductUpdateDto
+        
     {
         protected readonly IUnitOfWork _uow;
         protected readonly IMapper _mapper;
@@ -41,13 +42,13 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> DeleteProduct(int tProductId, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
-            var product = await mockProduct.GetProductById(tProductId, token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
+            var product = await repo.GetProductById(tProductId, token);
 
             if (product == null)
                 return Result.Error(ErrorType.NotFound);
 
-            await mockProduct.DeleteProduct(product);
+            await repo.DeleteProduct(product);
             await _uow.SaveAsync(token);
 
             return Result.Ok("Successfully deleted.");
@@ -55,53 +56,62 @@ namespace TechStore.BLL.Services
 
         public async Task<TProductDto?> GetProductById(int productId, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
-            var product = await mockProduct.GetProductById(productId, token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
+            var product = await repo.GetProductById(productId, token);
             return _mapper.Map<TProductDto>(product);
         }
 
         public async Task<IEnumerable<TProductDto>> GetProducts(CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
-            var products = await mockProduct.GetProducts(token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
+            var products = await repo.GetProducts(token);
             return _mapper.Map<List<TProductDto>>(products);
         }
         public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByBrandId(int brandId, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
             var brand = await _uow.BrandRepository.GetBrand(brandId, token);
 
             if (brand == null)
                 return (Result.Error(ErrorType.NotFound, $"Brand with {brandId} BrandId not found."), null);
 
-            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByBrandId(brandId)));
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await repo.GetProductsByBrandId(brandId)));
         }
 
         public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByColorId(int colorId, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
             var color = await _uow.ColorRepository.GetColorById(colorId, token);
 
             if (color == null)
                 return (Result.Error(ErrorType.NotFound, $"Color with {colorId} ColorId not found."), null);
 
-            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByColorId(colorId)));
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await repo.GetProductsByColorId(colorId)));
         }
 
         public async Task<(Result, IEnumerable<TProductDto>)> GetProductsByModelId(int modelId, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
             var model = await _uow.ModelRepository.GetModel(modelId, token);
 
             if (model == null)
                 return (Result.Error(ErrorType.NotFound, $"Model with {modelId} ModelId not found."), null);
 
-            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await mockProduct.GetProductsByModelId(modelId)));
+            return (Result.Ok(), _mapper.Map<List<TProductDto>>(await repo.GetProductsByModelId(modelId)));
         }
+
+        public async Task<IEnumerable<TProductDto>> GetProductSuggestions(string query,CancellationToken token = default)
+        {
+            var repo = await _uow.GetProductRepository<TProduct>(token);
+            var products = await repo.GetProductSuggestions(query, token);
+
+            return _mapper.Map<List<TProductDto>>(products);
+        }
+
         public  async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
         {
-            var mockProduct = await _uow.GetProductRepository<TProduct>(token);
-            var product = await mockProduct.GetProductById(tProductId, token);
+            var repo = await _uow.GetProductRepository<TProduct>(token);
+            var product = await repo.GetProductById(tProductId, token);
 
             if (product == null)
                 return Result.Error(ErrorType.NotFound);

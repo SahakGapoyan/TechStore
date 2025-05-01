@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using TechStore.Blazor.Configuration;
+using TechStore.Blazor.DtoModels.Product;
 using TechStore.Blazor.DtoModels.SmartPhone;
 using TechStore.Blazor.Interfaces;
 
@@ -124,6 +125,16 @@ namespace TechStore.Blazor.Apis
             }
         }
 
+        public async Task<IEnumerable<ProductSuggestionDto>> GetSmartPhoneSuggestions(string query)
+        {
+            var response = await _httpClient.GetAsync($"api/smartphones/suggestions?query={Uri.EscapeDataString(query)}");
 
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<ProductSuggestionDto>>();
+            }
+
+            throw new Exception("Error" + response.ReasonPhrase);
+        }
     }
 }

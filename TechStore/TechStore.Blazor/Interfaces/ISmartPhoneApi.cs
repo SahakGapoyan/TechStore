@@ -1,4 +1,5 @@
-﻿using TechStore.Blazor.DtoModels.SmartPhone;
+﻿using TechStore.Blazor.DtoModels.Product;
+using TechStore.Blazor.DtoModels.SmartPhone;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -15,5 +16,6 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByColorId(int colorId);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByBrandId(int brandId);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByModelId(int brandId);
+        Task<IEnumerable<ProductSuggestionDto>> GetSmartPhoneSuggestions(string query);
     }
 }
