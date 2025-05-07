@@ -33,7 +33,7 @@ namespace TechStore.Data.Repositories
             return await _context.Rams.FirstOrDefaultAsync(r => r.Id == ramId, token);
         }
 
-        public async Task<IEnumerable<Ram>> GetRams(CancellationToken token)
+        public async Task<IEnumerable<Ram>> GetRams(CancellationToken token = default)
         {
             return await _context.Rams.ToListAsync();
         }

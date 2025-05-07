@@ -16,7 +16,7 @@ namespace TechStore.Api.Controllers
 
         public OSesController(IOSService oSService)
         {
-           _oSService = oSService;
+            _oSService = oSService;
         }
 
         [HttpGet]
@@ -45,19 +45,37 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateOS([FromBody] OSAddDto oSAddDto, CancellationToken token)
         {
-            await _oSService.AddOS(oSAddDto, token);
-            return Ok("Successfully Created");
+            var result = await _oSService.AddOS(oSAddDto, token);
+
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.NotFound)
+                    return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
         public async Task<ActionResult> UpdateOS([FromRoute] int id, [FromBody] OSUpdateDto oSUpdateDto, CancellationToken token)
         {
             var result = await _oSService.UpdateOS(id, oSUpdateDto, token);
+
             if (!result.Success)
             {
-                if (result.ErrorType == ErrorType.NotFound)
-                    return NotFound();
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
+
             return Ok(result.Message);
         }
 

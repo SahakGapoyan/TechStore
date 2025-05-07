@@ -14,7 +14,7 @@ namespace TechStore.BLL.Services
 {
     public class TvService : ProductService<Tv, TvDto, TvAddDto, TvUpdateDto>, ITvService
     {
-        public TvService(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public TvService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider) : base(uow, mapper, serviceProvider)
         {
 
         }

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -21,23 +23,33 @@ namespace TechStore.BLL.Services
         where TProductDto : ProductDto
         where TProductAddDto : ProductAddDto
         where TProductUpdateDto : ProductUpdateDto
-        
+
     {
         protected readonly IUnitOfWork _uow;
         protected readonly IMapper _mapper;
+        protected readonly IServiceProvider _serviceProvider;
 
-        public ProductService(IUnitOfWork uow, IMapper mapper)
+        public ProductService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task AddProduct(TProductAddDto productAddDto, CancellationToken token = default)
+        public async Task<Result> AddProduct(TProductAddDto productAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<TProductAddDto>>();
+            var validationResult = await validator.ValidateAsync(productAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var productMap = _mapper.Map<TProduct>(productAddDto);
             var product = await _uow.GetProductRepository<Product>(token);
             await product.AddProduct(productMap);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully deleted.");
+
         }
 
         public async Task<Result> DeleteProduct(int tProductId, CancellationToken token = default)
@@ -100,7 +112,7 @@ namespace TechStore.BLL.Services
             return (Result.Ok(), _mapper.Map<List<TProductDto>>(await repo.GetProductsByModelId(modelId)));
         }
 
-        public async Task<IEnumerable<TProductDto>> GetProductSuggestions(string query,CancellationToken token = default)
+        public async Task<IEnumerable<TProductDto>> GetProductSuggestions(string query, CancellationToken token = default)
         {
             var repo = await _uow.GetProductRepository<TProduct>(token);
             var products = await repo.GetProductSuggestions(query, token);
@@ -108,8 +120,13 @@ namespace TechStore.BLL.Services
             return _mapper.Map<List<TProductDto>>(products);
         }
 
-        public  async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
+        public async Task<Result> UpdateProduct(int tProductId, TProductUpdateDto productUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<TProductUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(productUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var repo = await _uow.GetProductRepository<TProduct>(token);
             var product = await repo.GetProductById(tProductId, token);
 
@@ -125,10 +142,10 @@ namespace TechStore.BLL.Services
             product.Price = productUpdateDto.Price ?? product.Price;
             product.ModelId = productUpdateDto.ModelId ?? product.ModelId;
             product.ImagesUrls = productUpdateDto.ImagesUrls ?? product.ImagesUrls;
-            
+
             return Result.Ok();
         }
-        
+
 
     }
 }

@@ -45,9 +45,18 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateColor([FromBody] ColorAddDto colorAddDto, CancellationToken token)
         {
-            await _colorService.AddColor(colorAddDto, token);
+            var result = await _colorService.AddColor(colorAddDto, token);
 
-            return Ok("Successfully created.");
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
@@ -60,6 +69,12 @@ namespace TechStore.Api.Controllers
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
 
             return Ok(result.Message);

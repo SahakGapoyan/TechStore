@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using TechStore.BLL.DtoModels.Brand;
 using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.Interfaces;
@@ -37,15 +38,24 @@ namespace TechStore.Api.Controllers
         [HttpGet("categoryId/{categoryId}")]
         public async Task<ActionResult<BrandDto>> GetBrandsByCategoryId([FromRoute] int categoryId, CancellationToken token)
         {
-            return Ok(await _brandService.GetBrandsByCategoryId(categoryId,token));
+            return Ok(await _brandService.GetBrandsByCategoryId(categoryId, token));
         }
 
         [HttpPost]
         public async Task<ActionResult> CreateBrand(BrandAddDto brandAddDto, CancellationToken token)
         {
-            await _brandService.AddBrand(brandAddDto, token);
+            var result = await _brandService.AddBrand(brandAddDto, token);
 
-            return Ok("Successfully created.");
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
@@ -57,8 +67,13 @@ namespace TechStore.Api.Controllers
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
-            }
 
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
             return Ok(result.Message);
         }
 

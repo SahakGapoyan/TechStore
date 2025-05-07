@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +19,27 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public OSService(IUnitOfWork uow, IMapper mapper)
+        public OSService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddOS(OSAddDto oSAddDto, CancellationToken token = default)
+        public async Task<Result> AddOS(OSAddDto oSAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<OSAddDto>>();
+            var validationResult = await validator.ValidateAsync(oSAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var os = _mapper.Map<OS>(oSAddDto);
             await _uow.OSRepsoitory.AddOS(os, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
+
         }
 
         public async Task<Result> DeleteOS(int OsId, CancellationToken token)
@@ -62,6 +74,11 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateOS(int OsId, OSUpdateDto oSUpdateDto, CancellationToken token)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<OSUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(oSUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var os = await _uow.OSRepsoitory.GetOSById(OsId, token);
 
             if (os == null)

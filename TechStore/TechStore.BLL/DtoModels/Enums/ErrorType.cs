@@ -9,6 +9,7 @@ namespace TechStore.BLL.DtoModels.Enums
     public enum ErrorType
     {
         None,
-        NotFound
+        NotFound,
+        Validation
     }
 }

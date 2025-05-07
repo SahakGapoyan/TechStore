@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace TechStore.BLL.Services
         : ProductService<SmartPhone, SmartPhoneDto, SmartPhoneAddDto, SmartPhoneUpdateDto>,
         ISmartPhoneService
     {
-        public SmartPhoneService(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public SmartPhoneService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider) : base(uow, mapper, serviceProvider)
         {
 
         }
@@ -51,7 +53,7 @@ namespace TechStore.BLL.Services
 
             return (Result.Ok(), _mapper.Map<List<SmartPhoneDto>>(await _uow.SmartPhoneRepository.GetSmartPhonesByRamId(ramId)));
         }
-        public  async Task<Result> UpdateSmartPhone(int smartPhoneId, SmartPhoneUpdateDto smartPhoneUpdateDto, CancellationToken token = default)
+        public async Task<Result> UpdateSmartPhone(int smartPhoneId, SmartPhoneUpdateDto smartPhoneUpdateDto, CancellationToken token = default)
         {
             var result = await base.UpdateProduct(smartPhoneId, smartPhoneUpdateDto, token);
             if (!result.Success)

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,18 +19,27 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public BrandService(IUnitOfWork uow, IMapper mapper)
+        public BrandService(IUnitOfWork uow, IMapper mapper,IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task AddBrand(BrandAddDto brandAddDto, CancellationToken token = default)
+        public async Task<Result> AddBrand(BrandAddDto brandAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<BrandAddDto>>();
+            var validationResult = await validator.ValidateAsync(brandAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var brand = _mapper.Map<Brand>(brandAddDto);
             await _uow.BrandRepository.AddBrand(brand, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
         public async Task<Result> DeleteBrand(int brandId, CancellationToken token = default)
@@ -65,6 +76,11 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<BrandUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(brandUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var brand = await _uow.BrandRepository.GetBrand(brandId, token);
 
             if (brand == null)

@@ -4,6 +4,7 @@ using TechStore.BLL.DtoModels;
 using TechStore.BLL.DtoModels.Category;
 using TechStore.BLL.DtoModels.Enums;
 using TechStore.BLL.Interfaces;
+using TechStore.BLL.Services;
 
 namespace TechStore.Api.Controllers
 {
@@ -38,8 +39,18 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateCategory([FromBody] CategoryAddDto categoryAddDto, CancellationToken token)
         {
-            await _categoryService.AddCategory(categoryAddDto, token);
-            return Ok("Successfully created.");
+            var result = await _categoryService.AddCategory(categoryAddDto, token);
+
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
@@ -51,13 +62,19 @@ namespace TechStore.Api.Controllers
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
 
             return Ok(result.Message);
         }
 
         [HttpDelete("id/{id}")]
-        public async Task<ActionResult> DeleteCategory([FromRoute] int id,CancellationToken token)
+        public async Task<ActionResult> DeleteCategory([FromRoute] int id, CancellationToken token)
         {
             var result = await _categoryService.DeleteCategory(id, token);
 

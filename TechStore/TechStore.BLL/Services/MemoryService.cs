@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +19,26 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public MemoryService(IUnitOfWork uow, IMapper mapper)
+        public MemoryService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddMemory(MemoryAddDto memoryAddDto, CancellationToken token = default)
+        public async Task<Result> AddMemory(MemoryAddDto memoryAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<MemoryAddDto>>();
+            var validationResult = await validator.ValidateAsync(memoryAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var memory = _mapper.Map<Memory>(memoryAddDto);
             await _uow.MemoryRepository.AddMemory(memory, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
         public async Task<Result> DeleteMemory(int memoryId, CancellationToken token = default)
@@ -62,6 +73,11 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<MemoryUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(memoryUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var memory = await _uow.MemoryRepository.GetMemoryById(memoryId, token);
 
             if (memory == null)

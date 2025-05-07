@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,23 +19,32 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ColorService(IUnitOfWork uow, IMapper mapper)
+        public ColorService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddColor(ColorAddDto colorAddDto, CancellationToken token = default)
+        public async Task<Result> AddColor(ColorAddDto colorAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<ColorAddDto>>();
+            var validationResult = await validator.ValidateAsync(colorAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var color = _mapper.Map<Color>(colorAddDto);
-            await _uow.ColorRepository.AddColor(color,token);
+            await _uow.ColorRepository.AddColor(color, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
         public async Task<Result> DeleteColor(int colorId, CancellationToken token = default)
         {
             var color = await _uow.ColorRepository.GetColorById(colorId, token);
-            if(color==null)
+            if (color == null)
             {
                 return Result.Error(ErrorType.NotFound);
             }
@@ -60,13 +71,18 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateColor(int colorId, ColorUpdateDto colorUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<ColorUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(colorUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var color = await _uow.ColorRepository.GetColorById(colorId, token);
             if (color == null)
             {
                 return Result.Error(ErrorType.NotFound);
             }
             color.Name = colorUpdateDto.Name ?? color.Name;
-            color.HexCode=colorUpdateDto.HexCode ?? color.HexCode;
+            color.HexCode = colorUpdateDto.HexCode ?? color.HexCode;
             await _uow.ColorRepository.UpdateColor(color);
             await _uow.SaveAsync(token);
             return Result.Ok("Successfully Updated");

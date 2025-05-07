@@ -13,7 +13,7 @@ namespace TechStore.BLL.Interfaces
         Task<IEnumerable<ColorDto>> GetColors(CancellationToken token);
         Task<ColorDto?> GetColorById(int colorId, CancellationToken token = default);
         Task<IEnumerable<ColorDto>> GetColorsByCategoryId(int categoryId, CancellationToken token = default);
-        Task AddColor(ColorAddDto colorAddDto, CancellationToken token = default);
+        Task<Result> AddColor(ColorAddDto colorAddDto, CancellationToken token = default);
         Task<Result> UpdateColor(int colorId,ColorUpdateDto colorUpdateDto, CancellationToken token = default);
         Task<Result> DeleteColor(int colorId, CancellationToken token = default);
     }
