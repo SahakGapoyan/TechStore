@@ -1,5 +1,6 @@
 ﻿using TechStore.Blazor.DtoModels.Color;
 using TechStore.Blazor.DtoModels.Memory;
+using TechStore.Blazor.DtoModels.Result;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -8,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<MemoryDto>> GetMemories();
         Task<MemoryDto> GetMemory(int id);
         Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int categoryId);
-        Task AddMemory(MemoryAddDto memoryAddDto);
+        Task<ApiResult<bool>> AddMemory(MemoryAddDto memoryAddDto);
         Task UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto);
         Task DeleteMemory(int memoryId);
     }
