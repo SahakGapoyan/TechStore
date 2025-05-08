@@ -1,5 +1,6 @@
 ﻿@page "/models/create"
 @using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IModelApi ModelApi
 
@@ -61,6 +62,32 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
+
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
+        @if (_hasValidationErrors)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                <ul>
+                    @foreach (var error in _validationErrors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </MudAlert>
+        }
+
+        @if (!string.IsNullOrEmpty(_apiErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                @_apiErrorMessage
+            </MudAlert>
+        }
 </MudPaper>
 </MudForm>
 
@@ -72,16 +99,38 @@
     private bool _formValidated = false;
     private bool _formIsValid = false;
 
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
+
     private async Task SubmitForm()
     {
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+                _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
 
         if (_formIsValid)
         {
-            await ModelApi.AddModel(ModelAddDto);
-            Nav.NavigateTo("models");
+            var result = await ModelApi.AddModel(ModelAddDto);
+
+            if (result.Success)
+            {
+                Nav.NavigateTo("models");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 
