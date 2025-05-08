@@ -3,14 +3,14 @@
 @using TechStore.Blazor.Interfaces
 @inject IColorApi ColorApi
 
-
+<MudForm @ref="_form" Model="ColorUpdateDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
         Խմբագրել Գույնը
     </MudText>
 
-    @if (ColorDto == null)
+    @if (ColorUpdateDto == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
     }
@@ -18,16 +18,20 @@
     {
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="ColorDto.Name"
+                <MudTextField @bind-Value="ColorUpdateDto.Name"
                               Label="Անունը"
                               Variant="Variant.Outlined"
+                              For="@(()=>ColorUpdateDto.Name)"
+                              Required
                               Class="mb-4"
                               FullWidth />
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="ColorDto.HexCode"
+                <MudTextField @bind-Value="ColorUpdateDto.HexCode"
                               Label="Գույնի կոդը"
                               Variant="Variant.Outlined"
+                              For="@(()=>ColorUpdateDto.HexCode)"
+                              Required
                               Class="mb-4"
                               FullWidth />
             </MudItem>
@@ -42,27 +46,44 @@
                 Պահպանել
             </MudButton>
         </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
     }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Parameter] public int id { get; set; }
-    private ColorDto ColorDto { get; set; } = new ColorDto();
+    private ColorUpdateDto ColorUpdateDto { get; set; } = new ColorUpdateDto();
+    ColorDto colorDto = new ColorDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     protected override async Task OnInitializedAsync()
     {
-        ColorDto = await ColorApi.GetColor(id);
+        colorDto = await ColorApi.GetColor(id);
+        ColorUpdateDto = new ColorUpdateDto
+            {
+                Name = colorDto.Name,
+                HexCode = colorDto.HexCode
+            };
     }
 
     private async Task SaveAsync()
     {
-        var colorUpdateDto = new ColorUpdateDto
-            {
-                Name = ColorDto.Name,
-                HexCode = ColorDto.HexCode
-            };
-        await ColorApi.UpdateColor(id, colorUpdateDto);
-        Nav.NavigateTo("colors");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await ColorApi.UpdateColor(id, ColorUpdateDto);
+            Nav.NavigateTo("colors");
+        }
     }
 }
