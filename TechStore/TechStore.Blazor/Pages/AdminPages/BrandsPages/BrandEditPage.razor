@@ -3,66 +3,85 @@
 @using TechStore.Blazor.Interfaces
 @inject IBrandApi BrandApi
 
+<MudForm @ref="_form" Model="BrandUpdateDto">
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Բրենդը
+        </MudText>
 
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Խմբագրել Բրենդը
-    </MudText>
+        @if (BrandUpdateDto == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="pr-md-4">
+                    <MudTextField @bind-Value="BrandUpdateDto.Name"
+                                  Label="Անունը"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  For="@(()=>BrandUpdateDto.Name)"
+                                  Required
+                                  FullWidth />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="BrandUpdateDto.ImageUrl"
+                                  Label="Նկարի հղումը"
+                                  Variant="Variant.Outlined"
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
 
-    @if (BrandDto == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="BrandDto.Name"
-                              Label="Անունը"
-                              Variant="Variant.Outlined"
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="BrandDto.ImageUrl"
-                              Label="Նկարի հղումը"
-                              Variant="Variant.Outlined"
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-        </MudGrid>
-
-        <div class="d-flex justify-end mt-4">
-            <MudButton OnClick="SaveAsync"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
-                Պահպանել
-            </MudButton>
-        </div>
-    }
-</MudPaper>
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="SaveAsync"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.Save"
+                           Class="ml-2">
+                    Պահպանել
+                </MudButton>
+            </div>
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+        }
+    </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Parameter] public int id { get; set; }
-    private BrandDto BrandDto { get; set; } = new BrandDto();
+    private BrandUpdateDto BrandUpdateDto { get; set; } = new BrandUpdateDto();
+    BrandDto brandDto = new BrandDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     protected override async Task OnInitializedAsync()
     {
-        BrandDto = await BrandApi.GetBrand(id);
+        brandDto = await BrandApi.GetBrand(id);
+        BrandUpdateDto = new BrandUpdateDto
+            {
+                Name = brandDto.Name,
+                ImageUrl = brandDto.ImageUrl
+            };
     }
 
     private async Task SaveAsync()
     {
-        var brandUpdateDto = new BrandUpdateDto
-            {
-                Name = BrandDto.Name,
-                ImageUrl=BrandDto.ImageUrl
-            };
-        await BrandApi.UpdateBrand(id, brandUpdateDto);
-        Nav.NavigateTo("brands");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await BrandApi.UpdateBrand(id, BrandUpdateDto);
+            Nav.NavigateTo("brands");
+        }
     }
 }
