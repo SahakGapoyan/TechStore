@@ -13,90 +13,164 @@
 @inject IModelApi ModelApi
 @inject NavigationManager Nav
 
-<MudGrid>
-    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
-                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
-        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-            Խմբագրել Հեռուստացույցը
-        </MudText>
-    </MudContainer>
+<MudForm @ref="_form" Model="TvUpdateDto">
+    <MudGrid>
+        <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+                      Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+            <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
+                <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+                Խմբագրել Հեռուստացույցը
+            </MudText>
+        </MudContainer>
 
-    <MudContainer Class="d-flex justify-space-between align-center"
-                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
-        <MudCard Style="width: 100%;">
-            <MudCardContent>
-                <MudGrid Style="width: 100%;" GutterSize="3">
-                    <MudItem xs="12" md="6">
-                        <MudTextField @bind-Value="TvDto.Name" Label="Անունը" />
-                        <MudTextField @bind-Value="TvDto.PanelType" Label="Գրաֆիկական պրոցեսորը" />
-                        <MudTextField @bind-Value="TvDto.ScreenSize" Label="Էկրանի Չափսը" />
-                        <MudTextField @bind-Value="TvDto.Price" Label="Գինը" For="@(() => TvDto.Price)" />
-                        <MudTextField @bind-Value="TvDto.Description" Label="Նկարագրությունը" Lines="3" />
-                        <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                            <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
+        <MudContainer Class="d-flex justify-space-between align-center"
+                      Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+            <MudCard Style="width: 100%;">
+                <MudCardContent>
+                    <MudGrid Style="width: 100%;" GutterSize="3">
+                        <MudItem xs="12" md="6">
+                            <MudTextField @bind-Value="TvUpdateDto.Name"
+                                          Label="Անունը"
+                                          For="@(()=>TvUpdateDto.Name)"
+                                          Required />
 
-                            @if (TvDto.ImagesUrls != null)
-                            {
-                                @for (int i = 0; i < TvDto.ImagesUrls.Count; i++)
+                            <MudTextField @bind-Value="TvUpdateDto.Price"
+                                          Label="Գինը"
+                                          For="@(() => TvUpdateDto.Price)"
+                                          Required />
+
+                            <MudTextField @bind-Value="TvUpdateDto.PanelType"
+                                          Label="Էկրանի տեսակը" />
+
+                            <MudTextField @bind-Value="TvUpdateDto.ScreenSize"
+                                          Label="Էկրանի Չափսը"
+                                          For="@(()=>TvUpdateDto.ScreenSize)"
+                                          Required />
+
+                            <MudItem xs="12" md="6">
+                                <MudSelect Label="Գույնը" @bind-Value="TvUpdateDto.ColorId" Variant="Variant.Outlined">
+                                    @foreach (var color in AvailableColors)
+                                    {
+                                        <MudSelectItem Value="@((int?)color.Id)">@color.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+
+
+                                <MudSelect Label="Կատեգորիան"
+                                           @bind-Value="TvUpdateDto.CategoryId"
+                                           Variant="Variant.Outlined"
+                                           ReadOnly>
+                                    @foreach (var category in AvailableCategories)
+                                    {
+                                        <MudSelectItem Value="@((int?)category.Id)">@category.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+
+
+                                <MudSelect Label="Բրենդը" @bind-Value="TvUpdateDto.BrandId" Variant="Variant.Outlined">
+                                    @foreach (var brand in AvailableBrands)
+                                    {
+                                        <MudSelectItem Value="@((int?)brand.Id)">@brand.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+
+                                <MudSelect Label="Մոդելը" @bind-Value="TvUpdateDto.ModelId" Variant="Variant.Outlined">
+                                    @foreach (var model in AvailableModels)
+                                    {
+                                        <MudSelectItem Value="@((int?)model.Id)">@model.Name</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudTextField @bind-Value="TvUpdateDto.Description" Label="Նկարագրությունը" Lines="3" />
+                            <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
+
+                                @if (TvUpdateDto.ImagesUrls != null)
                                 {
-                                    var index = i;
-                                    <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
-                                        <MudItem xs="11">
-                                            <MudTextField @bind-Value="TvDto.ImagesUrls[index]"
-                                                          Variant="Variant.Outlined"
-                                                          Label="Նկարի Հղումը" />
-                                        </MudItem>
-                                        <MudItem xs="1" Class="d-flex align-center">
-                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                           Color="Color.Error"
-                                                           OnClick="@(() => RemoveImageUrl(index))" />
-                                        </MudItem>
-                                    </MudGrid>
+                                    @for (int i = 0; i < TvUpdateDto.ImagesUrls.Count; i++)
+                                    {
+                                        var index = i;
+                                        <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                            <MudItem xs="11">
+                                                <MudTextField @bind-Value="TvUpdateDto.ImagesUrls[index]"
+                                                              Variant="Variant.Outlined"
+                                                              Label="Նկարի Հղումը" />
+                                            </MudItem>
+                                            <MudItem xs="1" Class="d-flex align-center">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                               Color="Color.Error"
+                                                               OnClick="@(() => RemoveImageUrl(index))" />
+                                            </MudItem>
+                                        </MudGrid>
+                                    }
                                 }
-                            }
 
-                            <MudButton Variant="Variant.Text"
-                                       Color="Color.Primary"
-                                       StartIcon="@Icons.Material.Filled.Add"
-                                       OnClick="AddImageUrl"
-                                       Class="mt-2">
-                                Ավելացնել Նկարի Հղում
+                                <MudButton Variant="Variant.Text"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.Add"
+                                           OnClick="AddImageUrl"
+                                           Class="mt-2">
+                                    Ավելացնել Նկարի Հղում
+                                </MudButton>
+                            </MudPaper>
+                            <MudCheckBox @bind-Value="TvUpdateDto.IsAvailable" Label="Առկա է" />
+                        </MudItem>
+
+                        <MudItem xs="12">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                                Պահպանել
                             </MudButton>
-                        </MudPaper>
-                        <MudCheckBox @bind-Value="TvDto.IsAvailable" Label="Առկա է" />
-                    </MudItem>
-
-                    <MudItem xs="12">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
-                            Պահպանել
-                        </MudButton>
-                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
-                            Չեղարկել
-                        </MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudContainer>
-</MudGrid>
+                            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                                Չեղարկել
+                            </MudButton>
+                            @if (!_formIsValid && _formValidated)
+                            {
+                                <MudAlert Severity="Severity.Error" Class="mb-4">
+                                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                                </MudAlert>
+                            }
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </MudGrid>
+</MudForm>
 @code {
     [Parameter] public int Id { get; set; }
 
-    private TvDto TvDto { get; set; } = new TvDto();
+    private TvUpdateDto TvUpdateDto { get; set; } = new TvUpdateDto();
     private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
     private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
     private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
     private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
 
+    TvDto tvDto = new TvDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
+
     protected override async Task OnInitializedAsync()
     {
-        TvDto = await TvApi.GetTv(Id);
-        TvDto.ImagesUrls ??= new List<string>();
-        if (TvDto.ImagesUrls.Count == 0)
+        tvDto = await TvApi.GetTv(Id);
+        tvDto.ImagesUrls ??= new List<string>();
+        if (tvDto.ImagesUrls.Count == 0)
         {
-            TvDto.ImagesUrls.Add(string.Empty);
+            tvDto.ImagesUrls.Add(string.Empty);
         }
+        TvUpdateDto = new TvUpdateDto
+            {
+                Name = tvDto.Name,
+                Price = tvDto.Price,
+                ColorId = tvDto.ColorId,
+                ModelId = tvDto.ModelId,
+                BrandId = tvDto.BrandId,
+                IsAvailable = tvDto.IsAvailable,
+                ImagesUrls = tvDto.ImagesUrls,
+                PanelType = tvDto.PanelType,
+                CategoryId = tvDto.CategoryId,
+                IsSmartTv = tvDto.IsSmartTv
+            };
         AvailableColors = (await ColorApi.GetColors()).ToList();
         AvailableModels = (await ModelApi.GetModels()).ToList();
         AvailableBrands = (await BrandApi.GetBrands()).ToList();
@@ -104,52 +178,45 @@
 
     private void AddImageUrl()
     {
-        if (TvDto.ImagesUrls == null)
+        if (tvDto.ImagesUrls == null)
         {
-            TvDto.ImagesUrls = new List<string>();
+            tvDto.ImagesUrls = new List<string>();
         }
 
-        TvDto.ImagesUrls.Add(string.Empty);
+        tvDto.ImagesUrls.Add(string.Empty);
     }
 
     private void RemoveImageUrl(int index)
     {
-        if (TvDto.ImagesUrls == null ||
+        if (tvDto.ImagesUrls == null ||
         index < 0 ||
-        index >= TvDto.ImagesUrls.Count)
+        index >= TvUpdateDto.ImagesUrls.Count)
         {
             return;
         }
 
-        TvDto.ImagesUrls.RemoveAt(index);
+        tvDto.ImagesUrls.RemoveAt(index);
 
-        if (TvDto.ImagesUrls.Count == 0)
+        if (tvDto.ImagesUrls.Count == 0)
         {
-            TvDto.ImagesUrls.Add(string.Empty);
+            tvDto.ImagesUrls.Add(string.Empty);
         }
     }
 
     private async Task SaveChanges()
     {
-        var tvUpdateDto = new TvUpdateDto
-            {
-                Name = TvDto.Name,
-                Price = TvDto.Price,
-                ColorId = TvDto.ColorId,
-                ModelId = TvDto.ModelId,
-                BrandId = TvDto.BrandId,
-                IsAvailable = TvDto.IsAvailable,
-                ImagesUrls = TvDto.ImagesUrls,
-                PanelType = TvDto.PanelType,
-                CategoryId = TvDto.CategoryId,
-                IsSmartTv = TvDto.IsSmartTv
-            };
-        await TvApi.UpdateTv(Id, tvUpdateDto);
-        Nav.NavigateTo("tvs");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await TvApi.UpdateTv(Id, TvUpdateDto);
+            Nav.NavigateTo("tvs");
+        }
     }
 
     private void Cancel()
     {
         Nav.NavigateTo("tvs");
     }
-        }
+}
