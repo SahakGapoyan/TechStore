@@ -9,7 +9,7 @@ namespace TechStore.Data.Interfaces
 {
     public interface IColorRepository
     {
-        Task<IEnumerable<Color>> GetColors(CancellationToken token);
+        Task<IEnumerable<Color>> GetColors(CancellationToken token = default);
         Task<Color?> GetColorById(int colorId, CancellationToken token = default);
         Task<IEnumerable<Color>> GetColorssByCategoryId(int categoryId, CancellationToken token = default);
         Task AddColor(Color color, CancellationToken token = default);

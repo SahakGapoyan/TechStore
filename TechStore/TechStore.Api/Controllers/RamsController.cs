@@ -45,19 +45,37 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateRam([FromBody] RamAddDto ramAddDto, CancellationToken token)
         {
-            await _ramService.AddRam(ramAddDto, token);
-            return Ok("Successfully Created");
+            var result = await _ramService.AddRam(ramAddDto, token);
+
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
         public async Task<ActionResult> UpdateRam([FromRoute] int id, [FromBody] RamUpdateDto ramUpdateDto, CancellationToken token)
         {
             var result = await _ramService.UpdateRam(id, ramUpdateDto, token);
+
             if (!result.Success)
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
+
             return Ok(result.Message);
         }
 

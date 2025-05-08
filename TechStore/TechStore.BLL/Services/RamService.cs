@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,23 +20,32 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public RamService(IUnitOfWork uow,IMapper mapper)
+        public RamService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddRam(RamAddDto ramAddDto, CancellationToken token = default)
+        public async Task<Result> AddRam(RamAddDto ramAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<RamAddDto>>();
+            var validationResult = await validator.ValidateAsync(ramAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var ram = _mapper.Map<Ram>(ramAddDto);
-            await _uow.RamRepository.AddRam(ram,token);
+            await _uow.RamRepository.AddRam(ram, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
         public async Task<Result> DeleteRam(int ramId, CancellationToken token = default)
         {
             var ram = await _uow.RamRepository.GetRamById(ramId);
-            if(ram==null)
+            if (ram == null)
             {
                 return Result.Error(ErrorType.NotFound);
             }
@@ -62,14 +73,20 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateRam(int ramId, RamUpdateDto ramUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<RamUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(ramUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var ram = await _uow.RamRepository.GetRamById(ramId);
-            if(ram==null)
+            if (ram == null)
             {
                 return Result.Error(ErrorType.NotFound);
             }
             ram.Size = ramUpdateDto.Size ?? ram.Size;
             await _uow.RamRepository.UpdateRam(ram);
             await _uow.SaveAsync(token);
+
             return Result.Ok("Successfully Updated");
         }
     }

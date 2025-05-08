@@ -17,8 +17,4 @@
     <ProjectReference Include="..\TechStore.Data\TechStore.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validations\" />
-  </ItemGroup>
-
 </Project>

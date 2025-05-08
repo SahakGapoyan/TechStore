@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,17 +19,26 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ModelService(IUnitOfWork uow, IMapper mapper)
+        public ModelService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddModel(ModelAddDto modelAddDto, CancellationToken token = default)
+        public async Task<Result> AddModel(ModelAddDto modelAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<ModelAddDto>>();
+            var validationResult = await validator.ValidateAsync(modelAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var model = _mapper.Map<Model>(modelAddDto);
             await _uow.ModelRepository.AddModel(model, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
         public async Task<Result> Delete(int modelId, CancellationToken token = default)
@@ -61,6 +72,11 @@ namespace TechStore.BLL.Services
 
         public async Task<Result> UpdateModel(int modelId, ModelUpdateDto modelUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<ModelUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(modelUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var model = await _uow.ModelRepository.GetModel(modelId, token);
 
             if (model == null)

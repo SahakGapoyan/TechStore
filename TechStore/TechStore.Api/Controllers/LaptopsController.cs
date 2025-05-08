@@ -41,9 +41,18 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateLaptop([FromBody] LaptopAddDto laptopAddDto, CancellationToken token)
         {
-            await _laptopService.AddProduct(laptopAddDto, token);
+            var result = await _laptopService.AddProduct(laptopAddDto, token);
 
-            return Ok("Successfully created.");
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
@@ -56,6 +65,12 @@ namespace TechStore.Api.Controllers
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
 
             return Ok(result.Message);

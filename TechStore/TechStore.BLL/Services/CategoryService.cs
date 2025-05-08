@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,20 +21,29 @@ namespace TechStore.BLL.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IServiceProvider _serviceProvider;
 
-        public CategoryService(IUnitOfWork uow,IMapper mapper)
+        public CategoryService(IUnitOfWork uow, IMapper mapper, IServiceProvider serviceProvider)
         {
             _uow = uow;
             _mapper = mapper;
+            _serviceProvider = serviceProvider;
         }
-        public async Task AddCategory(CategoryAddDto categoryAddDto, CancellationToken token = default)
+        public async Task<Result> AddCategory(CategoryAddDto categoryAddDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<CategoryAddDto>>();
+            var validationResult = await validator.ValidateAsync(categoryAddDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var category = _mapper.Map<Category>(categoryAddDto);
-            await _uow.CategoryRepository.AddCategory(category,token);
+            await _uow.CategoryRepository.AddCategory(category, token);
             await _uow.SaveAsync(token);
+
+            return Result.Ok("Successfully created.");
         }
 
-        public async Task<Result> DeleteCategory(int categoryId,CancellationToken token = default)
+        public async Task<Result> DeleteCategory(int categoryId, CancellationToken token = default)
         {
             var category = await _uow.CategoryRepository.GetCategory(categoryId);
             if (category == null)
@@ -57,17 +68,24 @@ namespace TechStore.BLL.Services
             return _mapper.Map<CategoryDto>(category);
         }
 
-        public async Task<Result> UpdateCategory(int categoryId,CategoryUpdateDto categoryUpdateDto, CancellationToken token = default)
+        public async Task<Result> UpdateCategory(int categoryId, CategoryUpdateDto categoryUpdateDto, CancellationToken token = default)
         {
+            var validator = _serviceProvider.GetRequiredService<IValidator<CategoryUpdateDto>>();
+            var validationResult = await validator.ValidateAsync(categoryUpdateDto, token);
+            if (!validationResult.IsValid)
+                return Result.ValidationError(validationResult.Errors);
+
             var category = await _uow.CategoryRepository.GetCategory(categoryId, token);
-            if(category==null)
+            if (category == null)
             {
                 return Result.Error(ErrorType.NotFound);
             }
+
             category.Name = categoryUpdateDto.Name ?? category.Name;
             category.Description = categoryUpdateDto.Description ?? category.Description;
             await _uow.CategoryRepository.UpdateCategory(category);
             await _uow.SaveAsync(token);
+
             return Result.Ok("Successfully updated");
         }
     }

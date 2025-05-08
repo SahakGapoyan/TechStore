@@ -17,7 +17,7 @@ namespace TechStore.BLL.Services
 {
     public class LaptopService : ProductService<Laptop, LaptopDto, LaptopAddDto, LaptopUpdateDto>, ILaptopService
     {
-        public LaptopService(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public LaptopService(IUnitOfWork uow, IMapper mapper,IServiceProvider serviceProvider) : base(uow, mapper, serviceProvider)
         {
 
         }

@@ -25,7 +25,7 @@ namespace TechStore.Api.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public async Task<ActionResult<ModelDto>> GetModel([FromRoute] int id,CancellationToken token)
+        public async Task<ActionResult<ModelDto>> GetModel([FromRoute] int id, CancellationToken token)
         {
             var model = await _modelService.GetModel(id, token);
             if (model == null)
@@ -44,19 +44,37 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateModel([FromBody] ModelAddDto modelAddDto, CancellationToken token)
         {
-            await _modelService.AddModel(modelAddDto, token);
-            return Ok("Successfully Created");
+            var result = await _modelService.AddModel(modelAddDto, token);
+
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
-        public async Task<ActionResult> UpdateModel([FromRoute] int id, [FromBody] ModelUpdateDto modelUpdateDto,CancellationToken token)
+        public async Task<ActionResult> UpdateModel([FromRoute] int id, [FromBody] ModelUpdateDto modelUpdateDto, CancellationToken token)
         {
             var result = await _modelService.UpdateModel(id, modelUpdateDto, token);
-            if(!result.Success)
+
+            if (!result.Success)
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
+
             return Ok(result.Message);
         }
 

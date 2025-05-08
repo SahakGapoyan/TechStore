@@ -1,4 +1,5 @@
 
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TechStore.BLL.DtoModels.Laptop;
@@ -7,6 +8,7 @@ using TechStore.BLL.DtoModels.SmartPhone;
 using TechStore.BLL.DtoModels.Tv;
 using TechStore.BLL.Interfaces;
 using TechStore.BLL.Services;
+using TechStore.BLL.Validations.Brand;
 using TechStore.Data.DbContext;
 using TechStore.Data.Entity;
 using TechStore.Data.Interfaces;
@@ -26,6 +28,8 @@ namespace TechStore.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddValidatorsFromAssemblyContaining<BrandAddDtoValidator>(ServiceLifetime.Transient);
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

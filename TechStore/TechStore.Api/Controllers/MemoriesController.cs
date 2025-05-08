@@ -45,9 +45,18 @@ namespace TechStore.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateMemory([FromBody] MemoryAddDto memoryAddDto, CancellationToken token)
         {
-            await _memoryService.AddMemory(memoryAddDto, token);
+            var result = await _memoryService.AddMemory(memoryAddDto, token);
 
-            return Ok("Successfully created.");
+            if (!result.Success)
+            {
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
+            }
+
+            return Ok(result.Message);
         }
 
         [HttpPut("id/{id}")]
@@ -60,6 +69,12 @@ namespace TechStore.Api.Controllers
             {
                 if (result.ErrorType == ErrorType.NotFound)
                     return NotFound();
+
+                if (result.ErrorType == ErrorType.Validation)
+                    return BadRequest(new
+                    {
+                        errors = result.ValidationErrors.Select(e => new { e.PropertyName, e.ErrorMessage })
+                    });
             }
 
             return Ok(result.Message);
