@@ -17,17 +17,17 @@ namespace TechStore.BLL.Validations.SmartPhone
             Include(new ProductAddDtoValidator<Data.Entity.SmartPhone>(uow));
 
             RuleFor(smartPhone => smartPhone.ScreenSize)
-                .NotNull().WithMessage("The ScreenSize is required!")
+                .NotNull().WithMessage("Էկրանի չափսը պարտադիր է!")
                 .Must(screenSize =>
                     screenSize.All(ch => char.IsDigit(ch) || ch == '.') &&
                     screenSize.Count(ch => ch == '.') <= 1
-                ).WithMessage("The ScreenSize must contain only digits and at most one dot!");
+                ).WithMessage("Էկրանի չափսը միայն թվեր պետք է պարունակի և ամենաշատը մեկ կետ");
 
             RuleFor(smartPhone => smartPhone.BatteryCapacity)
-                .GreaterThan(0).WithMessage("The BatteryCapacity must be positive number!");
+                .GreaterThan(0).WithMessage("Մարտկոցի հզորությունտ պետք է լինի դրական!");
 
             RuleFor(smartPhone => smartPhone.CameraMegaPixel)
-               .GreaterThan(0).WithMessage("The CameraMegaPixel must be positive number!");
+               .GreaterThan(0).WithMessage("Տեսախցիկի Փիքսելները պետք է լինեն դրական!");
         }
     }
 }

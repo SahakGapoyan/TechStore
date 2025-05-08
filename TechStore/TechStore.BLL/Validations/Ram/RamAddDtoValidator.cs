@@ -14,7 +14,7 @@ namespace TechStore.BLL.Validations.Ram
         public RamAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(ram => ram.Size)
-                .NotNull().WithMessage("The Ram is required!")
+                .NotNull().WithMessage("Ծավալը պարտադիր է!")
                 .Must(size =>
                 {
                     foreach (var letter in size)
@@ -23,10 +23,10 @@ namespace TechStore.BLL.Validations.Ram
                             return false;
                     }
                     return true;
-                }).WithMessage("The Size must contain only digits!")
+                }).WithMessage("Ծավալը միայն թվեր պետք է պարունակի!")
                 .MustAsync(async (ram, token) => !(await uow.RamRepository.GetRams())
                 .Any(r => r.Size.Trim().ToLower() == ram.Trim().ToLower()))
-                .WithMessage("The Ram size already exists!");
+                .WithMessage("Տվյալ օպերատիվ հիշողությունը արդեն գոյություն ունի!");
         }
     }
 }

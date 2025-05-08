@@ -14,10 +14,10 @@ namespace TechStore.BLL.Validations.Os
         public OsAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(os => os.Name)
-               .NotNull().WithMessage("The Name is required!")
+               .NotNull().WithMessage("Անունը պարտադիր է!")
                .MustAsync(async (name, token) => !(await uow.OSRepsoitory.GetOSs())
                .Any(os => os.Name.Trim().ToLower() == name.Trim().ToLower()))
-               .WithMessage("The Os name already exists!");
+               .WithMessage("Տվյալ օպերացիոն համակարգը արդեն գոյություն ունի!");
         }
     }
 }

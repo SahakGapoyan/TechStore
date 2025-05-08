@@ -14,10 +14,10 @@ namespace TechStore.BLL.Validations.Brand
         public BrandAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(brand => brand.Name)
-                .NotNull().WithMessage("The Name is required!")
+                .NotNull().WithMessage("Անունը պարտադիր է!")
                 .MustAsync(async (name, token) => !(await uow.BrandRepository.GetBrands())
                 .Any(b => b.Name.Trim().ToLower() == name.Trim().ToLower()))
-                .WithMessage("The Brand name already exists!");
+                .WithMessage("Տվյալ բրենդը արդեն գոյություն ունի!");
         }
     }
 }

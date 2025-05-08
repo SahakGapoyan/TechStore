@@ -14,10 +14,10 @@ namespace TechStore.BLL.Validations.Category
         public CategoryAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(category=>category.Name)
-                .NotNull().WithMessage("The Name is required!")
+                .NotNull().WithMessage("Անունտ պարադիր է")
                 .MustAsync(async (name, token) => !(await uow.CategoryRepository.GetCategories())
                 .Any(c => c.Name.Trim().ToLower() == name.Trim().ToLower()))
-                .WithMessage("The Category name already exists!");
+                .WithMessage("Տվյալ կատեգորիան արդեն գոյություն ունի!");
         }
     }
 }
