@@ -1,4 +1,5 @@
 ﻿using TechStore.Blazor.DtoModels.OS;
+using TechStore.Blazor.DtoModels.Result;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -7,7 +8,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<OSDto>> GetOSes();
         Task<OSDto> GetOS(int id);
         Task<IEnumerable<OSDto>> GetOsesByCategoryId(int categoryId);
-        Task AddOS(OSAddDto osAddDto);
+        Task<ApiResult<bool>> AddOS(OSAddDto osAddDto);
         Task UpdateOS(int osId, OSUpdateDto osUpdateDto);
         Task DeleteOS(int osId);
     }
