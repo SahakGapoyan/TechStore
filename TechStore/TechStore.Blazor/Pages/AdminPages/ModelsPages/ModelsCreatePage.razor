@@ -3,6 +3,7 @@
 @using TechStore.Blazor.Interfaces
 @inject IModelApi ModelApi
 
+<MudForm @ref="_form" Model="ModelAddDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
@@ -15,6 +16,8 @@
                           Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>ModelAddDto.Name)"
+                          Required
                           FullWidth />
         </MudItem>
         <MudItem xs="12" md="6">
@@ -22,6 +25,8 @@
                           Label="Հայտարարության Տարին"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>ModelAddDto.AnnouncementYear)"
+                          Required
                           FullWidth />
         </MudItem>
         <MudItem xs="12" md="6">
@@ -29,6 +34,8 @@
                           Label="Քանակը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>ModelAddDto.Stock)"
+                          Required
                           FullWidth />
         </MudItem>
     </MudGrid>
@@ -40,7 +47,7 @@
                    Class="mr-2">
             Չեղարկել
         </MudButton>
-        <MudButton OnClick="CreateAsync"
+            <MudButton OnClick="SubmitForm"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
@@ -48,16 +55,34 @@
             Ստեղծել Մոդել
         </MudButton>
     </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private ModelAddDto ModelAddDto { get; set; } = new ModelAddDto();
 
-    private async Task CreateAsync()
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
+
+    private async Task SubmitForm()
     {
-        await ModelApi.AddModel(ModelAddDto);
-        Nav.NavigateTo("models");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await ModelApi.AddModel(ModelAddDto);
+            Nav.NavigateTo("models");
+        }
     }
 
     private void NavigateBack()
