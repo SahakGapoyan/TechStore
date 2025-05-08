@@ -1,5 +1,6 @@
 ﻿using TechStore.Blazor.DtoModels.Laptop;
 using TechStore.Blazor.DtoModels.Product;
+using TechStore.Blazor.DtoModels.Result;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -7,7 +8,7 @@ namespace TechStore.Blazor.Interfaces
     {
         Task<IEnumerable<LaptopDto>> GetLaptops();
         Task<LaptopDto> GetLaptop(int id);
-        Task AddLaptop(LaptopAddDto laptopAddDto);
+        Task<ApiResult<bool>> AddLaptop(LaptopAddDto laptopAddDto);
         Task Update(int id, LaptopUpdateDto laptopUpdateDto);
         Task Delete(int id);
         Task<IEnumerable<LaptopDto>> GetLaptopsByRamId(int ramId);
