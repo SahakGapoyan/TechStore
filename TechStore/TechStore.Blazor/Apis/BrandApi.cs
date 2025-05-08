@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Brand;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -15,14 +17,36 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
-        public async Task AddBrand(BrandAddDto brandAddDto)
+        public async Task<ApiResult<bool>> AddBrand(BrandAddDto brandAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Brands", brandAddDto);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error" + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var errorContent = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+                if (errorContent != null && errorContent.ContainsKey("errors"))
+                {
+                    var validationErrors = JsonSerializer.Deserialize<List<ValidationError>>(
+                        errorContent["errors"].ToString(),
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return new ApiResult<bool>
+                    {
+                        Success = false,
+                        ValidationErrors = validationErrors
+                    };
+                }
+            }
+
+            return new ApiResult<bool>
+            {
+                Success = false,
+                ErrorMessage = await response.Content.ReadAsStringAsync()
+            };
         }
 
         public async Task DeleteBrand(int brandId)
