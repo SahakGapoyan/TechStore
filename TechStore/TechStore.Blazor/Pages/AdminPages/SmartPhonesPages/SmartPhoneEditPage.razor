@@ -18,134 +18,170 @@
 @inject IModelApi ModelApi
 @inject NavigationManager Nav
 
-<MudGrid>
-    <MudContainer Class="mt-auto d-flex justify-space-between align-center"
-                  Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
-        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
-            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-            Խմբագրել Հեռախոսը
-        </MudText>
-    </MudContainer>
+<MudForm @ref="_form" Model="SmartPhoneUpdateDto">
+    <MudGrid>
+        <MudContainer Class="mt-auto d-flex justify-space-between align-center"
+        Style="padding: 20px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+            <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center" Style="align-items:center">
+                <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+                Խմբագրել Հեռախոսը
+            </MudText>
+        </MudContainer>
 
-    <MudContainer Class="d-flex justify-space-between align-center"
-                  Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
-        <MudCard Style="width: 100%;">
-            <MudCardContent>
-                <MudGrid Style="width: 100%;" GutterSize="3">
-                    <MudItem xs="12" md="6">
-                        <MudTextField @bind-Value="SmartPhoneDto.Name" Label="Անունը" />
-                        <MudTextField @bind-Value="SmartPhoneDto.ScreenSize" Label="Էկրանի Չափսը" />
-                        <MudTextField @bind-Value="SmartPhoneDto.Processor" Label="Պրոցեսորը" />
-                        <MudTextField @bind-Value="SmartPhoneDto.BatteryCapacity" Label="Մարտկոցի Հզորությունը" />
-                        <MudTextField @bind-Value="SmartPhoneDto.CameraMegaPixel" Label="Տեսախցիկի Փիքսելները" />
-                        <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                            <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
+        <MudContainer Class="d-flex justify-space-between align-center"
+        Style="padding: 16px; background-color: white; margin: 0 auto; margin-bottom: 1px; width: 100%; position: relative;">
+            <MudCard Style="width: 100%;">
+                <MudCardContent>
+                    <MudGrid Style="width: 100%;" GutterSize="3">
+                        <MudItem xs="12" md="6">
+                            <MudTextField
+                            @bind-Value="SmartPhoneUpdateDto.Name"
+                            Label="Անունը"
+                            For="@(()=>SmartPhoneUpdateDto.Name)"
+                            Required/>
 
-                            @if (SmartPhoneDto.ImagesUrls != null)
-                            {
-                                @for (int i = 0; i < SmartPhoneDto.ImagesUrls.Count; i++)
+                            <MudTextField 
+                            @bind-Value="SmartPhoneUpdateDto.ScreenSize" 
+                            Label="Էկրանի Չափսը" 
+                            For="@(()=>SmartPhoneUpdateDto.ScreenSize)"
+                            Required/>
+
+                            <MudTextField
+                            @bind-Value="SmartPhoneUpdateDto.Processor"
+                            Label="Պրոցեսորը"
+                            For="@(()=>SmartPhoneUpdateDto.Processor)"
+                            Required/>
+
+                            <MudTextField
+                                @bind-Value="SmartPhoneUpdateDto.BatteryCapacity"
+                                Label="Մարտկոցի Հզորությունը"
+                                For="@(()=>SmartPhoneUpdateDto.BatteryCapacity)"
+                                Required/>
+
+                            <MudTextField 
+                                @bind-Value="SmartPhoneUpdateDto.CameraMegaPixel" 
+                                Label="Տեսախցիկի Փիքսելները" 
+                                For="@(()=>SmartPhoneUpdateDto.CameraMegaPixel)"
+                                Required/>
+
+                            <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
+
+                                @if (SmartPhoneUpdateDto.ImagesUrls != null)
                                 {
-                                    var index = i; // Capture the current index
-                                    <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
-                                        <MudItem xs="11">
-                                            <MudTextField @bind-Value="SmartPhoneDto.ImagesUrls[index]"
-                                                          Variant="Variant.Outlined"
-                                                          Label="Նկարի Հղումը " />
-                                        </MudItem>
-                                        <MudItem xs="1" Class="d-flex align-center">
-                                            <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                                           Color="Color.Error"
-                                                           OnClick="@(() => RemoveImageUrl(index))" />
-                                        </MudItem>
-                                    </MudGrid>
+                                    @for (int i = 0; i < smartPhoneDto.ImagesUrls.Count; i++)
+                                    {
+                                        var index = i; 
+                                        <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                            <MudItem xs="11">
+                                                <MudTextField @bind-Value="smartPhoneDto.ImagesUrls[index]"
+                                                Variant="Variant.Outlined"
+                                                Label="Նկարի Հղումը " />
+                                            </MudItem>
+                                            <MudItem xs="1" Class="d-flex align-center">
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                Color="Color.Error"
+                                                OnClick="@(() => RemoveImageUrl(index))" />
+                                            </MudItem>
+                                        </MudGrid>
+                                    }
                                 }
-                            }
 
-                            <MudButton Variant="Variant.Text"
-                                       Color="Color.Primary"
-                                       StartIcon="@Icons.Material.Filled.Add"
-                                       OnClick="AddImageUrl"
-                                       Class="mt-2">
-                                Ավելացնել նկարի հղում
+                                <MudButton Variant="Variant.Text"
+                                Color="Color.Primary"
+                                StartIcon="@Icons.Material.Filled.Add"
+                                OnClick="AddImageUrl"
+                                Class="mt-2">
+                                    Ավելացնել նկարի հղում
+                                </MudButton>
+                            </MudPaper>
+                            <MudTextField @bind-Value="SmartPhoneUpdateDto.Price" Label="Գինը" For="@(() => SmartPhoneUpdateDto.Price)" />
+                            <MudTextField @bind-Value="SmartPhoneUpdateDto.Description" Label="Նկարագրությունը" Lines="3" />
+                            <MudCheckBox @bind-Value="SmartPhoneUpdateDto.IsAvailable" Label="Առկա է" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <!-- Dropdown selectors for IDs -->
+                            <MudSelect  Label="Օպերատիվ Հիշողություն" @bind-Value="SmartPhoneUpdateDto.RamId" Variant="Variant.Outlined">
+                                @foreach (var ram in AvailableRams)
+                                {
+                                    <MudSelectItem Value="@((int?)ram.Id)">@ram.Size GB</MudSelectItem>
+                                }
+                            </MudSelect>
+
+                            <MudSelect  Label="Հիշողությունը" @bind-Value="SmartPhoneUpdateDto.MemoryId" Variant="Variant.Outlined">
+                                @foreach (var memory in AvailableMemories)
+                                {
+                                    <MudSelectItem Value="@((int?)memory.Id)">@memory.Size GB</MudSelectItem>
+                                }
+                            </MudSelect>
+
+                            <MudSelect  Label="Օպերացիոն Համակարգը" @bind-Value="SmartPhoneUpdateDto.OSId" Variant="Variant.Outlined">
+                                @foreach (var os in AvailableOSs)
+                                {
+                                    <MudSelectItem Value="@((int?)os.Id)">@os.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+
+                            <MudSelect Label="Գույնը" @bind-Value="SmartPhoneUpdateDto.ColorId" Variant="Variant.Outlined">
+                                @foreach (var color in AvailableColors)
+                                {
+                                    <MudSelectItem Value="@((int?)color.Id)">@color.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+
+
+                            <MudSelect  Label="Կատեգորիան"
+                            @bind-Value="SmartPhoneUpdateDto.CategoryId"
+                            Variant="Variant.Outlined"
+                            ReadOnly>
+                                @foreach (var category in AvailableCategories)
+                                {
+                                    <MudSelectItem Value="@((int?)category.Id)">@category.Name</MudSelectItem>
+                                }
+                            </MudSelect> 
+
+
+                            <MudSelect  Label="Բրենդը" @bind-Value="SmartPhoneUpdateDto.BrandId" Variant="Variant.Outlined">
+                                @foreach (var brand in AvailableBrands)
+                                {
+                                    <MudSelectItem Value="@((int?)brand.Id)">@brand.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+
+                            <MudSelect  Label="Մոդելը" @bind-Value="SmartPhoneUpdateDto.ModelId" Variant="Variant.Outlined">
+                                @foreach (var model in AvailableModels)
+                                {
+                                    <MudSelectItem Value="@((int?)model.Id)">@model.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+
+                        <MudItem xs="12">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
+                                Պահպանել
                             </MudButton>
-                        </MudPaper>
-                        <MudTextField @bind-Value="SmartPhoneDto.Price" Label="Գինը" For="@(() => SmartPhoneDto.Price)" />
-                        <MudTextField @bind-Value="SmartPhoneDto.Description" Label="Նկարագրությունը" Lines="3" />
-                        <MudCheckBox @bind-Value="SmartPhoneDto.IsAvailable" Label="Առկա է" />
-                    </MudItem>
-
-                    <MudItem xs="12" md="6">
-                        <!-- Dropdown selectors for IDs -->
-                        <MudSelect T="int" Label="Օպերատիվ Հիշողություն" @bind-Value="SmartPhoneDto.RamId" Variant="Variant.Outlined">
-                            @foreach (var ram in AvailableRams)
+                            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
+                                Չեղարկել
+                            </MudButton>
+                            @if (!_formIsValid && _formValidated)
                             {
-                                <MudSelectItem Value="@ram.Id">@ram.Size GB</MudSelectItem>
+                                <MudAlert Severity="Severity.Error" Class="mb-4">
+                                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                                </MudAlert>
                             }
-                        </MudSelect>
-
-                        <MudSelect T="int" Label="Հիշողությունը" @bind-Value="SmartPhoneDto.MemoryId" Variant="Variant.Outlined">
-                            @foreach (var memory in AvailableMemories)
-                            {
-                                <MudSelectItem Value="@memory.Id">@memory.Size GB</MudSelectItem>
-                            }
-                        </MudSelect>
-
-                        <MudSelect T="int" Label="Օպերացիոն Համակարգը" @bind-Value="SmartPhoneDto.OSId" Variant="Variant.Outlined">
-                            @foreach (var os in AvailableOSs)
-                            {
-                                <MudSelectItem Value="@os.Id">@os.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-
-                        <MudSelect T="int" Label="Գույնը" @bind-Value="SmartPhoneDto.ColorId" Variant="Variant.Outlined">
-                            @foreach (var color in AvailableColors)
-                            {
-                                <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-
-
-                        <MudSelect T="int" Label="Կատեգորիան" @bind-Value="SmartPhoneDto.CategoryId" Variant="Variant.Outlined">
-                            @foreach (var category in AvailableCategories)
-                            {
-                                <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-
-
-                        <MudSelect T="int" Label="Բրենդը" @bind-Value="SmartPhoneDto.BrandId" Variant="Variant.Outlined">
-                            @foreach (var brand in AvailableBrands)
-                            {
-                                <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-
-                        <MudSelect T="int" Label="Մոդելը" @bind-Value="SmartPhoneDto.ModelId" Variant="Variant.Outlined">
-                            @foreach (var model in AvailableModels)
-                            {
-                                <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-
-                    <MudItem xs="12">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveChanges">
-                            Պահպանել
-                        </MudButton>
-                        <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="Cancel" Class="ml-2">
-                            Չեղարկել
-                        </MudButton>
-                    </MudItem>
-                </MudGrid>
-            </MudCardContent>
-        </MudCard>
-    </MudContainer>
-</MudGrid>
+                        </MudItem>
+                    </MudGrid>
+                </MudCardContent>
+            </MudCard>
+        </MudContainer>
+    </MudGrid>
+</MudForm>
 
 @code {
     [Parameter] public int Id { get; set; }
 
-    private SmartPhoneDto SmartPhoneDto { get; set; } = new SmartPhoneDto();
+    private SmartPhoneUpdateDto SmartPhoneUpdateDto = new SmartPhoneUpdateDto();
     private List<RamDto> AvailableRams { get; set; } = new List<RamDto>();
     private List<MemoryDto> AvailableMemories { get; set; } = new List<MemoryDto>();
     private List<OSDto> AvailableOSs { get; set; } = new List<OSDto>();
@@ -154,17 +190,41 @@
     private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
     private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
 
-    // Add similar lists for Category, Brand, Model
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
+    SmartPhoneDto smartPhoneDto = new SmartPhoneDto();
 
     protected override async Task OnInitializedAsync()
     {
-        SmartPhoneDto = await SmartPhoneApi.GetSmartPhone(Id);
-        SmartPhoneDto.ImagesUrls ??= new List<string>();
-        if (SmartPhoneDto.ImagesUrls.Count == 0)
+        smartPhoneDto = await SmartPhoneApi.GetSmartPhone(Id);
+        smartPhoneDto.ImagesUrls ??= new List<string>();
+        if (smartPhoneDto.ImagesUrls.Count == 0)
         {
-            SmartPhoneDto.ImagesUrls.Add(string.Empty);
+            smartPhoneDto.ImagesUrls.Add(string.Empty);
         }
 
+             SmartPhoneUpdateDto = new SmartPhoneUpdateDto
+                {
+                    Name = smartPhoneDto.Name,
+                    Price = smartPhoneDto.Price,
+                    BatteryCapacity = smartPhoneDto.BatteryCapacity,
+                    ColorId = smartPhoneDto.ColorId,
+                    RamId = smartPhoneDto.RamId,
+                    MemoryId = smartPhoneDto.MemoryId,
+                    ModelId = smartPhoneDto.ModelId,
+                    BrandId = smartPhoneDto.BrandId,
+                    IsAvailable = smartPhoneDto.IsAvailable,
+                    OSId = smartPhoneDto.OSId,
+                    CameraMegaPixel = smartPhoneDto.CameraMegaPixel,
+                    ScreenSize = smartPhoneDto.ScreenSize,
+                    Has5G = smartPhoneDto.Has5G,
+                    ImagesUrls = smartPhoneDto.ImagesUrls,
+                    IsWaterResistant = smartPhoneDto.IsWaterResistant,
+                    Processor = smartPhoneDto.Processor,
+                    Wifi = smartPhoneDto.Wifi,
+                    CategoryId = smartPhoneDto.CategoryId
+                };
         AvailableRams = (await RamApi.GetRams()).ToList();
         AvailableMemories = (await MemoryApi.GetMemories()).ToList();
         AvailableOSs = (await OSApi.GetOSes()).ToList();
@@ -175,54 +235,39 @@
 
     private async Task SaveChanges()
     {
-        var smartPhoneUpdateDto = new SmartPhoneUpdateDto
-            {
-                Name = SmartPhoneDto.Name,
-                Price = SmartPhoneDto.Price,
-                BatteryCapacity = SmartPhoneDto.BatteryCapacity,
-                ColorId = SmartPhoneDto.ColorId,
-                RamId = SmartPhoneDto.RamId,
-                MemoryId = SmartPhoneDto.MemoryId,
-                ModelId = SmartPhoneDto.ModelId,
-                BrandId = SmartPhoneDto.BrandId,
-                IsAvailable = SmartPhoneDto.IsAvailable,
-                OSId = SmartPhoneDto.OSId,
-                CameraMegaPixel = SmartPhoneDto.CameraMegaPixel,
-                ScreenSize = SmartPhoneDto.ScreenSize,
-                Has5G = SmartPhoneDto.Has5G,
-                ImagesUrls = SmartPhoneDto.ImagesUrls,
-                IsWaterResistant = SmartPhoneDto.IsWaterResistant,
-                Processor = SmartPhoneDto.Processor,
-                Wifi = SmartPhoneDto.Wifi,
-                CategoryId = SmartPhoneDto.CategoryId
-            };
-        await SmartPhoneApi.Update(Id, smartPhoneUpdateDto);
-        Nav.NavigateTo("smartphones");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await SmartPhoneApi.Update(Id, SmartPhoneUpdateDto);
+            Nav.NavigateTo("smartphones");
+        }
     }
     private void AddImageUrl()
     {
-        if (SmartPhoneDto.ImagesUrls == null)
+        if (smartPhoneDto.ImagesUrls == null)
         {
-            SmartPhoneDto.ImagesUrls = new List<string>();
+            smartPhoneDto.ImagesUrls = new List<string>();
         }
 
-        SmartPhoneDto.ImagesUrls.Add(string.Empty);
+        smartPhoneDto.ImagesUrls.Add(string.Empty);
     }
 
     private void RemoveImageUrl(int index)
     {
-        if (SmartPhoneDto.ImagesUrls == null ||
+        if (smartPhoneDto.ImagesUrls == null ||
             index < 0 ||
-            index >= SmartPhoneDto.ImagesUrls.Count)
+            index >= smartPhoneDto.ImagesUrls.Count)
         {
             return;
         }
 
-        SmartPhoneDto.ImagesUrls.RemoveAt(index);
+        smartPhoneDto.ImagesUrls.RemoveAt(index);
 
-        if (SmartPhoneDto.ImagesUrls.Count == 0)
+        if (smartPhoneDto.ImagesUrls.Count == 0)
         {
-            SmartPhoneDto.ImagesUrls.Add(string.Empty);
+            smartPhoneDto.ImagesUrls.Add(string.Empty);
         }
     }
 

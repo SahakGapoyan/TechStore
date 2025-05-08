@@ -3,58 +3,79 @@
 @using TechStore.Blazor.Interfaces
 @inject IBrandApi BrandApi
 
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Ավելացնել Նոր Բրենդ
-    </MudText>
+<MudForm @ref="_form" Model="BrandAddDto">
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Ավելացնել Նոր Բրենդ
+        </MudText>
 
-    <MudGrid>
-        <MudItem xs="12" md="6" Class="pr-md-4">
-            <MudTextField @bind-Value="BrandAddDto.Name"
-                          Label="Անունը"
-                          Variant="Variant.Outlined"
-                          Class="mb-4"
-                          FullWidth />
-        </MudItem>
-        <MudItem xs="12" md="6">
-            <MudTextField @bind-Value="BrandAddDto.ImageUrl"
-                          Label="Նկարի հղումը"
-                          Variant="Variant.Outlined"
-                          Class="mb-4"
-                          FullWidth />
-        </MudItem>
-    </MudGrid>
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="BrandAddDto.Name"
+                              Label="Անունը"
+                              Variant="Variant.Outlined"
+                              For="@(()=>BrandAddDto.Name)"
+                              Class="mb-4"
+                              FullWidth
+                              Required/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="BrandAddDto.ImageUrl"
+                              Label="Նկարի հղումը"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"
+                              FullWidth />
+            </MudItem>
+        </MudGrid>
 
-    <div class="d-flex justify-end mt-4">
-        <MudButton OnClick="NavigateBack"
-                   Color="Color.Default"
-                   Variant="Variant.Text"
-                   Class="mr-2">
-            Չեղարկել
-        </MudButton>
-        <MudButton OnClick="CreateAsync"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   EndIcon="@Icons.Material.Filled.Save"
-                   Class="ml-2">
-            Ստեղծել Բրենդ
-        </MudButton>
-    </div>
-</MudPaper>
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="NavigateBack"
+                       Color="Color.Default"
+                       Variant="Variant.Text"
+                       Class="mr-2">
+                Չեղարկել
+            </MudButton>
+            <MudButton OnClick="SubmitForm"
+                       Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Save"
+                       Class="ml-2">
+                Ստեղծել Բրենդ
+            </MudButton>
+        </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
+    </MudPaper>
+</MudForm>
 
-@code {
-    [Inject] private NavigationManager Nav { get; set; } = default!;
-    private BrandAddDto BrandAddDto { get; set; } = new BrandAddDto();
+    @code {
+        [Inject] private NavigationManager Nav { get; set; } = default!;
+        private BrandAddDto BrandAddDto { get; set; } = new BrandAddDto();
 
-    private async Task CreateAsync()
-    {
-        await BrandApi.AddBrand(BrandAddDto);
+        private MudForm _form;
+        private bool _formValidated = false;
+        private bool _formIsValid = false;
+
+        private async Task SubmitForm()
+        {
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await BrandApi.AddBrand(BrandAddDto);
+            Nav.NavigateTo("brands");
+        }
+        }
+
+        private void NavigateBack()
+        {
         Nav.NavigateTo("brands");
+        }
     }
-
-    private void NavigateBack()
-    {
-        Nav.NavigateTo("brands");
-    }
-}

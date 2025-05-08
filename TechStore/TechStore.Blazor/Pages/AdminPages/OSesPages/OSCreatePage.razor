@@ -3,6 +3,7 @@
 @using TechStore.Blazor.Interfaces
 @inject IOSApi OSApi
 
+<MudForm @ref="_form" Model="OSAddDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
@@ -14,6 +15,8 @@
             <MudTextField @bind-Value="OSAddDto.Name"
                           Label="Անունը"
                           Variant="Variant.Outlined"
+                          For="@(()=>OSAddDto.Name)"
+                          Required
                           Class="mb-4"
                           FullWidth />
         </MudItem>
@@ -26,7 +29,7 @@
                    Class="mr-2">
             Չեղարկել
         </MudButton>
-        <MudButton OnClick="CreateAsync"
+            <MudButton OnClick="SubmitForm"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
@@ -34,16 +37,34 @@
             Ստեղծել Օպերացիոն Համակարգ
         </MudButton>
     </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private OSAddDto OSAddDto { get; set; } = new OSAddDto();
 
-    private async Task CreateAsync()
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
+
+    private async Task SubmitForm()
     {
-        await OSApi.AddOS(OSAddDto);
-        Nav.NavigateTo("oses");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await OSApi.AddOS(OSAddDto);
+            Nav.NavigateTo("oses");
+        }
     }
 
     private void NavigateBack()

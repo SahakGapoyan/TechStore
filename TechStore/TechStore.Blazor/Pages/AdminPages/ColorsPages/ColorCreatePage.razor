@@ -3,6 +3,7 @@
 @using TechStore.Blazor.Interfaces
 @inject IColorApi ColorApi
 
+<MudForm @ref="_form" Model="ColorAddDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
@@ -15,6 +16,8 @@
                           Label="Անունը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>ColorAddDto.Name)"
+                          Required
                           FullWidth />
         </MudItem>
         <MudItem xs="12" md="6">
@@ -22,6 +25,8 @@
                           Label="Գույնի կոդը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>ColorAddDto.HexCode)"
+                          Required
                           FullWidth />
         </MudItem>
     </MudGrid>
@@ -33,7 +38,7 @@
                    Class="mr-2">
             Չեղարկել
         </MudButton>
-        <MudButton OnClick="CreateAsync"
+            <MudButton OnClick="SubmitForm"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
@@ -41,16 +46,34 @@
             Ստեղծել Գույն
         </MudButton>
     </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private ColorAddDto ColorAddDto { get; set; } = new ColorAddDto();
 
-    private async Task CreateAsync()
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
+
+    private async Task SubmitForm()
     {
-        await ColorApi.AddColor(ColorAddDto);
-        Nav.NavigateTo("colors");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await ColorApi.AddColor(ColorAddDto);
+            Nav.NavigateTo("colors");
+        }
     }
 
     private void NavigateBack()

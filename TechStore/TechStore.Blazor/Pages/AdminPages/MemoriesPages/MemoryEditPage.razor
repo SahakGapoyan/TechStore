@@ -3,14 +3,14 @@
 @using TechStore.Blazor.Interfaces
 @inject IMemoryApi MemoryApi
 
-
+<MudForm @ref="_form" Model="MemoryUpdateDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
         Խմբագրել Հիշողությունը
     </MudText>
 
-    @if (MemoryDto == null)
+    @if (MemoryUpdateDto == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
     }
@@ -18,9 +18,11 @@
     {
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="MemoryDto.Size"
+                <MudTextField @bind-Value="MemoryUpdateDto.Size"
                               Label="Ծավալը"
                               Variant="Variant.Outlined"
+                              For="@(()=>MemoryUpdateDto.Size)"
+                              Required
                               Class="mb-4"
                               FullWidth />
             </MudItem>
@@ -35,26 +37,43 @@
                 Պահպանել
             </MudButton>
         </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
     }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Parameter] public int id { get; set; }
-    private MemoryDto MemoryDto { get; set; } = new MemoryDto();
+    private MemoryUpdateDto MemoryUpdateDto { get; set; } = new MemoryUpdateDto();
+    MemoryDto memoryDto = new MemoryDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     protected override async Task OnInitializedAsync()
     {
-        MemoryDto = await MemoryApi.GetMemory(id);
+        memoryDto = await MemoryApi.GetMemory(id);
+        MemoryUpdateDto = new MemoryUpdateDto
+            {
+                Size = memoryDto.Size
+            };
     }
 
     private async Task SaveAsync()
     {
-        var memoryUpdateDto = new MemoryUpdateDto
-            {
-                Size = MemoryDto.Size
-            };
-        await MemoryApi.UpdateMemory(id, memoryUpdateDto);
-        Nav.NavigateTo("memories");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await MemoryApi.UpdateMemory(id, MemoryUpdateDto);
+            Nav.NavigateTo("memories");
+        }
     }
 }

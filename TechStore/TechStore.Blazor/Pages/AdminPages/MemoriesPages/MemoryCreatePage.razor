@@ -4,6 +4,7 @@
 @using TechStore.Blazor.Interfaces
 @inject IMemoryApi MemoryApi
 
+<MudForm @ref="_form" Model="MemoryAddDto">
 <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
     <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
@@ -16,6 +17,8 @@
                           Label="Ծավալը"
                           Variant="Variant.Outlined"
                           Class="mb-4"
+                          For="@(()=>MemoryAddDto.Size)"
+                          Required
                           FullWidth />
         </MudItem>
     </MudGrid>
@@ -27,7 +30,7 @@
                    Class="mr-2">
             Չեղարկել
         </MudButton>
-        <MudButton OnClick="CreateAsync"
+            <MudButton OnClick="SubmitForm"
                    Color="Color.Primary"
                    Variant="Variant.Filled"
                    EndIcon="@Icons.Material.Filled.Save"
@@ -35,17 +38,35 @@
             Ստեղծել Հիշողություն
         </MudButton>
     </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
 </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private MemoryAddDto MemoryAddDto { get; set; } = new MemoryAddDto();
 
-    private async Task CreateAsync()
-    {
-        await MemoryApi.AddMemory(MemoryAddDto);
-        Nav.NavigateTo("memories");
-    }
+        private MudForm _form;
+        private bool _formValidated = false;
+        private bool _formIsValid = false;
+
+        private async Task SubmitForm()
+        {
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await MemoryApi.AddMemory(MemoryAddDto);
+            Nav.NavigateTo("memories");
+        }
+        }
 
     private void NavigateBack()
     {

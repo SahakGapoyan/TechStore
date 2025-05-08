@@ -15,180 +15,211 @@
 @inject IBrandApi BrandApi
 @inject IModelApi ModelApi
 
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Ավելացնել Նոր Հեռուստացույց
-    </MudText>
+<MudForm @ref="_form" Model="TvAddDto">
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 800px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Ավելացնել Նոր Հեռուստացույց
+        </MudText>
 
-    <MudGrid>
-        <!-- Left Column -->
-        <MudItem xs="12" md="6" Class="pr-md-4">
-            <MudTextField @bind-Value="TvAddDto.Name"
-                          Label="Անունը"
-                          Variant="Variant.Outlined"
-                          Class="mb-4"
-                          FullWidth
-                          Required />
+        <MudGrid>
+            <!-- Left Column -->
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="TvAddDto.Name"
+                              Label="Անունը"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"
+                              For="@(() => TvAddDto.Name)"
+                              FullWidth
+                              Required />
 
-            <MudTextField @bind-Value="TvAddDto.Price"
-                          Label="Գինը"
-                          Variant="Variant.Outlined"
-                          For="@(() => TvAddDto.Price)"
-                          Class="mb-4"
-                          FullWidth
-                          Required />>
+                <MudTextField @bind-Value="TvAddDto.Price"
+                              Label="Գինը"
+                              Variant="Variant.Outlined"
+                              For="@(() => TvAddDto.Price)"
+                              Class="mb-4"
+                              FullWidth
+                              Required />
 
-            <MudTextField @bind-Value="TvAddDto.Description"
-                          Label="Նկարագրությունը"
-                          Variant="Variant.Outlined"
-                          Lines="3"
-                          Class="mb-4"
-                          FullWidth />
+                <MudTextField @bind-Value="TvAddDto.Description"
+                              Label="Նկարագրությունը"
+                              Variant="Variant.Outlined"
+                              Lines="3"
+                              Class="mb-4"
+                              FullWidth />
 
 
-            <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
-                <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
+                <MudPaper Class="pa-4 mb-4" Elevation="0" Style="border: 1px solid var(--mud-palette-lines-default);">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Նկարների Հղումները</MudText>
 
-                @if (TvAddDto.ImagesUrls != null)
-                {
-                    @for (int i = 0; i < TvAddDto.ImagesUrls.Count; i++)
+                    @if (TvAddDto.ImagesUrls != null)
                     {
-                        var index = i; // Capture the current index
-                        <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
-                            <MudItem xs="11">
-                                <MudTextField @bind-Value="TvAddDto.ImagesUrls[index]"
-                                              Variant="Variant.Outlined"
-                                              Label="Նկարի Հղումը" />
-                            </MudItem>
-                            <MudItem xs="1" Class="d-flex align-center">
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                                               Color="Color.Error"
-                                               OnClick="@(() => RemoveImageUrl(index))" />
-                            </MudItem>
-                        </MudGrid>
+                        @for (int i = 0; i < TvAddDto.ImagesUrls.Count; i++)
+                        {
+                            var index = i; // Capture the current index
+                            <MudGrid Class="mb-2" Spacing="2" Key="@($"image-url-{index}")">
+                                <MudItem xs="11">
+                                    <MudTextField @bind-Value="TvAddDto.ImagesUrls[index]"
+                                                  Variant="Variant.Outlined"
+                                                  Label="Նկարի Հղումը" />
+                                </MudItem>
+                                <MudItem xs="1" Class="d-flex align-center">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveImageUrl(index))" />
+                                </MudItem>
+                            </MudGrid>
+                        }
                     }
-                }
 
-                <MudButton Variant="Variant.Text"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Add"
-                           OnClick="AddImageUrl"
-                           Class="mt-2">
-                    Ավելացնել Նկարի Հղում
-                </MudButton>
-            </MudPaper>
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               OnClick="AddImageUrl"
+                               Class="mt-2">
+                        Ավելացնել Նկարի Հղում
+                    </MudButton>
+                </MudPaper>
 
-            <MudCheckBox @bind-Value="TvAddDto.IsAvailable"
-                         Label="Առկա է"
-                         Class="mb-4" />
+                <MudCheckBox @bind-Value="TvAddDto.IsAvailable"
+                             Label="Առկա է"
+                             Class="mb-4" />
 
-        </MudItem>
+            </MudItem>
 
-        <!-- Right Column -->
-        <MudItem xs="12" md="6">
-            <!-- Dropdown selectors -->
-            <MudSelect T="int"
-                       Label="Կատեգորիան"
-                       @bind-Value="TvAddDto.CategoryId"
-                       Variant="Variant.Outlined"
-                       Class="mb-4"
-                       FullWidth>
-                @foreach (var category in AvailableCategories)
+            <!-- Right Column -->
+            <MudItem xs="12" md="6">
+                <!-- Dropdown selectors -->
+                @if (AvailableCategories.Count > 0)
                 {
-                    <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
-                }
-            </MudSelect>
-
-            <MudSelect T="int"
-                       Label="Բրենդը"
-                       @bind-Value="TvAddDto.BrandId"
-                       Variant="Variant.Outlined"
-                       Class="mb-4"
-                       FullWidth>
-                @foreach (var brand in AvailableBrands)
-                {
-                    <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
-                }
-            </MudSelect>
-
-            <MudSelect T="int"
-                       Label="Մոդելը"
-                       @bind-Value="TvAddDto.ModelId"
-                       Variant="Variant.Outlined"
-                       Class="mb-4"
-                       FullWidth>
-                @foreach (var model in AvailableModels)
-                {
-                    <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
-                }
-            </MudSelect>
-        </MudItem>
-
-        <!-- Full width additional specs -->
-        <MudItem xs="12" Class="mt-4">
-            <MudText Typo="Typo.subtitle1" Class="mb-3">Տեխնիկական Բնութագրեր</MudText>
-            <MudGrid>
-                <MudItem xs="12" md="4" Class="pr-md-2">
-                    <MudTextField @bind-Value="TvAddDto.ScreenSize"
-                                  Label="Էկրանի Չափսը"
-                                  Variant="Variant.Outlined"
-                                  Class="mb-4"
-                                  FullWidth />
-                </MudItem>
-
-                <MudItem xs="12" md="4" Class="px-md-2">
-                    <MudTextField @bind-Value="TvAddDto.PanelType"
-                                  Label="Էկրանի Տեսակը"
-                                  Variant="Variant.Outlined"
-                                  Class="mb-4"
-                                  FullWidth />
-                </MudItem>
-
-                <MudItem xs="12" md="4" Class="pl-md-2">
                     <MudSelect T="int"
-                               Label="Գույնը"
-                               @bind-Value="TvAddDto.ColorId"
+                               Label="Կատեգորիան"
+                               @bind-Value="TvAddDto.CategoryId"
+                               For="@(() => TvAddDto.CategoryId)"
                                Variant="Variant.Outlined"
                                Class="mb-4"
+                               Required
                                FullWidth>
-                        @foreach (var color in AvailableColors)
+                        @foreach (var category in AvailableCategories)
                         {
-                            <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                            <MudSelectItem Value="@category.Id">@category.Name</MudSelectItem>
                         }
                     </MudSelect>
-                </MudItem>
-            </MudGrid>
-        </MudItem>
+                }
+                else
+                {
+                    <MudText Color="Color.Secondary" Typo="Typo.caption">Կատեգորիաները բեռնվում են...</MudText>
+                }
 
-        <!-- Checkboxes -->
-        <MudItem xs="12">
-            <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
-                <MudCheckBox @bind-Value="TvAddDto.IsSmartTv" Label="Սմարթ Tv" Class="mr-4" />
-            </MudStack>
-        </MudItem>
-    </MudGrid>
+                <MudSelect T="int"
+                           Label="Բրենդը"
+                           @bind-Value="TvAddDto.BrandId"
+                           For="@(()=>TvAddDto.BrandId)"
+                           Variant="Variant.Outlined"
+                           Class="mb-4"
+                           Required
+                           FullWidth>
+                    @foreach (var brand in AvailableBrands)
+                    {
+                        <MudSelectItem Value="@brand.Id">@brand.Name</MudSelectItem>
+                    }
+                </MudSelect>
 
-    <div class="d-flex justify-end mt-4">
-        <MudButton OnClick="NavigateBack"
-                   Color="Color.Default"
-                   Variant="Variant.Text"
-                   Class="mr-2">
-            Չեղարկել
-        </MudButton>
-        <MudButton OnClick="CreateSmartphone"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   EndIcon="@Icons.Material.Filled.Save"
-                   Class="ml-2">
-            Ստեղծել Հեռուստացույց
-        </MudButton>
-    </div>
-</MudPaper>
+                <MudSelect T="int"
+                           Label="Մոդելը"
+                           @bind-Value="TvAddDto.ModelId"
+                           For="@(()=>TvAddDto.ModelId)"
+                           Variant="Variant.Outlined"
+                           Class="mb-4"
+                           FullWidth>
+                    @foreach (var model in AvailableModels)
+                    {
+                        <MudSelectItem Value="@model.Id">@model.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <!-- Full width additional specs -->
+            <MudItem xs="12" Class="mt-4">
+                <MudText Typo="Typo.subtitle1" Class="mb-3">Տեխնիկական Բնութագրեր</MudText>
+                <MudGrid>
+                    <MudItem xs="12" md="4" Class="pr-md-2">
+                        <MudTextField @bind-Value="TvAddDto.ScreenSize"
+                                      Label="Էկրանի Չափսը"
+                                      Variant="Variant.Outlined"
+                                      For="@(()=>TvAddDto.ScreenSize)"
+                                      Class="mb-4"
+                                      Required
+                                      FullWidth />
+                    </MudItem>
+
+                    <MudItem xs="12" md="4" Class="px-md-2">
+                        <MudTextField @bind-Value="TvAddDto.PanelType"
+                                      Label="Էկրանի Տեսակը"
+                                      For="@(() => TvAddDto.PanelType)"
+                                      Variant="Variant.Outlined"
+                                      Class="mb-4"
+                                      Required
+                                      FullWidth />
+                    </MudItem>
+
+                    <MudItem xs="12" md="4" Class="pl-md-2">
+                        <MudSelect T="int"
+                                   Label="Գույնը"
+                                   @bind-Value="TvAddDto.ColorId"
+                                   For="@(()=>TvAddDto.ColorId)"
+                                   Variant="Variant.Outlined"
+                                   Class="mb-4"
+                                   Required
+                                   FullWidth>
+                            @foreach (var color in AvailableColors)
+                            {
+                                <MudSelectItem Value="@color.Id">@color.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+            <!-- Checkboxes -->
+            <MudItem xs="12">
+                <MudStack Direction="Direction.Row" Class="mb-4" Wrap="@Wrap.Wrap">
+                    <MudCheckBox @bind-Value="TvAddDto.IsSmartTv" Label="Սմարթ Tv" Class="mr-4" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="NavigateBack"
+                       Color="Color.Default"
+                       Variant="Variant.Text"
+                       Class="mr-2">
+                Չեղարկել
+            </MudButton>
+            <MudButton OnClick="SubmitForm"
+                       Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Save"
+                       Class="ml-2">
+                Ստեղծել Հեռուստացույց
+            </MudButton>
+        </div>
+        @if (!_formIsValid && _formValidated)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+            </MudAlert>
+        }
+    </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private TvAddDto TvAddDto { get; set; } = new TvAddDto();
+
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     // Lists for dropdown options
     private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
@@ -199,6 +230,12 @@
     protected override async Task OnInitializedAsync()
     {
         AvailableCategories = (await CategoryApi.GetCategories()).ToList();
+        var tvCategory = AvailableCategories.FirstOrDefault(c => c.Name == "Հեռուստացույցներ");
+        if (tvCategory != null)
+        {
+            TvAddDto.CategoryId = tvCategory.Id;
+            AvailableCategories = new List<CategoryDto> { tvCategory };
+        }
         AvailableBrands = (await BrandApi.GetBrands()).ToList();
         AvailableModels = (await ModelApi.GetModels()).ToList();
         AvailableColors = (await ColorApi.GetColors()).ToList();
@@ -207,6 +244,19 @@
         if (TvAddDto.ImagesUrls.Count == 0)
         {
             TvAddDto.ImagesUrls.Add(string.Empty);
+        }
+    }
+
+    private async Task SubmitForm()
+    {
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+
+        if (_formIsValid)
+        {
+            await TvApi.AddTv(TvAddDto);
+            Nav.NavigateTo("tvs");
         }
     }
 

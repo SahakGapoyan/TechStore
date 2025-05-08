@@ -3,58 +3,77 @@
 @using TechStore.Blazor.Interfaces
 @inject IRamApi RamApi
 
+<MudForm @ref="_form" Model="RamUpdateDto">
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Օպերատիվ Հիշողությունը
+        </MudText>
 
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Խմբագրել Օպերատիվ Հիշողությունը
-    </MudText>
+        @if (RamUpdateDto == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="pr-md-4">
+                    <MudTextField @bind-Value="RamUpdateDto.Size"
+                                  Label="Ծավալը"
+                                  Variant="Variant.Outlined"
+                                  For="@(()=>RamUpdateDto.Size)"
+                                  Required
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
 
-    @if (RamDto == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="RamDto.Size"
-                              Label="Ծավալը"
-                              Variant="Variant.Outlined"
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-        </MudGrid>
-
-        <div class="d-flex justify-end mt-4">
-            <MudButton OnClick="SaveAsync"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
-                Պահպանել
-            </MudButton>
-        </div>
-    }
-</MudPaper>
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="SaveAsync"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.Save"
+                           Class="ml-2">
+                    Պահպանել
+                </MudButton>
+            </div>
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+        }
+    </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Parameter] public int id { get; set; }
-    private RamDto RamDto { get; set; } = new RamDto();
+    private RamUpdateDto RamUpdateDto { get; set; } = new RamUpdateDto();
+    RamDto ramDto = new RamDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     protected override async Task OnInitializedAsync()
     {
-        RamDto = await RamApi.GetRam(id);
+        ramDto = await RamApi.GetRam(id);
+        RamUpdateDto = new RamUpdateDto
+            {
+                Size = ramDto.Size
+            };
     }
 
     private async Task SaveAsync()
     {
-        var ramUpdateDto = new RamUpdateDto
-            {
-                Size = RamDto.Size
-            };
-        await RamApi.UpdateRam(id, ramUpdateDto);
-        Nav.NavigateTo("rams");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await RamApi.UpdateRam(id, RamUpdateDto);
+            Nav.NavigateTo("rams");
+        }
     }
 }
