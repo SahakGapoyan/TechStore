@@ -1,4 +1,5 @@
 ﻿using TechStore.Blazor.DtoModels.Ram;
+using TechStore.Blazor.DtoModels.Result;
 
 namespace TechStore.Blazor.Interfaces
 {
@@ -7,7 +8,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<RamDto>> GetRams();
         Task<RamDto> GetRam(int id);
         Task<IEnumerable<RamDto>> GetRamsByCategoryId(int categoryId);
-        Task AddRam(RamAddDto ramAddDto);
+        Task<ApiResult<bool>> AddRam(RamAddDto ramAddDto);
         Task UpdateRam(int ramId, RamUpdateDto ramUpdateDto);
         Task DeleteRam(int ramId);
     }
