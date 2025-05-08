@@ -3,58 +3,77 @@
 @using TechStore.Blazor.Interfaces
 @inject IOSApi OSApi
 
+<MudForm @ref="_form" Model="OsUpdateDto">
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Օպերացիոն Համակարգը
+        </MudText>
 
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Խմբագրել Օպերացիոն Համակարգը
-    </MudText>
+        @if (OsUpdateDto == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
+        }
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="pr-md-4">
+                    <MudTextField @bind-Value="OsUpdateDto.Name"
+                                  Label="Անունը"
+                                  Variant="Variant.Outlined"
+                                  For="@(()=>OsUpdateDto.Name)"
+                                  Required
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
 
-    @if (OSDto == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="OSDto.Name"
-                              Label="Անունը"
-                              Variant="Variant.Outlined"
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-        </MudGrid>
-
-        <div class="d-flex justify-end mt-4">
-            <MudButton OnClick="SaveAsync"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
-                Պահպանել
-            </MudButton>
-        </div>
-    }
-</MudPaper>
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="SaveAsync"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.Save"
+                           Class="ml-2">
+                    Պահպանել
+                </MudButton>
+            </div>
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+        }
+    </MudPaper>
+</MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     [Parameter] public int id { get; set; }
-    private OSDto OSDto { get; set; } = new OSDto();
+    private OSUpdateDto OsUpdateDto { get; set; } = new OSUpdateDto();
+    OSDto oSDto = new OSDto();
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
     protected override async Task OnInitializedAsync()
     {
-        OSDto = await OSApi.GetOS(id);
+        oSDto = await OSApi.GetOS(id);
+        OsUpdateDto = new OSUpdateDto
+            {
+                Name = oSDto.Name
+            };
     }
 
     private async Task SaveAsync()
     {
-        var osUpdateDto = new OSUpdateDto
-            {
-                Name = OSDto.Name
-            };
-        await OSApi.UpdateOS(id, osUpdateDto);
-        Nav.NavigateTo("oses");
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        if (_formIsValid)
+        {
+            await OSApi.UpdateOS(id, OsUpdateDto);
+            Nav.NavigateTo("oses");
+        }
     }
 }
