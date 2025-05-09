@@ -12,7 +12,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public RamApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        public RamApi(HttpClient httpClient, IOptions<ApiRamSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);

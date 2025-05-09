@@ -12,7 +12,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public OSApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        public OSApi(HttpClient httpClient, IOptions<ApiOsSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
