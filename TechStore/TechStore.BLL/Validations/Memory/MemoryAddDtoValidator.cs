@@ -14,16 +14,7 @@ namespace TechStore.BLL.Validations.Memory
         public MemoryAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(memory => memory.Size)
-                .NotNull().WithMessage("Ծավալը պարտադիր է!")
-                .Must(size =>
-                {
-                    foreach (var letter in size)
-                    {
-                        if (!char.IsDigit(letter))
-                            return false;
-                    }
-                    return true;
-                }).WithMessage("Ծավալը միայն թվեր պետք է պարունակի!")
+
                 .MustAsync(async (memory, token) => !(await uow.MemoryRepository.GetMemories())
                 .Any(m => m.Size.Trim().ToLower() == memory.Trim().ToLower()))
                 .WithMessage("Տվյալ հիշողությունտ արդեն գոյություն ունի!");
