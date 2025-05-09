@@ -16,12 +16,12 @@ namespace TechStore.BLL.Validations.Color
             RuleFor(color => color.Name)
                 .MustAsync(async (name, token) => !(await uow.ColorRepository.GetColors())
                 .Any(b => b.Name.Trim().ToLower() == name.Trim().ToLower()))
-                .WithMessage("The Color name already exists!");
+                .WithMessage("Տվյալ գույնը արդեն գոյութոյւն ունի!");
 
             RuleFor(color => color.HexCode)
                 .MustAsync(async (hexCode, token) => !(await uow.ColorRepository.GetColors())
                 .Any(c => c.HexCode.Trim().ToLower() == hexCode.Trim().ToLower()))
-                .WithMessage("The Color HexCode already exists!");
+                .WithMessage("Տվյալ գույնի կոդը արդեն գոյութոյւն ունի!");
         }
     }
 }

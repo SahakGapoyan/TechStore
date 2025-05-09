@@ -85,29 +85,7 @@ namespace TechStore.Blazor.Apis
             {
                 return new ApiResult<bool> { Success = true, Data=true };
             }
-
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                var errorContent = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-                if (errorContent != null && errorContent.ContainsKey("errors"))
-                {
-                    var validationErrors = JsonSerializer.Deserialize<List<ValidationError>>(
-                        errorContent["errors"].ToString(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return new ApiResult<bool>
-                    {
-                        Success = false,
-                        ValidationErrors = validationErrors
-                    };
-                }
-            }
-
-            return new ApiResult<bool>
-            {
-                Success = false,
-                ErrorMessage = await response.Content.ReadAsStringAsync()
-            };
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task Update(int id, LaptopUpdateDto laptopUpdateDto)

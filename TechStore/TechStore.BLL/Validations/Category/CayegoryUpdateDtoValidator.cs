@@ -16,7 +16,7 @@ namespace TechStore.BLL.Validations.Category
             RuleFor(category => category.Name)
                 .MustAsync(async (name, token) => !(await uow.CategoryRepository.GetCategories())
                 .Any(c => c.Name.Trim().ToLower() == name.Trim().ToLower()))
-                .WithMessage("The Category name already exists!");
+                .WithMessage("Տվյալ կատեգորիան արդեն գոյութոյւն ունի!");
         }
     }
 }
