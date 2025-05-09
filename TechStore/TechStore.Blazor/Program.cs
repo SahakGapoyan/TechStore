@@ -16,16 +16,7 @@ namespace TechStore.Blazor
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddOptions<ApiBrandSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiCategorySettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiColorSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiLaptopSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiMemorySettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiModelSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiOsSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiRamSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiTvSettings>().BindConfiguration("ApiSettings");
-            builder.Services.AddOptions<ApiSmartPhoneSettings>().BindConfiguration("ApiSettings");
+            builder.Services.AddOptions<ApiSettings>().BindConfiguration("ApiSettings");
 
             builder.Services.AddMudServices();
 

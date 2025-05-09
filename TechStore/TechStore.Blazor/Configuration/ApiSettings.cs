@@ -1,6 +1,6 @@
 ﻿namespace TechStore.Blazor.Configuration
 {
-    public class ApiColorSettings
+    public class ApiSettings
     {
         public string BaseUri { get; set; } = string.Empty;
     }

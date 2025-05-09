@@ -231,7 +231,10 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        await LoadTvDataAsync();
+        if (tv == null || tv.Id != Id)
+        {
+            await LoadTvDataAsync();
+        }
     }
 
     private async Task LoadTvDataAsync()
@@ -286,9 +289,7 @@ else
 
     async Task OnColorSelected(int productId)
     {
-        Nav.NavigateTo($"/tvs/{productId}", forceLoad: true);
-        await LoadTvDataAsync();
-        StateHasChanged();
+        Nav.NavigateTo($"/tvs/{productId}");
     }
 
     private void IncrementCartCounter()

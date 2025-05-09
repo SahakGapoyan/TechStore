@@ -290,7 +290,10 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        await LoadLaptopDataAsync();
+        if (laptop == null || laptop.Id != Id)
+        {
+            await LoadLaptopDataAsync();
+        }
     }
 
     private async Task LoadLaptopDataAsync()
@@ -354,9 +357,7 @@ else
 
     async Task OnColorSelected(int productId)
     {
-        Nav.NavigateTo($"/laptops/{productId}", forceLoad: true);
-        await LoadLaptopDataAsync();
-        StateHasChanged();
+        Nav.NavigateTo($"/laptops/{productId}");
     }
 
     private void IncrementCartCounter()

@@ -15,7 +15,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public SmartPhoneApi(HttpClient httpClient, IOptions<ApiSmartPhoneSettings> options)
+        public SmartPhoneApi(HttpClient httpClient, IOptions<ApiSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);

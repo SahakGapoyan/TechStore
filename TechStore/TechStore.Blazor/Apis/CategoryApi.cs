@@ -12,7 +12,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpclient;
 
-        public CategoryApi(HttpClient httpclient,IOptions<ApiCategorySettings> options)
+        public CategoryApi(HttpClient httpclient,IOptions<ApiSettings> options)
         {
             _httpclient = httpclient;
             _httpclient.BaseAddress = new Uri(options.Value.BaseUri);
