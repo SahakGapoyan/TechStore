@@ -327,7 +327,6 @@
     protected override async Task OnInitializedAsync()
     {
         AvailableCategories = (await CategoryApi.GetCategories()).ToList();
-        AvailableCategories = (await CategoryApi.GetCategories()).ToList();
 
         var phoneCategory = AvailableCategories.FirstOrDefault(c => c.Name == "Հեռախոսներ");
         if (phoneCategory != null)
@@ -336,7 +335,7 @@
             AvailableCategories = new List<CategoryDto> { phoneCategory };
         }
         AvailableBrands = (await BrandApi.GetBrands()).ToList();
-        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableModels = (await ModelApi.GetModelsByCategoryId(phoneCategory.Id)).ToList();
         AvailableColors = (await ColorApi.GetColors()).ToList();
         AvailableRams = (await RamApi.GetRams()).ToList();
         AvailableMemories = (await MemoryApi.GetMemories()).ToList();
