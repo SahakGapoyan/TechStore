@@ -25,6 +25,7 @@ namespace TechStore.Blazor
             builder.Services.AddOptions<ApiOsSettings>().BindConfiguration("ApiSettings");
             builder.Services.AddOptions<ApiRamSettings>().BindConfiguration("ApiSettings");
             builder.Services.AddOptions<ApiTvSettings>().BindConfiguration("ApiSettings");
+            builder.Services.AddOptions<ApiSmartPhoneSettings>().BindConfiguration("ApiSettings");
 
             builder.Services.AddMudServices();
 
