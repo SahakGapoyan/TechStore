@@ -19,7 +19,7 @@
         {
             <MudGrid>
                 <MudItem xs="12" md="6" Class="pr-md-4">
-                    <MudTextField @bind-Value="RamUpdateDto.Size"
+                    <MudTextField @bind-Value="_rimeSize"
                                   Label="Ծավալը"
                                   Variant="Variant.Outlined"
                                   For="@(()=>RamUpdateDto.Size)"
@@ -27,9 +27,25 @@
                                   Class="mb-4"
                                   FullWidth />
                 </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect @bind-Value="RamSizeUnit"
+                               Variant="Variant.Outlined"
+                               Label="Միավոր"
+                               Class="mb-4"
+                               FullWidth>
+                        <MudSelectItem Value=@("GB")>GB</MudSelectItem>
+                        <MudSelectItem Value=@("MB")>MB</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
             </MudGrid>
 
             <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Text"
+                           Class="mr-2">
+                    Չեղարկել
+                </MudButton>
                 <MudButton OnClick="SaveAsync"
                            Color="Color.Primary"
                            Variant="Variant.Filled"
@@ -53,6 +69,8 @@
     [Parameter] public int id { get; set; }
     private RamUpdateDto RamUpdateDto { get; set; } = new RamUpdateDto();
     RamDto ramDto = new RamDto();
+    private string RamSizeUnit { get; set; } = "GB";
+    private string _rimeSize = "";
 
     private MudForm _form;
     private bool _formValidated = false;
@@ -80,6 +98,7 @@
         _hasValidationErrors = false;
         _validationErrors.Clear();
         _apiErrorMessage = string.Empty;
+        RamUpdateDto.Size = $"{_rimeSize} {RamSizeUnit}";
         if (_formIsValid)
         {
             var result = await RamApi.UpdateRam(id, RamUpdateDto);
@@ -99,5 +118,9 @@
 
             StateHasChanged();
         }
+    }
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("rams");
     }
 }

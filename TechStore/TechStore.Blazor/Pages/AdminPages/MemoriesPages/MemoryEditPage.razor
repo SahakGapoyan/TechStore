@@ -19,31 +19,41 @@
         {
             <MudGrid>
                 <MudItem xs="12" md="6" Class="pr-md-4">
-                    <MudTextField @bind-Value="MemoryUpdateDto.Size"
-                                  Label="Ծավալը"
-                                  Variant="Variant.Outlined"
-                                  For="@(()=>MemoryUpdateDto.Size)"
-                                  Required
-                                  Class="mb-4"
-                                  FullWidth />
+                    <MudTextField @bind-Value="_memorySize"
+                    Label="Ծավալը"
+                    Variant="Variant.Outlined"
+                    For="@(()=>MemoryUpdateDto.Size)"
+                    Required
+                    Class="mb-4"
+                    FullWidth />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect @bind-Value="MemorySizeUnit"
+                    Label="Միավոր"
+                    Variant="Variant.Outlined"
+                    Class="mb-4"
+                    FullWidth>
+                        <MudSelectItem Value="@("GB")">GB</MudSelectItem>
+                        <MudSelectItem Value="@("TB")">TB</MudSelectItem>
+                    </MudSelect>
                 </MudItem>
             </MudGrid>
 
             <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="NavigateBack"
+                           Color="Color.Default"
+                           Variant="Variant.Text"
+                           Class="mr-2">
+                    Չեղարկել
+                </MudButton>
                 <MudButton OnClick="SaveAsync"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled"
-                           EndIcon="@Icons.Material.Filled.Save"
-                           Class="ml-2">
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                EndIcon="@Icons.Material.Filled.Save"
+                Class="ml-2">
                     Պահպանել
                 </MudButton>
             </div>
-            @if (!_formIsValid && _formValidated)
-            {
-                <MudAlert Severity="Severity.Error" Class="mb-4">
-                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
-                </MudAlert>
-            }
             @if (!_formIsValid && _formValidated)
             {
                 <MudAlert Severity="Severity.Error" Class="mb-4">
@@ -77,6 +87,9 @@
     [Parameter] public int id { get; set; }
     private MemoryUpdateDto MemoryUpdateDto { get; set; } = new MemoryUpdateDto();
     MemoryDto memoryDto = new MemoryDto();
+    private string _memorySize = "";
+    private string MemorySizeUnit { get; set; } = "GB";
+
 
     private MudForm _form;
     private bool _formValidated = false;
@@ -106,6 +119,7 @@
         _apiErrorMessage = string.Empty;
         if (_formIsValid)
         {
+            MemoryUpdateDto.Size = $"{_memorySize} {MemorySizeUnit}";
             var result = await MemoryApi.UpdateMemory(id, MemoryUpdateDto);
             if (result.Success)
             {
@@ -123,5 +137,9 @@
 
             StateHasChanged();
         }
+    }
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("memories");
     }
 }
