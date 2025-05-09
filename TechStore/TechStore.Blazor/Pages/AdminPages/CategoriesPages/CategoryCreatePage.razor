@@ -51,13 +51,6 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-
-        @if (!_formIsValid && _formValidated)
-        {
-            <MudAlert Severity="Severity.Error" Class="mb-4">
-                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
-            </MudAlert>
-        }
         @if (_hasValidationErrors)
         {
             <MudAlert Severity="Severity.Error" Class="mb-4">
