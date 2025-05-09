@@ -10,7 +10,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public BrandApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        public BrandApi(HttpClient httpClient, IOptions<ApiBrandSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);

@@ -10,7 +10,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public ColorApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        public ColorApi(HttpClient httpClient, IOptions<ApiColorSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);

@@ -10,7 +10,7 @@ namespace TechStore.Blazor.Apis
     {
         private readonly HttpClient _httpClient;
 
-        public TvApi(HttpClient httpClient, IOptions<ApiSettings> options)
+        public TvApi(HttpClient httpClient, IOptions<ApiTvSettings> options)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
