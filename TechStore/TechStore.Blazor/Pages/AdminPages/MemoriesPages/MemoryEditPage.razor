@@ -1,50 +1,75 @@
 ﻿@page "/memories/edit/{id::int}"
 @using TechStore.Blazor.DtoModels.Memory
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IMemoryApi MemoryApi
 
 <MudForm @ref="_form" Model="MemoryUpdateDto">
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Խմբագրել Հիշողությունը
-    </MudText>
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Հիշողությունը
+        </MudText>
 
-    @if (MemoryUpdateDto == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="MemoryUpdateDto.Size"
-                              Label="Ծավալը"
-                              Variant="Variant.Outlined"
-                              For="@(()=>MemoryUpdateDto.Size)"
-                              Required
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-        </MudGrid>
-
-        <div class="d-flex justify-end mt-4">
-            <MudButton OnClick="SaveAsync"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
-                Պահպանել
-            </MudButton>
-        </div>
-        @if (!_formIsValid && _formValidated)
+        @if (MemoryUpdateDto == null)
         {
-            <MudAlert Severity="Severity.Error" Class="mb-4">
-                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
-            </MudAlert>
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
         }
-    }
-</MudPaper>
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="pr-md-4">
+                    <MudTextField @bind-Value="MemoryUpdateDto.Size"
+                                  Label="Ծավալը"
+                                  Variant="Variant.Outlined"
+                                  For="@(()=>MemoryUpdateDto.Size)"
+                                  Required
+                                  Class="mb-4"
+                                  FullWidth />
+                </MudItem>
+            </MudGrid>
+
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="SaveAsync"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.Save"
+                           Class="ml-2">
+                    Պահպանել
+                </MudButton>
+            </div>
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+            @if (_hasValidationErrors)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                    <ul>
+                        @foreach (var error in _validationErrors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </MudAlert>
+            }
+            @if (!string.IsNullOrEmpty(_apiErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @_apiErrorMessage
+                </MudAlert>
+            }
+        }
+    </MudPaper>
 </MudForm>
 
 @code {
@@ -52,15 +77,21 @@
     [Parameter] public int id { get; set; }
     private MemoryUpdateDto MemoryUpdateDto { get; set; } = new MemoryUpdateDto();
     MemoryDto memoryDto = new MemoryDto();
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         memoryDto = await MemoryApi.GetMemory(id);
         MemoryUpdateDto = new MemoryUpdateDto
             {
+                Id = memoryDto.Id,
                 Size = memoryDto.Size
             };
     }
@@ -70,10 +101,27 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
         if (_formIsValid)
         {
-            await MemoryApi.UpdateMemory(id, MemoryUpdateDto);
-            Nav.NavigateTo("memories");
+            var result = await MemoryApi.UpdateMemory(id, MemoryUpdateDto);
+            if (result.Success)
+            {
+                Nav.NavigateTo("memories");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 }

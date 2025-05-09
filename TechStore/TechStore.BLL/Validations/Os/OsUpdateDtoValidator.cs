@@ -16,7 +16,7 @@ namespace TechStore.BLL.Validations.Os
             RuleFor(os => os.Name)
                .MustAsync(async (name, token) => !(await uow.OSRepsoitory.GetOSs())
                .Any(os => os.Name.Trim().ToLower() == name.Trim().ToLower()))
-               .WithMessage("The Os name already exists!");
+               .WithMessage("Տվյալ օպերացիոն համակարգը արդեն գոյություն ունի!");
         }
     }
 }

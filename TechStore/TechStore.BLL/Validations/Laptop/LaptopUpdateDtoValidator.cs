@@ -18,7 +18,7 @@ namespace TechStore.BLL.Validations.Laptop
             Include(new ProductUpdateDtoValidator<Data.Entity.Laptop>(uou));
 
             RuleFor(laptop => laptop.BatteryLifeInHours)
-                .GreaterThan(0).WithMessage("The BatteryLifeInHours must be positive number!");
+                .GreaterThan(0).WithMessage("Մարտկոցի կյանքի տևողությունտ պետք է լինի դրական!");
         }
     }
 }

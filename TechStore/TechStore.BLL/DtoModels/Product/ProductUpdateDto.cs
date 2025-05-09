@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechStore.BLL.DtoModels.Base;
 using TechStore.Data.Entity;
 
 namespace TechStore.BLL.DtoModels.Product
 {
-    public class ProductUpdateDto
+    public class ProductUpdateDto:BaseDto
     {
         public string? Name { get; set; }
         public decimal? Price { get; set; }

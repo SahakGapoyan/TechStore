@@ -1,5 +1,6 @@
 ﻿@page "/brands/edit/{id::int}"
 @using TechStore.Blazor.DtoModels.Brand
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IBrandApi BrandApi
 
@@ -19,28 +20,28 @@
             <MudGrid>
                 <MudItem xs="12" md="6" Class="pr-md-4">
                     <MudTextField @bind-Value="BrandUpdateDto.Name"
-                                  Label="Անունը"
-                                  Variant="Variant.Outlined"
-                                  Class="mb-4"
-                                  For="@(()=>BrandUpdateDto.Name)"
-                                  Required
-                                  FullWidth />
+                    Label="Անունը"
+                    Variant="Variant.Outlined"
+                    Class="mb-4"
+                    For="@(()=>BrandUpdateDto.Name)"
+                    Required
+                    FullWidth />
                 </MudItem>
                 <MudItem xs="12" md="6">
                     <MudTextField @bind-Value="BrandUpdateDto.ImageUrl"
-                                  Label="Նկարի հղումը"
-                                  Variant="Variant.Outlined"
-                                  Class="mb-4"
-                                  FullWidth />
+                    Label="Նկարի հղումը"
+                    Variant="Variant.Outlined"
+                    Class="mb-4"
+                    FullWidth />
                 </MudItem>
             </MudGrid>
 
             <div class="d-flex justify-end mt-4">
                 <MudButton OnClick="SaveAsync"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled"
-                           EndIcon="@Icons.Material.Filled.Save"
-                           Class="ml-2">
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                EndIcon="@Icons.Material.Filled.Save"
+                Class="ml-2">
                     Պահպանել
                 </MudButton>
             </div>
@@ -48,6 +49,24 @@
             {
                 <MudAlert Severity="Severity.Error" Class="mb-4">
                     Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+            @if (_hasValidationErrors)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                    <ul>
+                        @foreach (var error in _validationErrors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </MudAlert>
+            }
+            @if (!string.IsNullOrEmpty(_apiErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @_apiErrorMessage
                 </MudAlert>
             }
         }
@@ -59,15 +78,21 @@
     [Parameter] public int id { get; set; }
     private BrandUpdateDto BrandUpdateDto { get; set; } = new BrandUpdateDto();
     BrandDto brandDto = new BrandDto();
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         brandDto = await BrandApi.GetBrand(id);
         BrandUpdateDto = new BrandUpdateDto
             {
+                Id=brandDto.Id,
                 Name = brandDto.Name,
                 ImageUrl = brandDto.ImageUrl
             };
@@ -78,10 +103,33 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
+
         if (_formIsValid)
         {
-            await BrandApi.UpdateBrand(id, BrandUpdateDto);
-            Nav.NavigateTo("brands");
+            var result = await BrandApi.UpdateBrand(id, BrandUpdateDto);
+            if (result.Success)
+            {
+                Nav.NavigateTo("brands");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
+
+    }
+    private void NavigateBack()
+    {
+        Nav.NavigateTo("brands");
     }
 }

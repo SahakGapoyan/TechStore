@@ -7,7 +7,7 @@ using TechStore.BLL.DtoModels.Base;
 
 namespace TechStore.BLL.DtoModels.Brand
 {
-    public class BrandUpdateDto
+    public class BrandUpdateDto:BaseDto
     {
         public string? Name { get; set; }
         public string? ImageUrl { get; set; }

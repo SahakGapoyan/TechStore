@@ -1,5 +1,6 @@
 ﻿@page "/categories/edit/{id:int}"
 @using TechStore.Blazor.DtoModels.Category
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject ICategoryApi CategoryApi
 
@@ -50,6 +51,24 @@
                     Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
                 </MudAlert>
             }
+            @if (_hasValidationErrors)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                    <ul>
+                        @foreach (var error in _validationErrors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </MudAlert>
+            }
+            @if (!string.IsNullOrEmpty(_apiErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @_apiErrorMessage
+                </MudAlert>
+            }
     }
 </MudPaper>
 </MudForm>
@@ -59,15 +78,21 @@
     [Parameter] public int id { get; set; }
     private CategoryUpdateDto CategoryUpdateDto { get; set; } = new CategoryUpdateDto();
     CategoryDto categoryDto = new CategoryDto();
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         categoryDto = await CategoryApi.GetCategory(id);
         CategoryUpdateDto = new CategoryUpdateDto
             {
+                Id=categoryDto.Id,
                 Name = categoryDto.Name,
                 Description = categoryDto.Description
             };
@@ -78,10 +103,28 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
+
         if (_formIsValid)
         {
-            await CategoryApi.UpdateCategory(id, CategoryUpdateDto);
-            Nav.NavigateTo("categories");
+            var result = await CategoryApi.UpdateCategory(id, CategoryUpdateDto);
+            if (result.Success)
+            {
+                Nav.NavigateTo("categories");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 }
