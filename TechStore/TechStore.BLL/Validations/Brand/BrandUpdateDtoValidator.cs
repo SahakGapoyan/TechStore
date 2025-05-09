@@ -14,8 +14,8 @@ namespace TechStore.BLL.Validations.Brand
         public BrandUpdateDtoValidator(IUnitOfWork uow)
         {
             RuleFor(brand => brand.Name)
-               .MustAsync(async (name, token) => !(await uow.BrandRepository.GetBrands())
-               .Any(b => b.Name.Trim().ToLower() == name.Trim().ToLower()))
+               .MustAsync(async (brand, name, token) => !(await uow.BrandRepository.GetBrands())
+               .Any(b => b.Name.Trim().ToLower() == name.Trim().ToLower() && b.Id != brand.Id))
                .WithMessage("Տվյալ բրենդը արդեն գոյութոյւն ունի!");
         }
     }

@@ -9,13 +9,13 @@ using TechStore.Data.Interfaces;
 
 namespace TechStore.BLL.Validations.Os
 {
-    public class OsUpdateDtoValidator:AbstractValidator<OSUpdateDto>
+    public class OsUpdateDtoValidator : AbstractValidator<OSUpdateDto>
     {
         public OsUpdateDtoValidator(IUnitOfWork uow)
         {
             RuleFor(os => os.Name)
-               .MustAsync(async (name, token) => !(await uow.OSRepsoitory.GetOSs())
-               .Any(os => os.Name.Trim().ToLower() == name.Trim().ToLower()))
+               .MustAsync(async (os, name, token) => !(await uow.OSRepsoitory.GetOSs())
+               .Any(o => o.Name.Trim().ToLower() == name.Trim().ToLower() && o.Id != os.Id))
                .WithMessage("Տվյալ օպերացիոն համակարգը արդեն գոյություն ունի!");
         }
     }

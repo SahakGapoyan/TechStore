@@ -14,9 +14,9 @@ namespace TechStore.BLL.Validations.Memory
         public MemoryUpdateDtoValidator(IUnitOfWork uow)
         {
             RuleFor(memory => memory.Size)
-                .MustAsync(async (memory, token) => !(await uow.MemoryRepository.GetMemories())
-                .Any(m => m.Size.Trim().ToLower() == memory.Trim().ToLower()))
+                .MustAsync(async (memory, size, token) => !(await uow.MemoryRepository.GetMemories())
+                .Any(m => m.Size.Trim().ToLower() == size.Trim().ToLower() && m.Id != memory.Id))
                 .WithMessage("Տվյալ հիշողությունը արդեն գոյություն ունի!");
         }
-    } 
+    }
 }
