@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Memory;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -51,22 +53,24 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task AddMemory(MemoryAddDto memoryAddDto)
+        public async Task<ApiResult<bool>> AddMemory(MemoryAddDto memoryAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Memories", memoryAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
-        public async Task UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto)
+        public async Task<ApiResult<bool>> UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Memories/id/{memoryId}", memoryUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteMemory(int memoryId)

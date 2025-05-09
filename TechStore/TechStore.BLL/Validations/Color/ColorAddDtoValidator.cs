@@ -14,16 +14,16 @@ namespace TechStore.BLL.Validations.Color
         public ColorAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(color => color.Name)
-                .NotNull().WithMessage("The Name is required!")
+                .NotNull().WithMessage("Անունը պարտադրի է!")
                 .MustAsync(async (name, token) => !(await uow.ColorRepository.GetColors())
                 .Any(b => b.Name.Trim().ToLower() == name.Trim().ToLower()))
-                .WithMessage("The Color name already exists!");
+                .WithMessage("Տվյալ գույնը արդեն գոյություն ունի!");
 
             RuleFor(color => color.HexCode)
-                .NotNull().WithMessage("The HexCode is required!")
+                .NotNull().WithMessage("Գույնի կոդը պարտադիր է!")
                 .MustAsync(async (hexCode, token) => !(await uow.ColorRepository.GetColors())
                 .Any(c => c.HexCode.Trim().ToLower() == hexCode.Trim().ToLower()))
-                .WithMessage("The Color HexCode already exists!");
+                .WithMessage("Տվյալ գույնի կեդը արդեն գոյություն ունի!");
         }
     }
 }

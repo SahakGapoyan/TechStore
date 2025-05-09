@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.OS;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -16,13 +18,14 @@ namespace TechStore.Blazor.Apis
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
 
-        public async Task AddOS(OSAddDto osAddDto)
+        public async Task<ApiResult<bool>> AddOS(OSAddDto osAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/OSes", osAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteOS(int osId)
@@ -70,13 +73,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateOS(int osId, OSUpdateDto osUpdateDto)
+        public async Task<ApiResult<bool>> UpdateOS(int osId, OSUpdateDto osUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/OSes/id/{osId}", osUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

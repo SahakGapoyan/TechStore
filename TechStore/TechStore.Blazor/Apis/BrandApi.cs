@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Brand;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -15,14 +17,15 @@ namespace TechStore.Blazor.Apis
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
-        public async Task AddBrand(BrandAddDto brandAddDto)
+        public async Task<ApiResult<bool>> AddBrand(BrandAddDto brandAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Brands", brandAddDto);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error" + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteBrand(int brandId)
@@ -71,14 +74,15 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto)
+        public async Task<ApiResult<bool>> UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Brands/id/{brandId}", brandUpdateDto);
 
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error" + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Ram;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -16,13 +18,14 @@ namespace TechStore.Blazor.Apis
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
 
-        public async Task AddRam(RamAddDto ramAddDto)
+        public async Task<ApiResult<bool>> AddRam(RamAddDto ramAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Rams", ramAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteRam(int ramId)
@@ -70,13 +73,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateRam(int ramId, RamUpdateDto ramUpdateDto)
+        public async Task<ApiResult<bool>> UpdateRam(int ramId, RamUpdateDto ramUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Rams/id/{ramId}", ramUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

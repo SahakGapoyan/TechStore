@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Category;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -15,13 +17,14 @@ namespace TechStore.Blazor.Apis
             _httpclient = httpclient;
             _httpclient.BaseAddress = new Uri(options.Value.BaseUri);
         }
-        public async Task AddCategory(CategoryAddDto categoryAddDto)
+        public async Task<ApiResult<bool>> AddCategory(CategoryAddDto categoryAddDto)
         {
             var response = await _httpclient.PostAsJsonAsync("api/Categories", categoryAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteCategory(int id)
@@ -53,13 +56,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error " + response.ReasonPhrase);
         }
 
-        public async Task UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto)
+        public async Task<ApiResult<bool>> UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto)
         {
             var response = await _httpclient.PutAsJsonAsync($"api/Categories/id/{id}", categoryUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

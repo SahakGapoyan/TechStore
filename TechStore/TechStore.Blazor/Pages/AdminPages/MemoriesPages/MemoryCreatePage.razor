@@ -1,6 +1,7 @@
 ﻿@page "/memories/create"
 @using TechStore.Blazor.DtoModels.Memory
 @using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IMemoryApi MemoryApi
 
@@ -56,7 +57,7 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-    </MudPaper>
+
 </MudForm>
 
 @code {
@@ -69,16 +70,26 @@
     private bool _formValidated = false;
     private bool _formIsValid = false;
 
-    private async Task SubmitForm()
-    {
-        _formValidated = true;
-        await _form.Validate();
-        _formIsValid = _form.IsValid;
-        MemoryAddDto.Size = $"{_memorySize} {MemorySizeUnit}";
+
         if (_formIsValid)
         {
-            await MemoryApi.AddMemory(MemoryAddDto);
-            Nav.NavigateTo("memories");
+            var result = await MemoryApi.AddMemory(MemoryAddDto);
+
+            if (result.Success)
+            {
+                Nav.NavigateTo("laptops");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿@page "/rams/create"
 @using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IRamApi RamApi
 
@@ -55,7 +56,7 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-    </MudPaper>
+
 </MudForm>
 
 @code {
@@ -68,17 +69,36 @@
     private bool _formIsValid = false;
 
 
+
     private async Task SubmitForm()
     {
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
 
         RamAddDto.Size = $"{_rimeSize} {RamSizeUnit}";
         if (_formIsValid)
         {
-            await RamApi.AddRam(RamAddDto);
-            Nav.NavigateTo("rams");
+            var result = await RamApi.AddRam(RamAddDto);
+
+            if (result.Success)
+            {
+                Nav.NavigateTo("laptops");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.DtoModels.Tv;
 using TechStore.Blazor.Interfaces;
 
@@ -16,13 +18,14 @@ namespace TechStore.Blazor.Apis
             _httpClient.BaseAddress = new Uri(options.Value.BaseUri);
         }
 
-        public async Task AddTv(TvAddDto tvAddDto)
+        public async Task<ApiResult<bool>> AddTv(TvAddDto tvAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Tvs", tvAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteTv(int tvId)
@@ -94,13 +97,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
+        public async Task<ApiResult<bool>> UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/TVs/id/{tvId}", tvUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

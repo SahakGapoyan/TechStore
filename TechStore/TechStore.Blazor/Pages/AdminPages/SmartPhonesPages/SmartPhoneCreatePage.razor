@@ -7,6 +7,7 @@
 @using TechStore.Blazor.DtoModels.Model
 @using TechStore.Blazor.DtoModels.OS
 @using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.DtoModels.SmartPhone
 @using TechStore.Blazor.Interfaces
 @inject ISmartPhoneApi SmartPhoneApi
@@ -202,6 +203,26 @@
                                       FullWidth />
                     </MudItem>
 
+                    <MudItem xs="12" md="4" Class="pr-md-2">
+                        <MudTextField @bind-Value="SmartPhoneAddDto.BatteryCapacity"
+                                      Label="Մարտկոցի հզորությունը"
+                                      For="@(() => SmartPhoneAddDto.BatteryCapacity)"
+                                      Required
+                                      Variant="Variant.Outlined"
+                                      Class="mb-4"
+                                      FullWidth />
+                    </MudItem>
+
+                    <MudItem xs="12" md="4" Class="pr-md-2">
+                        <MudTextField @bind-Value="SmartPhoneAddDto.CameraMegaPixel"
+                                      Label="Տեսախցիկի Փիքսելներ"
+                                      For="@(() => SmartPhoneAddDto.CameraMegaPixel)"
+                                      Required
+                                      Variant="Variant.Outlined"
+                                      Class="mb-4"
+                                      FullWidth />
+                    </MudItem>
+
                     <MudItem xs="12" md="4" Class="px-md-2">
                         <MudTextField @bind-Value="SmartPhoneAddDto.Processor"
                                       Label="Պրոցեսորը"
@@ -262,6 +283,25 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
+        @if (_hasValidationErrors)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                <ul>
+                    @foreach (var error in _validationErrors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </MudAlert>
+        }
+        @if (!string.IsNullOrEmpty(_apiErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                @_apiErrorMessage
+            </MudAlert>
+        }
+
     </MudPaper>
 </MudForm>
 
@@ -279,6 +319,10 @@
     private List<RamDto> AvailableRams = new();
     private List<MemoryDto> AvailableMemories = new();
     private List<OSDto> AvailableOSs = new();
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -310,11 +354,29 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
 
         if (_formIsValid)
         {
-            await SmartPhoneApi.AddSmartPhone(SmartPhoneAddDto);
-            Nav.NavigateTo("smartphones");
+            var result = await SmartPhoneApi.AddSmartPhone(SmartPhoneAddDto);
+
+            if (result.Success)
+            {
+                Nav.NavigateTo("smartphones");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 

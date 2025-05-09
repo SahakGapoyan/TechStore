@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Formats.Asn1;
 using System.Net.Http.Json;
+using System.Text.Json;
 using TechStore.Blazor.Configuration;
 using TechStore.Blazor.DtoModels.Laptop;
 using TechStore.Blazor.DtoModels.Product;
+using TechStore.Blazor.DtoModels.Result;
 using TechStore.Blazor.Interfaces;
 
 namespace TechStore.Blazor.Apis
@@ -76,22 +78,24 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error " + response.ReasonPhrase);
         }
 
-        public async Task AddLaptop(LaptopAddDto laptopAddDto)
+        public async Task<ApiResult<bool>> AddLaptop(LaptopAddDto laptopAddDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Laptops", laptopAddDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data=true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
-        public async Task Update(int id, LaptopUpdateDto laptopUpdateDto)
+        public async Task<ApiResult<bool>> Update(int id, LaptopUpdateDto laptopUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Laptops/id/{id}", laptopUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
         public async Task<IEnumerable<LaptopDto>> GetLaptopsByBrandId(int brandId)
         {

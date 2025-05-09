@@ -15,16 +15,16 @@ namespace TechStore.BLL.Validations.Product
         public ProductAddDtoValidator(IUnitOfWork uow)
         {
             RuleFor(product => product.Name)
-               .NotNull().WithMessage("The Name is required!")
+               .NotNull().WithMessage("Անունտ պարտադիր է!")
                .MustAsync(async (name, token) =>
                {
                    var repo = await uow.GetProductRepository<TProduct>();
                    return !(await repo.GetProducts(token)).Any(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
                })
-               .WithMessage("The Product name already exists!");
+               .WithMessage("Տվյալ ապրանքը արդեն գոյություն ունի!!");
 
             RuleFor(product => product.Price)
-                .GreaterThanOrEqualTo(0).WithMessage("The price must be non-negative");
+                .GreaterThanOrEqualTo(0).WithMessage("Գինը չի կարող լինել բացասական");
         }
     }
 }

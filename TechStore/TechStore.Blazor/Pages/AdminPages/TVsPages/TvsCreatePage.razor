@@ -7,6 +7,7 @@
 @using TechStore.Blazor.DtoModels.Model
 @using TechStore.Blazor.DtoModels.OS
 @using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.DtoModels.Tv
 @using TechStore.Blazor.Interfaces
 @inject ITvApi TvApi
@@ -210,6 +211,24 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
+        @if (_hasValidationErrors)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                <ul>
+                    @foreach (var error in _validationErrors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </MudAlert>
+        }
+        @if (!string.IsNullOrEmpty(_apiErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                @_apiErrorMessage
+            </MudAlert>
+        }
     </MudPaper>
 </MudForm>
 
@@ -221,11 +240,14 @@
     private bool _formValidated = false;
     private bool _formIsValid = false;
 
-    // Lists for dropdown options
     private List<CategoryDto> AvailableCategories { get; set; } = new List<CategoryDto>();
     private List<BrandDto> AvailableBrands { get; set; } = new List<BrandDto>();
     private List<ModelDto> AvailableModels { get; set; } = new List<ModelDto>();
     private List<ColorDto> AvailableColors { get; set; } = new List<ColorDto>();
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -252,11 +274,29 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
 
         if (_formIsValid)
         {
-            await TvApi.AddTv(TvAddDto);
-            Nav.NavigateTo("tvs");
+            var result = await TvApi.AddTv(TvAddDto);
+
+            if (result.Success)
+            {
+                Nav.NavigateTo("tvs");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 
