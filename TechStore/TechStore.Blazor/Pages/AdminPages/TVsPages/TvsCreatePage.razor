@@ -259,7 +259,7 @@
             AvailableCategories = new List<CategoryDto> { tvCategory };
         }
         AvailableBrands = (await BrandApi.GetBrands()).ToList();
-        AvailableModels = (await ModelApi.GetModels()).ToList();
+        AvailableModels = (await ModelApi.GetModelsByCategoryId(tvCategory.Id)).ToList();
         AvailableColors = (await ColorApi.GetColors()).ToList();
 
         TvAddDto.ImagesUrls ??= new List<string>();

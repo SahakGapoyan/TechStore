@@ -256,11 +256,13 @@
         {
             laptopDto.ImagesUrls.Add(string.Empty);
         }
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableModels = (await ModelApi.GetModelsByCategoryId(laptopDto.Id)).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
         AvailableRams = (await RamApi.GetRams()).ToList();
         AvailableMemories = (await MemoryApi.GetMemories()).ToList();
-        AvailableColors = (await ColorApi.GetColors()).ToList();
-        AvailableModels = (await ModelApi.GetModels()).ToList();
-        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableOSes = (await OSApi.GetOSes()).ToList();
+
     }
 
     private void AddImageUrl()
