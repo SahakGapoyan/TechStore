@@ -5,6 +5,7 @@
 @using TechStore.Blazor.Interfaces
 @inherits LayoutComponentBase
 @implements IDisposable
+@inject NavigationManager NavigationManager
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -15,9 +16,11 @@
     <MudAppBar Elevation="4" Color="Color.Primary">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
 
-        <MudText Typo="Typo.h6" Class="ml-2 mr-auto">
-            My Application
-        </MudText>
+        <div style="height: 200px; display: flex; align-items: center;">
+            <img src="Images/TechStoreLogo.png" alt="TechStore"
+                 style="max-height: 100%; height: auto; width: auto; cursor: pointer;"
+                 @onclick="@(() => NavigationManager.NavigateTo("/"))" />
+        </div>
 
         <!-- Product Search -->
         <MudAutocomplete T="ProductSuggestionDto"
@@ -182,7 +185,7 @@
     protected override void OnInitialized()
     {
         Nav.LocationChanged += HandleLocationChanged;
-        
+
         // Initialize search text from current URL if on search page
         var uri = new Uri(Nav.Uri);
         if (uri.AbsolutePath.Contains("search"))
@@ -207,7 +210,7 @@
             var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
             _searchText = query["query"] ?? string.Empty;
         }
-        
+
         StateHasChanged();
     }
 
@@ -247,7 +250,7 @@
         if (product == null) return;
 
         _selectedProduct = null;
-        
+
         switch (product.ProductType?.ToLower())
         {
             case "smartphone":
@@ -313,9 +316,9 @@
         background-color: white !important;
     }
 
-    .white-search-box .mud-input-outlined .mud-input-slot {
-        background-color: white !important;
-    }
+        .white-search-box .mud-input-outlined .mud-input-slot {
+            background-color: white !important;
+        }
 
     .white-search-box .mud-input-root {
         background-color: white !important;
