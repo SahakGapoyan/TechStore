@@ -15,22 +15,21 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="pr-md-4">
                 <MudTextField @bind-Value="_memorySize"
-                              Label="Ծավալը"
-                              Variant="Variant.Outlined"
-                              Class="mb-4"
-                              For="@(()=>MemoryAddDto.Size)"
-                              Required
-                              InputType="InputType.Number"
-                              FullWidth />
+                Label="Ծավալը"
+                Variant="Variant.Outlined"
+                Class="mb-4"
+                For="@(()=>MemoryAddDto.Size)"
+                Required
+                InputType="InputType.Number"
+                FullWidth />
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudSelect @bind-Value="MemorySizeUnit"
-                           Label="Միավոր"
-                           Variant="Variant.Outlined"
-                           Class="mb-4"
-                           FullWidth>
+                Label="Միավոր"
+                Variant="Variant.Outlined"
+                Class="mb-4"
+                FullWidth>
                     <MudSelectItem Value="@("GB")">GB</MudSelectItem>
-                    <MudSelectItem Value="@("MB")">MB</MudSelectItem>
                     <MudSelectItem Value="@("TB")">TB</MudSelectItem>
                 </MudSelect>
             </MudItem>
@@ -38,16 +37,16 @@
 
         <div class="d-flex justify-end mt-4">
             <MudButton OnClick="NavigateBack"
-                       Color="Color.Default"
-                       Variant="Variant.Text"
-                       Class="mr-2">
+            Color="Color.Default"
+            Variant="Variant.Text"
+            Class="mr-2">
                 Չեղարկել
             </MudButton>
             <MudButton OnClick="SubmitForm"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
+            Color="Color.Primary"
+            Variant="Variant.Filled"
+            EndIcon="@Icons.Material.Filled.Save"
+            Class="ml-2">
                 Ստեղծել Հիշողություն
             </MudButton>
         </div>
@@ -57,7 +56,25 @@
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-
+        @if (_hasValidationErrors)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                <ul>
+                    @foreach (var error in _validationErrors)
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </MudAlert>
+        }
+        @if (!string.IsNullOrEmpty(_apiErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">
+                @_apiErrorMessage
+            </MudAlert>
+        }
+        </MudPaper>
 </MudForm>
 
 @code {
@@ -66,10 +83,24 @@
     private string MemorySizeUnit { get; set; } = "GB";
     private string _memorySize = "";
 
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
 
+    private async Task SubmitForm()
+    {
+        _formValidated = true;
+        await _form.Validate();
+        _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
+
+        MemoryAddDto.Size = $"{_memorySize} {MemorySizeUnit}";
 
         if (_formIsValid)
         {
@@ -77,7 +108,7 @@
 
             if (result.Success)
             {
-                Nav.NavigateTo("laptops");
+                Nav.NavigateTo("memories");
             }
             else if (result.ValidationErrors != null && result.ValidationErrors.Any())
             {
@@ -92,7 +123,6 @@
             StateHasChanged();
         }
     }
-
     private void NavigateBack()
     {
         Nav.NavigateTo("memories");
