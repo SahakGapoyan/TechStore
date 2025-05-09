@@ -15,15 +15,6 @@ namespace TechStore.BLL.Validations.Memory
         {
             RuleFor(memory => memory.Size)
                 .NotNull().WithMessage("The Memory is required!")
-                .Must(size =>
-                {
-                    foreach (var letter in size)
-                    {
-                        if (!char.IsDigit(letter))
-                            return false;
-                    }
-                    return true;
-                }).WithMessage("The Size must contain only digits!")
                 .MustAsync(async (memory, token) => !(await uow.MemoryRepository.GetMemories())
                 .Any(m => m.Size.Trim().ToLower() == memory.Trim().ToLower()))
                 .WithMessage("The Memory size already exists!");

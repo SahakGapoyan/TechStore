@@ -4,55 +4,69 @@
 @inject IRamApi RamApi
 
 <MudForm @ref="_form" Model="RamAddDto">
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Ավելացնել Նոր Օպերատիվ Հիշողություն
-    </MudText>
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Ավելացնել Նոր Օպերատիվ Հիշողություն
+        </MudText>
 
-    <MudGrid>
-        <MudItem xs="12" md="6" Class="pr-md-4">
-            <MudTextField @bind-Value="RamAddDto.Size"
-                          Label="Ծավալը"
-                          Variant="Variant.Outlined"
-                          For="@(()=>RamAddDto.Size)"
-                          Class="mb-4"
-                          Required
-                          FullWidth />
-        </MudItem>
-    </MudGrid>
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="_rimeSize"
+                              Label="Ծավալը"
+                              Variant="Variant.Outlined"
+                              For="@(() => RamAddDto.Size)"
+                              Class="mb-4"
+                              Required
+                              InputType="InputType.Number"
+                              FullWidth />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudSelect @bind-Value="RamSizeUnit"
+                           Variant="Variant.Outlined"
+                           Label="Միավոր"
+                           Class="mb-4"
+                           FullWidth>
+                    <MudSelectItem Value=@("GB")>GB</MudSelectItem>
+                    <MudSelectItem Value=@("MB")>MB</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
 
-    <div class="d-flex justify-end mt-4">
-        <MudButton OnClick="NavigateBack"
-                   Color="Color.Default"
-                   Variant="Variant.Text"
-                   Class="mr-2">
-            Չեղարկել
-        </MudButton>
+
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="NavigateBack"
+                       Color="Color.Default"
+                       Variant="Variant.Text"
+                       Class="mr-2">
+                Չեղարկել
+            </MudButton>
             <MudButton OnClick="SubmitForm"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   EndIcon="@Icons.Material.Filled.Save"
-                   Class="ml-2">
-            Ստեղծել Օպերատիվ Հիշողություն
-        </MudButton>
-    </div>
+                       Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Save"
+                       Class="ml-2">
+                Ստեղծել Օպերատիվ Հիշողություն
+            </MudButton>
+        </div>
         @if (!_formIsValid && _formValidated)
         {
             <MudAlert Severity="Severity.Error" Class="mb-4">
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-</MudPaper>
+    </MudPaper>
 </MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private RamAddDto RamAddDto { get; set; } = new RamAddDto();
-
+    private string RamSizeUnit { get; set; } = "GB";
+    private string _rimeSize = "";
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
 
     private async Task SubmitForm()
     {
@@ -60,6 +74,7 @@
         await _form.Validate();
         _formIsValid = _form.IsValid;
 
+        RamAddDto.Size = $"{_rimeSize} {RamSizeUnit}";
         if (_formIsValid)
         {
             await RamApi.AddRam(RamAddDto);

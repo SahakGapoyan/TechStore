@@ -5,68 +5,82 @@
 @inject IMemoryApi MemoryApi
 
 <MudForm @ref="_form" Model="MemoryAddDto">
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
-        Ավելացնել Նոր Հիշողություն
-    </MudText>
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Add" Class="mr-2" />
+            Ավելացնել Նոր Հիշողություն
+        </MudText>
 
-    <MudGrid>
-        <MudItem xs="12" md="6" Class="pr-md-4">
-            <MudTextField @bind-Value="MemoryAddDto.Size"
-                          Label="Ծավալը"
-                          Variant="Variant.Outlined"
-                          Class="mb-4"
-                          For="@(()=>MemoryAddDto.Size)"
-                          Required
-                          FullWidth />
-        </MudItem>
-    </MudGrid>
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="pr-md-4">
+                <MudTextField @bind-Value="_memorySize"
+                              Label="Ծավալը"
+                              Variant="Variant.Outlined"
+                              Class="mb-4"
+                              For="@(()=>MemoryAddDto.Size)"
+                              Required
+                              InputType="InputType.Number"
+                              FullWidth />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudSelect @bind-Value="MemorySizeUnit"
+                           Label="Միավոր"
+                           Variant="Variant.Outlined"
+                           Class="mb-4"
+                           FullWidth>
+                    <MudSelectItem Value="@("GB")">GB</MudSelectItem>
+                    <MudSelectItem Value="@("MB")">MB</MudSelectItem>
+                    <MudSelectItem Value="@("TB")">TB</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
 
-    <div class="d-flex justify-end mt-4">
-        <MudButton OnClick="NavigateBack"
-                   Color="Color.Default"
-                   Variant="Variant.Text"
-                   Class="mr-2">
-            Չեղարկել
-        </MudButton>
+        <div class="d-flex justify-end mt-4">
+            <MudButton OnClick="NavigateBack"
+                       Color="Color.Default"
+                       Variant="Variant.Text"
+                       Class="mr-2">
+                Չեղարկել
+            </MudButton>
             <MudButton OnClick="SubmitForm"
-                   Color="Color.Primary"
-                   Variant="Variant.Filled"
-                   EndIcon="@Icons.Material.Filled.Save"
-                   Class="ml-2">
-            Ստեղծել Հիշողություն
-        </MudButton>
-    </div>
+                       Color="Color.Primary"
+                       Variant="Variant.Filled"
+                       EndIcon="@Icons.Material.Filled.Save"
+                       Class="ml-2">
+                Ստեղծել Հիշողություն
+            </MudButton>
+        </div>
         @if (!_formIsValid && _formValidated)
         {
             <MudAlert Severity="Severity.Error" Class="mb-4">
                 Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
             </MudAlert>
         }
-</MudPaper>
+    </MudPaper>
 </MudForm>
 
 @code {
     [Inject] private NavigationManager Nav { get; set; } = default!;
     private MemoryAddDto MemoryAddDto { get; set; } = new MemoryAddDto();
+    private string MemorySizeUnit { get; set; } = "GB";
+    private string _memorySize = "";
 
-        private MudForm _form;
-        private bool _formValidated = false;
-        private bool _formIsValid = false;
+    private MudForm _form;
+    private bool _formValidated = false;
+    private bool _formIsValid = false;
 
-        private async Task SubmitForm()
-        {
+    private async Task SubmitForm()
+    {
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
-
+        MemoryAddDto.Size = $"{_memorySize} {MemorySizeUnit}";
         if (_formIsValid)
         {
             await MemoryApi.AddMemory(MemoryAddDto);
             Nav.NavigateTo("memories");
         }
-        }
+    }
 
     private void NavigateBack()
     {
