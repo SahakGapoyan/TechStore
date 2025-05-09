@@ -88,13 +88,14 @@ namespace TechStore.Blazor.Apis
             return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
-        public async Task Update(int id, LaptopUpdateDto laptopUpdateDto)
+        public async Task<ApiResult<bool>> Update(int id, LaptopUpdateDto laptopUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Laptops/id/{id}", laptopUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
         public async Task<IEnumerable<LaptopDto>> GetLaptopsByBrandId(int brandId)
         {

@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<OSDto> GetOS(int id);
         Task<IEnumerable<OSDto>> GetOsesByCategoryId(int categoryId);
         Task<ApiResult<bool>> AddOS(OSAddDto osAddDto);
-        Task UpdateOS(int osId, OSUpdateDto osUpdateDto);
+        Task<ApiResult<bool>> UpdateOS(int osId, OSUpdateDto osUpdateDto);
         Task DeleteOS(int osId);
     }
 }

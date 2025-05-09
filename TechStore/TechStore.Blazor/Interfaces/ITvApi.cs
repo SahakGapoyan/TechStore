@@ -11,7 +11,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<TvDto>> GetTvsByColorId(int colorId);
         Task<IEnumerable<TvDto>> GetTvsByModelId(int modelId);
         Task<ApiResult<bool>> AddTv(TvAddDto tvAddDto);
-        Task UpdateTv(int tvId, TvUpdateDto tvUpdateDto);
+        Task<ApiResult<bool>> UpdateTv(int tvId, TvUpdateDto tvUpdateDto);
         Task DeleteTv(int tvId);
     }
 }

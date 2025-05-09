@@ -56,13 +56,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error " + response.ReasonPhrase);
         }
 
-        public async Task UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto)
+        public async Task<ApiResult<bool>> UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto)
         {
             var response = await _httpclient.PutAsJsonAsync($"api/Categories/id/{id}", categoryUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

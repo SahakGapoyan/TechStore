@@ -97,13 +97,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
+        public async Task<ApiResult<bool>> UpdateTv(int tvId, TvUpdateDto tvUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/TVs/id/{tvId}", tvUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

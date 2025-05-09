@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhones();
         Task<SmartPhoneDto> GetSmartPhone(int id);
         Task<ApiResult<bool>> AddSmartPhone(SmartPhoneAddDto smartPhoneAddDto);
-        Task Update(int id,SmartPhoneUpdateDto smartPhoneUpdateDto);
+        Task<ApiResult<bool>> Update(int id,SmartPhoneUpdateDto smartPhoneUpdateDto);
         Task Delete(int id);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByRamId(int ramId);
         Task<IEnumerable<SmartPhoneDto>> GetSmartPhonesByMemoryId(int memoryId);

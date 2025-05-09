@@ -73,13 +73,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateOS(int osId, OSUpdateDto osUpdateDto)
+        public async Task<ApiResult<bool>> UpdateOS(int osId, OSUpdateDto osUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/OSes/id/{osId}", osUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

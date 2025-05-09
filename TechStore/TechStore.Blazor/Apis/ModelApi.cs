@@ -73,13 +73,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error" + response.ReasonPhrase);
         }
 
-        public async Task UpdateModel(int modelId, ModelUpdateDto modelUpdateDto)
+        public async Task<ApiResult<bool>> UpdateModel(int modelId, ModelUpdateDto modelUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Models/id/{modelId}", modelUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
     }
 }

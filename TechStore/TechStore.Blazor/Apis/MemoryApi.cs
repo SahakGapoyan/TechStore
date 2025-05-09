@@ -63,13 +63,14 @@ namespace TechStore.Blazor.Apis
             return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
-        public async Task UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto)
+        public async Task<ApiResult<bool>> UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Memories/id/{memoryId}", memoryUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task DeleteMemory(int memoryId)

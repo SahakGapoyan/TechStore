@@ -10,7 +10,7 @@ namespace TechStore.Blazor.Interfaces
         Task<MemoryDto> GetMemory(int id);
         Task<IEnumerable<MemoryDto>> GetMemoriesByCategoryId(int categoryId);
         Task<ApiResult<bool>> AddMemory(MemoryAddDto memoryAddDto);
-        Task UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto);
+        Task<ApiResult<bool>> UpdateMemory(int memoryId, MemoryUpdateDto memoryUpdateDto);
         Task DeleteMemory(int memoryId);
     }
 }

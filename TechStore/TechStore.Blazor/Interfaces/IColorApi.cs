@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<ColorDto> GetColor(int id);
         Task<IEnumerable<ColorDto>> GetColorsByCategoryId(int categoryId);
         Task<ApiResult<bool>> AddColor(ColorAddDto colorAddDto);
-        Task UpdateColor(int colorId, ColorUpdateDto colorUpdateDto);
+        Task<ApiResult<bool>> UpdateColor(int colorId, ColorUpdateDto colorUpdateDto);
         Task DeleteColor(int colorId);
     }
 }

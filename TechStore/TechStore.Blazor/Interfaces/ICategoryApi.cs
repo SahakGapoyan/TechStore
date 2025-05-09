@@ -9,6 +9,6 @@ namespace TechStore.Blazor.Interfaces
         Task<CategoryDto> GetCategory(int id);
         Task<ApiResult<bool>> AddCategory(CategoryAddDto categoryAddDto);
         Task DeleteCategory(int id);
-        Task UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto);
+        Task<ApiResult<bool>> UpdateCategory(int id, CategoryUpdateDto categoryUpdateDto);
     }
 }

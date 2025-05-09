@@ -120,13 +120,14 @@ namespace TechStore.Blazor.Apis
             throw new Exception("Error " + response.ReasonPhrase);
         }
 
-        public async Task Update(int id,SmartPhoneUpdateDto smartPhoneUpdateDto)
+        public async Task<ApiResult<bool>> Update(int id,SmartPhoneUpdateDto smartPhoneUpdateDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/SmartPhones/id/{id}", smartPhoneUpdateDto);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                throw new Exception("Error " + response.ReasonPhrase);
+                return new ApiResult<bool> { Success = true, Data = true };
             }
+            return await ApiResult<bool>.FromHttpResponseAsync(response);
         }
 
         public async Task<IEnumerable<ProductSuggestionDto>> GetSmartPhoneSuggestions(string query)

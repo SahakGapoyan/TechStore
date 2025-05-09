@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<RamDto> GetRam(int id);
         Task<IEnumerable<RamDto>> GetRamsByCategoryId(int categoryId);
         Task<ApiResult<bool>> AddRam(RamAddDto ramAddDto);
-        Task UpdateRam(int ramId, RamUpdateDto ramUpdateDto);
+        Task<ApiResult<bool>> UpdateRam(int ramId, RamUpdateDto ramUpdateDto);
         Task DeleteRam(int ramId);
     }
 }

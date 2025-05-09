@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<BrandDto>> GetBrandsByCategoryId(int categoryId);
         Task<BrandDto?> GetBrand(int brandId);
         Task<ApiResult<bool>> AddBrand(BrandAddDto brandAddDto);
-        Task UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto);
+        Task<ApiResult<bool>> UpdateBrand(int brandId, BrandUpdateDto brandUpdateDto);
         Task DeleteBrand(int brandId);
     }
 }

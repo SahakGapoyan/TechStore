@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<IEnumerable<LaptopDto>> GetLaptops();
         Task<LaptopDto> GetLaptop(int id);
         Task<ApiResult<bool>> AddLaptop(LaptopAddDto laptopAddDto);
-        Task Update(int id, LaptopUpdateDto laptopUpdateDto);
+        Task<ApiResult<bool>> Update(int id, LaptopUpdateDto laptopUpdateDto);
         Task Delete(int id);
         Task<IEnumerable<LaptopDto>> GetLaptopsByRamId(int ramId);
         Task<IEnumerable<LaptopDto>> GetLaptopsByMemoryId(int memoryId);

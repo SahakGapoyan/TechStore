@@ -9,7 +9,7 @@ namespace TechStore.Blazor.Interfaces
         Task<ModelDto> GetModel(int id);
         Task<IEnumerable<ModelDto>> GetModelsByCategoryId(int categoryId);
         Task<ApiResult<bool>> AddModel(ModelAddDto modelAddDto);
-        Task UpdateModel(int modelId, ModelUpdateDto modelUpdateDto);
+        Task<ApiResult<bool>> UpdateModel(int modelId, ModelUpdateDto modelUpdateDto);
         Task DeleteModel(int modelId);
     }
 }
