@@ -24,8 +24,10 @@
             <MudItem xs="12" md="6">
                 <MudTextField @bind-Value="BrandAddDto.ImageUrl"
                               Label="Նկարի հղումը"
+                              For="@(()=>BrandAddDto.ImageUrl)"
                               Variant="Variant.Outlined"
                               Class="mb-4"
+                              Required
                               FullWidth />
             </MudItem>
         </MudGrid>

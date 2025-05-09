@@ -6,6 +6,7 @@ namespace TechStore.Blazor.DtoModels.Brand
     {
         [Required(ErrorMessage = "Անունը պարտադիր է")]
         public string Name { get; set; } = default!;
+        [Required(ErrorMessage = "Նկարի հղումը պարտադիր է")]
         public string ImageUrl { get; set; } = default!;
     }
 }

@@ -45,7 +45,7 @@ namespace TechStore.Blazor.Apis
             return new ApiResult<bool>
             {
                 Success = false,
-                ErrorMessage = await response.Content.ReadAsStringAsync()
+                ErrorMessage ="Ինչ-որ բան սխալ գնաց"
             };
         }
 
