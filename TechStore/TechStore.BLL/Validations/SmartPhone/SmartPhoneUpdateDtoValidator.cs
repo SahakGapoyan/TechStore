@@ -20,13 +20,13 @@ namespace TechStore.BLL.Validations.SmartPhone
                .Must(screenSize =>
                    screenSize.All(ch => char.IsDigit(ch) || ch == '.') &&
                    screenSize.Count(ch => ch == '.') <= 1
-               ).WithMessage("The ScreenSize must contain only digits and at most one dot!");
+               ).WithMessage("Էկրանի չափսը միայն թվեր և կետ կարող է պարունակել!");
 
             RuleFor(smartPhone => smartPhone.BatteryCapacity)
-                .GreaterThan(0).WithMessage("The BatteryCapacity must be positive number!");
+                .GreaterThan(0).WithMessage("Մարտկոցի հզորությունը պետք է լինի դրական!");
 
             RuleFor(smartPhone => smartPhone.CameraMegaPixel)
-               .GreaterThan(0).WithMessage("The CameraMegaPixel must be positive number!");
+               .GreaterThan(0).WithMessage("Տեսախցիկի Փիքսելները պետք է լինեն դրական!");
         }
     }
 }

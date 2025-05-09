@@ -22,10 +22,10 @@ namespace TechStore.BLL.Validations.Ram
                             return false;
                     }
                     return true;
-                }).WithMessage("The Size must contain only digits!")
+                }).WithMessage("Ծավալը միայն թվեր կարող է պարունակել!")
                 .MustAsync(async (ram, token) => !(await uow.RamRepository.GetRams())
                 .Any(r => r.Size.Trim().ToLower() == ram.Trim().ToLower()))
-                .WithMessage("The Ram size already exists!");
+                .WithMessage("Տվյալ օպերատիվ հիշողությունը արդեն գոյություն ունի!");
         }
     }
 }
