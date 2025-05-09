@@ -1,5 +1,6 @@
 ﻿@page "/rams/edit/{id:int}"
 @using TechStore.Blazor.DtoModels.Ram
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IRamApi RamApi
 
@@ -52,15 +53,21 @@
     [Parameter] public int id { get; set; }
     private RamUpdateDto RamUpdateDto { get; set; } = new RamUpdateDto();
     RamDto ramDto = new RamDto();
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         ramDto = await RamApi.GetRam(id);
         RamUpdateDto = new RamUpdateDto
             {
+                Id=ramDto.Id,
                 Size = ramDto.Size
             };
     }
@@ -70,10 +77,27 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
         if (_formIsValid)
         {
-            await RamApi.UpdateRam(id, RamUpdateDto);
-            Nav.NavigateTo("rams");
+            var result = await RamApi.UpdateRam(id, RamUpdateDto);
+            if (result.Success)
+            {
+                Nav.NavigateTo("rams");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 }

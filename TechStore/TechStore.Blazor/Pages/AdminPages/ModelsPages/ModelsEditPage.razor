@@ -1,68 +1,87 @@
 ﻿@page "/models/edit/{id::int}"
 @using TechStore.Blazor.DtoModels.Model
+@using TechStore.Blazor.DtoModels.Result
 @using TechStore.Blazor.Interfaces
 @inject IModelApi ModelApi
 
 <MudForm @ref="_form" Model="ModelUpdateDto">
-<MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
-    <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
-        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
-        Խմբագրել Մոդելը
-    </MudText>
+    <MudPaper Elevation="5" Class="pa-8 mx-auto" Style="max-width: 600px; margin-top: 24px;">
+        <MudText Typo="Typo.h5" Class="mb-6 d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-2" />
+            Խմբագրել Մոդելը
+        </MudText>
 
-    @if (ModelUpdateDto == null)
-    {
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
-    }
-    else
-    {
-        <MudGrid>
-            <MudItem xs="12" md="6" Class="pr-md-4">
-                <MudTextField @bind-Value="ModelUpdateDto.Name"
-                              Label="Անունը"
-                              Variant="Variant.Outlined"
-                              For="@(()=>ModelUpdateDto.Name)"
-                              Required
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="ModelUpdateDto.AnnouncementYear"
-                              Label="Հայտարարության Տարին"
-                              Variant="Variant.Outlined"
-                              For="@(()=>ModelUpdateDto.AnnouncementYear)"
-                              Required
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-            <MudItem xs="12" md="6">
-                <MudTextField @bind-Value="ModelUpdateDto.Stock"
-                              Label="Քանակը"
-                              Variant="Variant.Outlined"
-                              For="@(()=>ModelUpdateDto.Stock)"
-                              Required
-                              Class="mb-4"
-                              FullWidth />
-            </MudItem>
-        </MudGrid>
-
-        <div class="d-flex justify-end mt-4">
-            <MudButton OnClick="SaveAsync"
-                       Color="Color.Primary"
-                       Variant="Variant.Filled"
-                       EndIcon="@Icons.Material.Filled.Save"
-                       Class="ml-2">
-                Պահպանել
-            </MudButton>
-        </div>
-        @if (!_formIsValid && _formValidated)
+        @if (ModelUpdateDto == null)
         {
-            <MudAlert Severity="Severity.Error" Class="mb-4">
-                Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
-            </MudAlert>
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto my-8" />
         }
-    }
-</MudPaper>
+        else
+        {
+            <MudGrid>
+                <MudItem xs="12" md="6" Class="pr-md-4">
+                    <MudTextField @bind-Value="ModelUpdateDto.Name"
+                    Label="Անունը"
+                    Variant="Variant.Outlined"
+                    For="@(()=>ModelUpdateDto.Name)"
+                    Required
+                    Class="mb-4"
+                    FullWidth />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="ModelUpdateDto.AnnouncementYear"
+                    Label="Հայտարարության Տարին"
+                    Variant="Variant.Outlined"
+                    For="@(()=>ModelUpdateDto.AnnouncementYear)"
+                    Required
+                    Class="mb-4"
+                    FullWidth />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="ModelUpdateDto.Stock"
+                    Label="Քանակը"
+                    Variant="Variant.Outlined"
+                    For="@(()=>ModelUpdateDto.Stock)"
+                    Required
+                    Class="mb-4"
+                    FullWidth />
+                </MudItem>
+            </MudGrid>
+
+            <div class="d-flex justify-end mt-4">
+                <MudButton OnClick="SaveAsync"
+                Color="Color.Primary"
+                Variant="Variant.Filled"
+                EndIcon="@Icons.Material.Filled.Save"
+                Class="ml-2">
+                    Պահպանել
+                </MudButton>
+            </div>
+            @if (!_formIsValid && _formValidated)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    Խնդրում ենք լրացնել բոլոր պարտադիր դաշտերը ճիշտ ձևով։
+                </MudAlert>
+            }
+            @if (_hasValidationErrors)
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    <MudText>Խնդրում ենք շտկել հետևյալ սխալները:</MudText>
+                    <ul>
+                        @foreach (var error in _validationErrors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </MudAlert>
+            }
+            @if (!string.IsNullOrEmpty(_apiErrorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-4">
+                    @_apiErrorMessage
+                </MudAlert>
+            }
+        }
+    </MudPaper>
 </MudForm>
 
 @code {
@@ -70,15 +89,21 @@
     [Parameter] public int id { get; set; }
     private ModelUpdateDto ModelUpdateDto { get; set; } = new ModelUpdateDto();
     ModelDto modelDto = new ModelDto();
+
     private MudForm _form;
     private bool _formValidated = false;
     private bool _formIsValid = false;
+
+    private List<ValidationError> _validationErrors = new();
+    private bool _hasValidationErrors = false;
+    private string _apiErrorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         modelDto = await ModelApi.GetModel(id);
         ModelUpdateDto = new ModelUpdateDto
             {
+                Id=modelDto.Id,
                 Name = modelDto.Name,
                 AnnouncementYear = modelDto.AnnouncementYear,
                 Stock = modelDto.Stock
@@ -90,10 +115,27 @@
         _formValidated = true;
         await _form.Validate();
         _formIsValid = _form.IsValid;
+        _hasValidationErrors = false;
+        _validationErrors.Clear();
+        _apiErrorMessage = string.Empty;
         if (_formIsValid)
         {
-            await ModelApi.UpdateModel(id, ModelUpdateDto);
-            Nav.NavigateTo("models");
+            var result = await ModelApi.UpdateModel(id, ModelUpdateDto);
+            if (result.Success)
+            {
+                Nav.NavigateTo("models");
+            }
+            else if (result.ValidationErrors != null && result.ValidationErrors.Any())
+            {
+                _hasValidationErrors = true;
+                _validationErrors = result.ValidationErrors;
+            }
+            else
+            {
+                _apiErrorMessage = result.ErrorMessage ?? "An unknown error occurred";
+            }
+
+            StateHasChanged();
         }
     }
 }

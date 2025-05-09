@@ -20,8 +20,8 @@ namespace TechStore.BLL.Validations.Model
                  .WithMessage("Տվյալ մոդելը արդեն գոյություն ունի!");
 
             RuleFor(model => model.AnnouncementYear)
-                .GreaterThan(1900).WithMessage("Թողարկամն տարեթիվը պետք է լինի 1900-ից բարձր")
-                .LessThanOrEqualTo(DateTime.Now.Year).WithMessage("Թողարկման տարեթիվը չի կարող լինել ապագայից");
+                .GreaterThan(1900).WithMessage("Թողարկամն տարեթիվը պետք է լինի 1900-ից բարձր!")
+                .LessThanOrEqualTo(DateTime.Now.Year).WithMessage("Թողարկման տարեթիվը չի կարող լինել ապագայից!");
 
             RuleFor(model => model.Stock)
                 .GreaterThanOrEqualTo(0).WithMessage("Քանակը չի կարող լինել բացասական!");

@@ -14,18 +14,9 @@ namespace TechStore.BLL.Validations.Memory
         public MemoryUpdateDtoValidator(IUnitOfWork uow)
         {
             RuleFor(memory => memory.Size)
-                .Must(size =>
-                {
-                    foreach (var letter in size)
-                    {
-                        if (!char.IsDigit(letter))
-                            return false;
-                    }
-                    return true;
-                }).WithMessage("The Size must contain only digits!")
                 .MustAsync(async (memory, token) => !(await uow.MemoryRepository.GetMemories())
                 .Any(m => m.Size.Trim().ToLower() == memory.Trim().ToLower()))
-                .WithMessage("The Memory size already exists!");
+                .WithMessage("Տվյալ հիշողությունը արդեն գոյություն ունի!");
         }
-    }
+    } 
 }
