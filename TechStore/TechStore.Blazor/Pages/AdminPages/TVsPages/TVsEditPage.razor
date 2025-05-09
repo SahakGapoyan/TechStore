@@ -171,9 +171,9 @@
                 CategoryId = tvDto.CategoryId,
                 IsSmartTv = tvDto.IsSmartTv
             };
-        AvailableColors = (await ColorApi.GetColors()).ToList();
-        AvailableModels = (await ModelApi.GetModels()).ToList();
         AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableModels = (await ModelApi.GetModelsByCategoryId(tvDto.Id)).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
     }
 
     private void AddImageUrl()
