@@ -222,6 +222,31 @@
             smartPhoneDto.ImagesUrls.Add(string.Empty);
         }
 
+        SmartPhoneUpdateDto = new SmartPhoneUpdateDto
+            {
+                Id=smartPhoneDto.Id,
+                Name = smartPhoneDto.Name,
+                Price = smartPhoneDto.Price,
+                BatteryCapacity = smartPhoneDto.BatteryCapacity,
+                ColorId = smartPhoneDto.ColorId,
+                RamId = smartPhoneDto.RamId,
+                MemoryId = smartPhoneDto.MemoryId,
+                ModelId = smartPhoneDto.ModelId,
+                BrandId = smartPhoneDto.BrandId,
+                IsAvailable = smartPhoneDto.IsAvailable,
+                OSId = smartPhoneDto.OSId,
+                CameraMegaPixel = smartPhoneDto.CameraMegaPixel,
+                ScreenSize = smartPhoneDto.ScreenSize,
+                Has5G = smartPhoneDto.Has5G,
+                ImagesUrls = smartPhoneDto.ImagesUrls,
+                IsWaterResistant = smartPhoneDto.IsWaterResistant,
+                Processor = smartPhoneDto.Processor,
+                Wifi = smartPhoneDto.Wifi,
+                CategoryId = smartPhoneDto.CategoryId
+            };
+        AvailableBrands = (await BrandApi.GetBrands()).ToList();
+        AvailableModels = (await ModelApi.GetModelsByCategoryId(smartPhoneDto.Id)).ToList();
+        AvailableColors = (await ColorApi.GetColors()).ToList();
         AvailableRams = (await RamApi.GetRams()).ToList();
         AvailableMemories = (await MemoryApi.GetMemories()).ToList();
         AvailableOSs = (await OSApi.GetOSes()).ToList();
