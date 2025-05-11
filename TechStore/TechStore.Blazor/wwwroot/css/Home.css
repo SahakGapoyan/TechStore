@@ -29,6 +29,7 @@
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
+    position: relative;
 }
 
     .product-card:hover {
@@ -90,5 +91,14 @@
     position: absolute;
     top: 8px;
     left: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none; /* Prevent accidental interaction while hidden */
+}
+
+/* Add this to show the chip only on hover */
+.product-card:hover .availability-chip {
+    opacity: 1;
+    pointer-events: auto;
 }
 
